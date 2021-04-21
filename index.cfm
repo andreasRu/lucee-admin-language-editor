@@ -1,6 +1,6 @@
 
 <cfscript>
-public struct function parseXMLDataToStruct( 
+	public struct function parseXMLDataToStruct( 
 			
 		struct XMLData required ){
 			
@@ -10,8 +10,8 @@ public struct function parseXMLDataToStruct(
 		
 		loop from="1" to="#arrayLen( arguments.XMLData.XmlRoot.XmlChildren )#" index="i" {
 
-		    local.keyName=arguments.XMLData["XmlRoot"]["XmlChildren"][i]["XmlAttributes"]["key"];
-		 local.parsedXMLResult[ local.keyName ]=arguments.XMLData.XmlRoot.XmlChildren[i].XmlText;
+		 	local.keyName=arguments.XMLData["XmlRoot"]["XmlChildren"][i]["XmlAttributes"]["key"];
+		 	local.parsedXMLResult[ local.keyName ]=arguments.XMLData.XmlRoot.XmlChildren[i].XmlText;
 
 		}
 
@@ -19,17 +19,36 @@ public struct function parseXMLDataToStruct(
 
 	}
 
+	public query function getAvailableJavaLocalesAsQuery(){
+
+		// Get Locale List
+		local.JavaLocale = CreateObject("java", "java.util.Locale");
+		local.availableJavaLocalesArray=JavaLocale.getAvailableLocales();
+		local.availableJavaLocalesQuery = queryNew("languagecode,displayname");
+		cfloop( from="1" to="#arraylen(availableJavaLocalesArray)#" index="i" ){
+			if( len( availableJavaLocalesArray[i].toLanguageTag() ) == 2 ){
+					queryAddRow(availableJavaLocalesQuery,{languagecode=availableJavaLocalesArray[i].toLanguageTag() ,displayname=availableJavaLocalesArray[i].getDisplayname()});
+				}	 
+		}
+		```
+		<cfquery dbtype="query" name="local.result">
+			SELECT languagecode, displayname
+			FROM availableJavaLocalesQuery
+			ORDER by languagecode
+		</cfquery>
+		```	
+		return local.result;
+
+	}
+
 
 </cfscript>
 
-<!--- Get Locale List--->
-<cfset JavaLocale = CreateObject("java", "java.util.Locale")>
-<cfset availableJavaLocalesArray=JavaLocale.getAvailableLocales()>
+
+
 
 <cfoutput>
 	
-
-
 	<cfset myXML={}>
 	<cfset availableLanguagesArray=[]>
 	
@@ -64,15 +83,11 @@ public struct function parseXMLDataToStruct(
 
 				<!---cfdump var="#xmlData#"--->
 				<!---cfabort--->
-<cfsavecontent variable="xmlFileContent"><?xml version="1.0" encoding="UTF-8"?>
-	<language key="#form.createLanguageXMLFile#" label=""><cfloop struct="#xmlData[form.createLanguageXMLFile]#" item="i">		
-		<data key="#i#"><!---#encodeForXML(xmlData[form.createLanguageXMLFile][i])#---></data></cfloop>
-	</language></cfsavecontent>
+				<cfsavecontent variable="xmlFileContent"><?xml version="1.0" encoding="UTF-8"?><language key="#form.createLanguageXMLFile#" label=""><cfloop struct="#xmlData[form.createLanguageXMLFile]#" item="i"><data key="#i#"><!---#encodeForXML(xmlData[form.createLanguageXMLFile][i])#---></data></cfloop></language></cfsavecontent>
 				<cffile action="write" file="#adminLanguageResourcePath##form.createLanguageXMLFile#.xml" output="#xmlFileContent#">
 				FILE CREATED AT YOUR WEBCONTEXT AT: #adminLanguageResourcePath##form.createLanguageXMLFile#.xml 
 			</cfif>
 		</cfif>
-		
 	</cfif>
 
 
@@ -141,20 +156,21 @@ public struct function parseXMLDataToStruct(
 	</table>
 
 
-    
-	
+    <cfset availableJavaLocalesAsQuery = getAvailableJavaLocalesAsQuery()>
+
 	<div style="margin-top:25px">Create an empty language xml resource file for:</div>
 	<form action="/index.cfm" method="post" >
 		<select name="createLanguageXMLFile" onChange="document.getElementById('formSendButton').style.display='block';">
 			<option value="">Please select language</option>
-			<cfloop from="1" to="#arraylen(availableJavaLocalesArray)#" index="i">
-		    	<cfif len(availableJavaLocalesArray[i]) is 2 and not arrayContains( availableLanguagesArray, "#availableJavaLocalesArray[i]#") >
-		    		<option value="#availableJavaLocalesArray[i]#">#availableJavaLocalesArray[i]# &gt; #availableJavaLocalesArray[i].getDisplayLanguage()#</option>
+			<cfloop query="availableJavaLocalesAsQuery">
+		    	<cfif not arrayContains( availableLanguagesArray, availableJavaLocalesAsQuery.languagecode) >
+		    		<option value="#availableJavaLocalesAsQuery.languagecode#">#availableJavaLocalesAsQuery.languagecode# ( #availableJavaLocalesAsQuery.displayname# )</option>
 		        </cfif>
 		    </cfloop>
    		</select>
    		<button id="formSendButton" onClick="this.form.submit(); this.disabled=true; this.innerText ='Sending...';" style="display:none;margin-top: 5px;">Create XML-File</button>
 	</form>
+
 
 	<div style="margin-top:25px">Download a xml resource file for:</div>
 	<form action="/index.cfm" method="post" >
