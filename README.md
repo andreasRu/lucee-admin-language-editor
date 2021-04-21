@@ -8,4 +8,4 @@ To run "Lucee Administrator Language Editor" locally you only need [CommandBox](
 
 ## About "Lucee Admin Language Editor"
 
-I came up with the idea because I want to translate Lucee Administrator to Portuguese and Spanish to help my South American (especially cf-brazil) to quickly dig and play around with Lucee Administrator in their own language.
+I came up with the idea because I want to translate Lucee Administrator to Portuguese and Spanish to help my South American fellows (especially cf-brazil) to quickly dig and play around with Lucee Administrator in their own language.
