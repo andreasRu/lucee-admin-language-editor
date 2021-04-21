@@ -46,7 +46,6 @@
 
 
 
-
 <cfoutput>
 	
 	<cfset myXML={}>
@@ -65,7 +64,7 @@
 		<cfabort>
 	</cfif>
 	
-	Reading data from Lucees WEB Admininstrator at:<br>#adminLanguageResourcePath#<hr>
+	Reading data from Lucees (#encodeForHtml(server.lucee.version)#) WEB Admininstrator at:<br>#encodeForHtml(adminLanguageResourcePath)#<hr>
 
 	<!---cfset adminLanguageResourcePath="C:\lucee-dev\webapps\ROOT\WEB-INF\lucee\context\admin\resources\language"--->
 	
