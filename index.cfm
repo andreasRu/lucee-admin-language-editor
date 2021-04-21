@@ -54,7 +54,8 @@
 	<cfset adminLanguageResourcePath=expandPath("../") & ".CommandBoxContexts/WEB-INF/lucee-web/context/admin/resources/language/">
 	
 	<cfif isDefined("form.downloadLanguageXMLFile") and len(form.downloadLanguageXMLFile) is 2 and FileExists("#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml")>
-		<cfcontent type = "text/txt" file = "#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml"
+		<cfheader name="Content-Disposition" value="attachment; filename=#form.downloadLanguageXMLFile#.xml">
+		<cfcontent type = "text/xml" file = "#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml"
 		deleteFile = "no">
 		<cfabort>
 	</cfif>
@@ -158,7 +159,7 @@
     <cfset availableJavaLocalesAsQuery = getAvailableJavaLocalesAsQuery()>
 
 	<div style="margin-top:25px">Create an empty language xml resource file for:</div>
-	<form action="/index.cfm" method="post" >
+	<form action="/index.cfm" method="post">
 		<select name="createLanguageXMLFile" onChange="document.getElementById('formSendButton').style.display='block';">
 			<option value="">Please select language</option>
 			<cfloop query="availableJavaLocalesAsQuery">
@@ -172,14 +173,14 @@
 
 
 	<div style="margin-top:25px">Download a xml resource file for:</div>
-	<form action="/index.cfm" method="post" >
+	<form action="/index.cfm" method="post" target="_blank" >
 		<select name="downloadLanguageXMLFile" onChange="document.getElementById('formSendButtonDownload').style.display='block';">
 			<option value="">Please select language</option>
 			<cfloop from="1" to="#arraylen(availableLanguagesArray)#" index="i">
 		    	<option value="#availableLanguagesArray[i]#">#availableLanguagesArray[i]#.xml</option>
 		    </cfloop>
    		</select>
-   		<button id="formSendButtonDownload" onClick="this.form.submit(); this.disabled=true; this.innerText ='Sending...';" style="display:none;margin-top: 5px;">Download XML-File</button>
+   		<button id="formSendButtonDownload" onClick="this.form.submit();this.style.display='none';" style="display:none;margin-top: 5px;">Download XML-File</button>
 	</form>
 
 	
