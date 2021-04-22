@@ -1,46 +1,46 @@
 
 <cfscript>
+	/**
+	 * returns XML data of an imported language resource file as a struct
+	 */
 	public struct function parseXMLDataToStruct( 
-			
 		struct XMLData required ){
 			
 		local.parsedXMLResult["XmlRoot.XmlComment"]=arguments.XMLData.XmlRoot.XmlComment;
 		local.parsedXMLResult["XmlRoot.XmlAttributes.key"]=arguments.XMLData.XmlRoot.XmlAttributes.key;
 		local.parsedXMLResult["XmlRoot.XmlAttributes.label"]=arguments.XMLData.XmlRoot.XmlAttributes.label;
-		
-		loop from="1" to="#arrayLen( arguments.XMLData.XmlRoot.XmlChildren )#" index="i" {
+		local.parsedXMLResult["XmlRoot.XmlAttributes.KeyData"]={}
+		loop array="#arguments.XMLData.XmlRoot.XmlChildren#" index="itemChildrenKey" {
 
-		 	local.keyName=arguments.XMLData["XmlRoot"]["XmlChildren"][i]["XmlAttributes"]["key"];
-		 	local.parsedXMLResult[ local.keyName ]=arguments.XMLData.XmlRoot.XmlChildren[i].XmlText;
+		 	local.keyName=itemChildrenKey["XmlAttributes"]["key"];
+		 	local.parsedXMLResult["XmlRoot.XmlAttributes.KeyData"][ local.keyName ]=itemChildrenKey.XmlText;
 
 		}
 
 		return local.parsedXMLResult;
-
 	}
 
-	public query function getAvailableJavaLocalesAsQuery(){
+	
+	/**
+	 * returns as struct of all available 2-letter codes of the underlying java.util with the referring Language DisplayName (target language)
+	 */
+	public struct function getAvailableJavaLocalesAsStruct(){
 
 		// Get Locale List
 		local.JavaLocale = CreateObject("java", "java.util.Locale");
 		local.availableJavaLocalesArray=JavaLocale.getAvailableLocales();
-		local.availableJavaLocalesQuery = queryNew("languagecode,displayname");
-		cfloop( from="1" to="#arraylen(availableJavaLocalesArray)#" index="i" ){
-			if( len( availableJavaLocalesArray[i].toLanguageTag() ) == 2 ){
-					queryAddRow(availableJavaLocalesQuery,{languagecode=availableJavaLocalesArray[i].toLanguageTag() ,displayname=availableJavaLocalesArray[i].getDisplayname()});
+		// initialize an ordered struct with shorthand [:]
+		local.availableJavaLocalesStruct =[:];
+		cfloop( array= "#availableJavaLocalesArray#" item="itemLocale" ){
+			if( len( itemLocale.toLanguageTag() ) == 2 ){
+				local.displayNameTargetLanguage=itemLocale.info();
+				local.availableJavaLocalesStruct[itemLocale.toLanguageTag()] = UcFirst( local.displayNameTargetLanguage["display"]["language"] );
 				}	 
 		}
-		```
-		<cfquery dbtype="query" name="local.result">
-			SELECT languagecode, displayname
-			FROM availableJavaLocalesQuery
-			ORDER by languagecode
-		</cfquery>
-		```	
-		return local.result;
+		
+		return local.availableJavaLocalesStruct;
 
 	}
-
 
 </cfscript>
 
@@ -50,134 +50,178 @@
 	
 	<cfset myXML={}>
 	<cfset availableLanguagesArray=[]>
-	
+	<cfset availableJavaLocalesAsStruct = getAvailableJavaLocalesAsStruct()>
+	<cfset availableJavaLocalesArray = StructKeyArray( availableJavaLocalesAsStruct )>
+	<cfset arraySort( availableJavaLocalesArray , "textnocase", "asc")>
 	<cfset adminLanguageResourcePath=expandPath("../") & ".CommandBoxContexts/WEB-INF/lucee-web/context/admin/resources/language/">
 	
-	<cfif isDefined("form.downloadLanguageXMLFile") and len(form.downloadLanguageXMLFile) is 2 and FileExists("#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml")>
-		<cfheader name="Content-Disposition" value="attachment; filename=#form.downloadLanguageXMLFile#.xml">
-		<cfcontent type = "text/xml" file = "#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml"
-		deleteFile = "no">
+	
+	
+	<!--- Download a xml ressource file --->
+	<cfif isDefined( "form.downloadLanguageXMLFile" )>
+		<cfif len( form.downloadLanguageXMLFile ) is 2 
+			and reFind( "[A-Za-z]+", form.downloadLanguageXMLFile )
+			and FileExists("#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml")>
+
+				<cfheader 	name="Content-Disposition" 
+							value="attachment; 
+							filename=#form.downloadLanguageXMLFile#.xml">
+				<cfcontent 	type = "text/xml" 
+							file = "#adminLanguageResourcePath##form.downloadLanguageXMLFile#.xml"
+							deleteFile = "no">
+				<cfabort>
+
+		<cfelse>
+
+			No such file available!
+	
+		</cfif>
 		<cfabort>
 	</cfif>
 
-	<cfif not FileExists("#adminLanguageResourcePath#en.xml")>
+
+	<!--- Import default English en.xml as XML, parse it to a struct and populate arrays--->
+	<cfif FileExists("#adminLanguageResourcePath#en.xml")>
+		<cffile action="read" file="#adminLanguageResourcePath#en.xml" variable="xmlString">
+		<cfset myXML["en"] = xmlParse(xmlString)>
+		<cfset xmlData[ "en" ]= parseXMLDataToStruct( myXML[ "en" ] )>
+		<cfset ArrayAppend(availableLanguagesArray,"en") >
+		<cfset allDefaultDataKeysFromEnglishAsArray= StructKeyArray( xmlData["en"]["XmlRoot.XmlAttributes.KeyData"])>
+		<cfset arraySort( allDefaultDataKeysFromEnglishAsArray , "textnocase", "asc")>
+	<cfelse>
 		Web-Context couldn't be found!
 		<cfabort>
 	</cfif>
 	
 	Reading data from Lucees (#encodeForHtml(server.lucee.version)#) WEB Admininstrator at:<br>#encodeForHtml(adminLanguageResourcePath)#<hr>
 
-	<!---cfset adminLanguageResourcePath="C:\lucee-dev\webapps\ROOT\WEB-INF\lucee\context\admin\resources\language"--->
-	
+	<!--- Generate a new default language xml file with the help of default en.xml file for available keys --->
 	<cfif isDefined("form.createLanguageXMLFile")>
-		<cfif len(form.createLanguageXMLFile) is 2 
-			  and arrayContains( availableJavaLocalesArray, form.createLanguageXMLFile) >
-			<cfif FileExists("#adminLanguageResourcePath##form.createLanguageXMLFile#.xml")>
-					#encodeForHTML("#form.createLanguageXMLFile#.xml already exists. File creation not executed!")#
+		<cfset createFileLanguageCode= listFirst( form.createLanguageXMLFile, ";" )>
+		<cfset createFileLanguageDisplayname= listLast( form.createLanguageXMLFile, ";" )>
+		<cfif len( createFileLanguageCode ) is 2 
+			  and arrayContains( availableJavaLocalesArray, createFileLanguageCode) >
+			<cfif FileExists("#adminLanguageResourcePath##createFileLanguageCode#.xml")>
+				<div style="color:red;border:1px solid red;padding:5px;">
+					Resource file #encodeForHTML("#createFileLanguageCode#")#.xml for language "#encodeForHtml(createFileLanguageDisplayname)#" already exists. File creation skipped!
+				</div>
 			<cfelse>
-				CREATING FILE:
-				<cffile action="read" file="#adminLanguageResourcePath#\en.xml" variable="xmlString">
 				
-				<cfset myXML[form.createLanguageXMLFile] =  xmlParse(xmlString)>
-				<cfset xmlData[form.createLanguageXMLFile]= parseXMLDataToStruct( myXML[form.createLanguageXMLFile] )>
+				<div style="color:green;border:1px solid green;padding:5px;">
+					
+					Generating resource file "#encodeForHTML( createFileLanguageCode )#.xml" for 
+					language "#encodeForHtml(createFileLanguageDisplayname)#" at 
+					#adminLanguageResourcePath##createFileLanguageCode#.xml
+					
+					<cffile action="read" file="#adminLanguageResourcePath#\en.xml" variable="xmlString">
+					
+					<cfset myXML[createFileLanguageCode] =  xmlParse(xmlString)>
+					<cfset xmlData[createFileLanguageCode]= parseXMLDataToStruct( myXML[createFileLanguageCode] )>
 
-				<!---cfdump var="#xmlData#"--->
-				<!---cfabort--->
-				<cfsavecontent variable="xmlFileContent"><?xml version="1.0" encoding="UTF-8"?><language key="#form.createLanguageXMLFile#" label=""><cfloop struct="#xmlData[form.createLanguageXMLFile]#" item="i"><data key="#i#"><!---#encodeForXML(xmlData[form.createLanguageXMLFile][i])#---></data></cfloop></language></cfsavecontent>
-				<cffile action="write" file="#adminLanguageResourcePath##form.createLanguageXMLFile#.xml" output="#xmlFileContent#">
-				FILE CREATED AT YOUR WEBCONTEXT AT: #adminLanguageResourcePath##form.createLanguageXMLFile#.xml 
+					<cfsavecontent variable="xmlFileContent"><!---
+					---><?xml version="1.0" encoding="UTF-8"?>
+<!--- 				--->		<language key="#encodeForXml(createFileLanguageCode)#" label="#encodeForXMLAttribute( createFileLanguageDisplayname )#">
+<!--- 				--->			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey" ><!---
+					--->					<data key="#encodeForXMLAttribute( itemDataKey )#"></data>
+<!--- 				--->			</cfloop>
+<!--- 				--->		</language></cfsavecontent>
+					
+					<cffile	action="write" file="#adminLanguageResourcePath##createFileLanguageCode#.xml" output="#xmlFileContent#">
+					
+				</div>
+
 			</cfif>
 		</cfif>
 	</cfif>
 
 
 
-	<!-- Read available language files from tde admin web context and parse XML Data--->
+	<!--- Read/import available language files from de admin web context and parse as XML Data --->
 	<cfdirectory directory="#adminLanguageResourcePath#" action="list" name="languageResourceFiles">
-	<cfloop query="languageResourceFiles">Language Resource File '#languageResourceFiles.name#' found<br></cfloop>
+	<div>
+		Language resource files found: 
+		<cfloop query="languageResourceFiles">
+			<cfif languageResourceFiles["name"] != "en.xml">
+				<cfset language=listFirst(languageResourceFiles["name"],".")>
+				<cffile action="read" file="#adminLanguageResourcePath#\#languageResourceFiles["name"]#" variable="xmlString">
+				<cfset myXML[language] = xmlParse(xmlString)>
+				<cfset ArrayAppend(availableLanguagesArray,language) >
+				'#languageResourceFiles.name#',
+			</cfif>
+		</cfloop>
+	</div>
+
 	
-	<cfloop query="languageResourceFiles">
-		<cfset language=listFirst(languageResourceFiles["name"],".")>
-		<cffile action="read" file="#adminLanguageResourcePath#\#languageResourceFiles["name"]#" variable="xmlString">
-		<cfset myXML[language] = xmlParse(xmlString)>
-		<cfset ArrayAppend(availableLanguagesArray,language) >
+	<!-- Parse the xml data to a struct with the original xml-langauge-key --> 
+	<cfloop array="#availableLanguagesArray#" item="itemLanguage" >
+		<cfset xmlData[ itemLanguage ]= parseXMLDataToStruct( myXML[ itemLanguage ] )>
 	</cfloop>
 
 
 	
-
-
-	<!-- Save data to a struct witd tde original xml-key-names as struct keys --> 
-	<cfloop from="1" to="#arrayLen( availableLanguagesArray )#" index="k" >
-		<cfset xmlData[availableLanguagesArray[k]]= parseXMLDataToStruct( myXML[availableLanguagesArray[k]] )>
-	</cfloop>
-
-	
-	<!-- dump data as table --->
 	<table border="1">
-
 		<tr>
-			<!---th>XmlRoot.xmlName</th--->
-			<th><!---XmlAttributes["key"]---></th>
-			<!---th>XmlComment</th--->
+			<th></th>
 			<th>XmlAttributes["label"]</th>
-			<cfloop from="1" to="#arrayLen( myXML["en"]["XmlRoot"]["XmlChildren"] )#" index="i">
-				<th style="vertical-align: top;">#htmleditformat(myXML["en"]["XmlRoot"]["XmlChildren"][i]["XmlAttributes"]["key"])#</th>
+			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey">
+				<th style="vertical-align: top;">#htmleditformat( itemDataKey )#</th>
 			</cfloop>
+			
 		</tr>
 		<tr style="border-bottom: 1px solid green;background-color: green;">
-			<!---th>XmlRoot.xmlName</th--->
-			<td>#myXML["en"].XmlRoot.XmlAttributes.key#</td>
-			<!---th>XmlComment</th--->
-			<td>#htmleditformat(myXML["en"].XmlRoot.XmlAttributes.label)#</td>
-			<cfloop from="1" to="#arrayLen( myXML["en"]["XmlRoot"]["XmlChildren"] )#" index="i">
-				<td style="vertical-align: top;"><textarea rows="4" readonly>#htmleditformat(xmlData["en"][myXML["en"]["XmlRoot"]["XmlChildren"][i]["XmlAttributes"]["key"]])#</textarea></td>
+			<td>#htmleditformat(xmlData["en"]["XmlRoot.XmlAttributes.key"])#</td>
+			<td>#htmleditformat(xmlData["en"]["XmlRoot.XmlAttributes.label"])#</td>
+			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey">
+				<td><textarea rows="4" spellcheck="true" lang="#encodeForhtml(xmlData["en"]["XmlRoot.XmlAttributes.key"])#" >#xmlData["en"]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ]#</textarea></td>
 			</cfloop>
 		</tr>
-		
 
-		<cfloop from="1" to="#arrayLen( availableLanguagesArray )#" index="k" >
-			<tr>
-				<!---td style="vertical-align: top;">#myXML[availableLanguagesArray[k]]["XmlRoot"]["xmlName"]#</td--->
-				<td style="vertical-align: top;">
-					#myXML[availableLanguagesArray[k]].XmlRoot.XmlAttributes.key#
-				<!---td><textarea rows="4">#htmleditformat(myXML[availableLanguagesArray[k]].XmlRoot.XmlComment)#</textarea></td--->
-				<td><textarea rows="4" spellcheck="true" lang="#availableLanguagesArray[k]#">#htmleditformat(myXML[availableLanguagesArray[k]].XmlRoot.XmlAttributes.label)#</textarea></td>
-				<cfloop from="1" to="#arrayLen( myXML["en"]["XmlRoot"]["XmlChildren"] )#" index="i">
-					<cfset attributeName=myXML["en"]["XmlRoot"]["XmlChildren"][i]["XmlAttributes"]["key"]>
-					<cfif isdefined("xmlData[availableLanguagesArray[k]][attributeName]") and xmlData[availableLanguagesArray[k]][attributeName] is not "">
-					<td><textarea rows="4" spellcheck="true" lang="#availableLanguagesArray[k]#">#htmleditformat(xmlData[availableLanguagesArray[k]][attributeName])#</textarea></td>
-					<cfelse>
-					<td><textarea rows="4" spellcheck="true" lang="#availableLanguagesArray[k]#" style="background-color: yellow;"></textarea></td>
-					</cfif>
-				</cfloop>
-			</tr>
+		<cfloop array="#availableLanguagesArray#" item="itemLanguageKey" >
+			<cfif itemLanguageKey is not "en">
+                <tr>
+                    <td>#htmleditformat( xmlData[ itemLanguageKey ][ "XmlRoot.XmlAttributes.key" ] )#</td>
+                    <td>#htmleditformat( xmlData[ itemLanguageKey ][ "XmlRoot.XmlAttributes.label" ] )#</td>
+                    <cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey" >
+						<cfif StructKeyExists( xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"], itemDataKey ) 
+							and xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ] is not "">
+							<td><textarea 	rows="4" 
+											spellcheck="true" 
+											lang="#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.key"]#">#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ]#</textarea></td>
+						<cfelse>
+							<td><textarea 	rows="4" 
+											spellcheck="true" 
+											style="background-color: yellow"
+											lang="#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.key"]#"></textarea></td>
+						</cfif>
+                    </cfloop>
+			    </tr>
+            </cfif>
 		</cfloop>
 	</table>
 
 
-    <cfset availableJavaLocalesAsQuery = getAvailableJavaLocalesAsQuery()>
+   
 
 	<div style="margin-top:25px">Create an empty language xml resource file for:</div>
 	<form action="/index.cfm" method="post">
 		<select name="createLanguageXMLFile" onChange="document.getElementById('formSendButton').style.display='block';">
 			<option value="">Please select language</option>
-			<cfloop query="availableJavaLocalesAsQuery">
-		    	<cfif not arrayContains( availableLanguagesArray, availableJavaLocalesAsQuery.languagecode) >
-		    		<option value="#availableJavaLocalesAsQuery.languagecode#">#availableJavaLocalesAsQuery.languagecode# ( #availableJavaLocalesAsQuery.displayname# )</option>
+			<cfloop array="#availableJavaLocalesArray#" item="languageKey">
+		    	<cfif not arrayContains( availableLanguagesArray, languageKey) >
+		    		<option value="#encodeForHtmlAttribute( languageKey & ";" & availableJavaLocalesAsStruct[ languageKey ] )#">#encodeForHTML( languageKey )# - #encodeForHTML( "#availableJavaLocalesAsStruct[ languageKey ]#" )#</option>
 		        </cfif>
 		    </cfloop>
    		</select>
    		<button id="formSendButton" onClick="this.form.submit(); this.disabled=true; this.innerText ='Sending...';" style="display:none;margin-top: 5px;">Create XML-File</button>
 	</form>
 
-
+	
 	<div style="margin-top:25px">Download a xml resource file for:</div>
 	<form action="/index.cfm" method="post" target="_blank" >
 		<select name="downloadLanguageXMLFile" onChange="document.getElementById('formSendButtonDownload').style.display='block';">
 			<option value="">Please select language</option>
-			<cfloop from="1" to="#arraylen(availableLanguagesArray)#" index="i">
-		    	<option value="#availableLanguagesArray[i]#">#availableLanguagesArray[i]#.xml</option>
+			<cfloop array="#availableLanguagesArray#" item="languageKey">
+		    	<option value="#encodeForHtmlAttribute( languageKey )#">#languageKey#.xml - #encodeForHTML( "#availableJavaLocalesAsStruct[ languageKey ]#" )#</option>
 		    </cfloop>
    		</select>
    		<button id="formSendButtonDownload" onClick="this.form.submit();this.style.display='none';" style="display:none;margin-top: 5px;">Download XML-File</button>
