@@ -9,7 +9,7 @@
 		local.parsedXMLResult["XmlRoot.XmlComment"]=arguments.XMLData.XmlRoot.XmlComment;
 		local.parsedXMLResult["XmlRoot.XmlAttributes.key"]=arguments.XMLData.XmlRoot.XmlAttributes.key;
 		local.parsedXMLResult["XmlRoot.XmlAttributes.label"]=arguments.XMLData.XmlRoot.XmlAttributes.label;
-		local.parsedXMLResult["XmlRoot.XmlAttributes.KeyData"]={}
+		local.parsedXMLResult["XmlRoot.XmlAttributes.KeyData"]=[:]
 		loop array="#arguments.XMLData.XmlRoot.XmlChildren#" index="itemChildrenKey" {
 
 		 	local.keyName=itemChildrenKey["XmlAttributes"]["key"];
@@ -29,10 +29,26 @@
 		// Get Locale List
 		local.JavaLocale = CreateObject("java", "java.util.Locale");
 		local.availableJavaLocalesArray=JavaLocale.getAvailableLocales();
-		// initialize an ordered struct with shorthand [:]
+        //dump( local.JavaLocale );
+		//dump( local.availableJavaLocalesArray );
+
+        // initialize an ordered struct with shorthand [:]
+       
 		local.availableJavaLocalesStruct =[:];
 		cfloop( array= "#availableJavaLocalesArray#" item="itemLocale" ){
-			if( len( itemLocale.toLanguageTag() ) == 2 ){
+            //echo( dump( [ itemLocale.toLanguageTag(), itemLocale.getDisplayName(), itemLocale.getISO3Language() ] ) );
+			if( ( len( itemLocale.toLanguageTag() ) == 2 )
+                || ( len( itemLocale.toLanguageTag() ) > 2 
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "001" 
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "CS"
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "150"
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "XK"
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "EA"
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "DG"
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "419"
+                    && listLast( itemLocale.toLanguageTag(), "-" ) != "IC" 
+                    )
+                )  {
 				local.displayNameTargetLanguage=itemLocale.info();
 				local.availableJavaLocalesStruct[itemLocale.toLanguageTag()] = UcFirst( local.displayNameTargetLanguage["display"]["language"] );
 				}	 
@@ -48,7 +64,7 @@
 
 <cfoutput>
 	
-	<cfset myXML={}>
+	<cfset myXML=[:]>
 	<cfset availableLanguagesArray=[]>
 	<cfset availableJavaLocalesAsStruct = getAvailableJavaLocalesAsStruct()>
 	<cfset availableJavaLocalesArray = StructKeyArray( availableJavaLocalesAsStruct )>
@@ -99,7 +115,7 @@
 	<cfif isDefined("form.createLanguageXMLFile")>
 		<cfset createFileLanguageCode= listFirst( form.createLanguageXMLFile, ";" )>
 		<cfset createFileLanguageDisplayname= listLast( form.createLanguageXMLFile, ";" )>
-		<cfif len( createFileLanguageCode ) is 2 
+		<cfif len( createFileLanguageCode ) is 2 or true
 			  and arrayContains( availableJavaLocalesArray, createFileLanguageCode) >
 			<cfif FileExists("#adminLanguageResourcePath##createFileLanguageCode#.xml")>
 				<div style="color:red;border:1px solid red;padding:5px;">
@@ -157,52 +173,7 @@
 		<cfset xmlData[ itemLanguage ]= parseXMLDataToStruct( myXML[ itemLanguage ] )>
 	</cfloop>
 
-
-	
-	<table border="1">
-		<tr>
-			<th></th>
-			<th>XmlAttributes["label"]</th>
-			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey">
-				<th style="vertical-align: top;">#htmleditformat( itemDataKey )#</th>
-			</cfloop>
-			
-		</tr>
-		<tr style="border-bottom: 1px solid green;background-color: green;">
-			<td>#htmleditformat(xmlData["en"]["XmlRoot.XmlAttributes.key"])#</td>
-			<td>#htmleditformat(xmlData["en"]["XmlRoot.XmlAttributes.label"])#</td>
-			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey">
-				<td><textarea rows="4" spellcheck="true" lang="#encodeForhtml(xmlData["en"]["XmlRoot.XmlAttributes.key"])#" >#xmlData["en"]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ]#</textarea></td>
-			</cfloop>
-		</tr>
-
-		<cfloop array="#availableLanguagesArray#" item="itemLanguageKey" >
-			<cfif itemLanguageKey is not "en">
-                <tr>
-                    <td>#htmleditformat( xmlData[ itemLanguageKey ][ "XmlRoot.XmlAttributes.key" ] )#</td>
-                    <td>#htmleditformat( xmlData[ itemLanguageKey ][ "XmlRoot.XmlAttributes.label" ] )#</td>
-                    <cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey" >
-						<cfif StructKeyExists( xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"], itemDataKey ) 
-							and xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ] is not "">
-							<td><textarea 	rows="4" 
-											spellcheck="true" 
-											lang="#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.key"]#">#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ]#</textarea></td>
-						<cfelse>
-							<td><textarea 	rows="4" 
-											spellcheck="true" 
-											style="background-color: yellow"
-											lang="#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.key"]#"></textarea></td>
-						</cfif>
-                    </cfloop>
-			    </tr>
-            </cfif>
-		</cfloop>
-	</table>
-
-
-   
-
-	<div style="margin-top:25px">Create an empty language xml resource file for:</div>
+    <div style="margin-top:25px;">Create an empty language xml resource file for:</div>
 	<form action="/index.cfm" method="post">
 		<select name="createLanguageXMLFile" onChange="document.getElementById('formSendButton').style.display='block';">
 			<option value="">Please select language</option>
@@ -228,6 +199,53 @@
 	</form>
 
 	
+    <style>
+        body, table {font-family: Tahoma;}
+        .langEditor  tr { display: block; float: left; height:10rem; }
+        .langEditor  th, .langEditor td { display: block; height:10rem; }
+        .langEditor  th { text-align: left;}
+        .langEditor button {display:block;}
+    </style>
+	
+	<table class="langEditor" border="1">
+		<tr>
+			<th></th>
+			<th>XmlAttributes["label"]/save</th>
+			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey">
+				<th style="vertical-align: top;">#htmleditformat( itemDataKey )#  </th>
+			</cfloop>
+			
+		</tr>
+		<tr style="border-bottom: 1px solid green;background-color: green;">
+			<td>#htmleditformat(xmlData["en"]["XmlRoot.XmlAttributes.key"])#</td>
+			<td>#htmleditformat(xmlData["en"]["XmlRoot.XmlAttributes.label"])#</td>
+			<cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey">
+				<td><textarea rows="4" spellcheck="true" lang="#encodeForhtml(xmlData["en"]["XmlRoot.XmlAttributes.key"])#" >#xmlData["en"]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ]#</textarea></td>
+			</cfloop>
+		</tr>
+
+		<cfloop array="#availableLanguagesArray#" item="itemLanguageKey" >
+			<cfif itemLanguageKey is not "en">
+                <tr id="#itemLanguageKey#">
+                    <td>#htmleditformat( xmlData[ itemLanguageKey ][ "XmlRoot.XmlAttributes.key" ] )# <button onClick="alert('save triggered for #encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ))#');">Save "#itemLanguageKey#.xml"</button>   </td>
+                    <td>#htmleditformat( xmlData[ itemLanguageKey ][ "XmlRoot.XmlAttributes.label" ] )#</td>
+                    <cfloop array="#allDefaultDataKeysFromEnglishAsArray#" item="itemDataKey" >
+						<cfif StructKeyExists( xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"], itemDataKey ) 
+							and xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ] is not "">
+							<td><textarea name="#itemDataKey#" rows="4" 
+											spellcheck="true" 
+											lang="#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.key"]#">#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.KeyData"][ itemDataKey ]#</textarea></td>
+						<cfelse>
+							<td><textarea name="#itemDataKey#" rows="4" 
+											spellcheck="true" 
+											style="background-color: yellow"
+											lang="#xmlData[ itemLanguageKey ]["XmlRoot.XmlAttributes.key"]#"></textarea></td>
+						</cfif>
+                    </cfloop>
+			    </tr>
+            </cfif>
+		</cfloop>
+	</table>
 
 	
 </cfoutput>
