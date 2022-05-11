@@ -205,6 +205,7 @@
         .langEditor  th, .langEditor td { display: block; height:10rem; }
         .langEditor  th { text-align: left;}
         .langEditor button {display:block;}
+        .langEditor textarea { height:100%; width:100%;}
     </style>
 	
 	<table class="langEditor" border="1">
