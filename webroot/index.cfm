@@ -68,7 +68,7 @@
                     <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                         <th>#encodeForHTML( itemLanguageKey )#.xml
                             <cfif itemLanguageKey == "en">
-                                <div style="font-weight:100;">* This file is not editable/writeable, because it's the default language and should be edited in orginal source only.</div>
+                                <div style="font-weight:100;max-width:250px;margin:auto;">* This file is not editable/writeable, because it's the default language and should be edited in orginal source only.</div>
                                 <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.encodeForXMLfilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
     
                             <cfelse>
