@@ -60,7 +60,7 @@ component {
             for( name in local.KeyNames ){
                 keyName=replaceNoCase( name, "~", ".", "All" );
                     if( form[ name ] != "" ){
-                        dataKeysXMLCode=dataKeysXMLCode & "            <data key=""#encodeForHTMLAttribute( keyName )#"">#encodeForXML( form[ name ] )#</data>" & chr(10) 
+                        dataKeysXMLCode=dataKeysXMLCode & "            <data key=""#encodeForXMLAttribute( keyName )#"">#encodeForXML( form[ name ] )#</data>" & chr(10) 
                     }
                 }
         }
