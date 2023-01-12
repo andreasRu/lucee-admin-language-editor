@@ -1,0 +1,222 @@
+@charset "UTF-8";
+
+body,
+table {
+    font-family: Tahoma;
+    background: #9b92d6;
+    font-size: 0.8rem;
+    border-radius: 1rem;
+
+}
+
+.commandDivWrapper {
+    background: #9b92d6;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.commandDiv {
+    border-radius: 1rem;
+    background: #786dbd;
+    color: white;
+    padding: 1rem;
+    margin: 1rem 1rem 1rem 0;
+    box-shadow: 0px 15px 20px rgb(77 79 78 / 40%);
+}
+
+
+#selectLangResource {
+    display: inline;
+    width: 100%
+}
+
+.langEditor button {
+    display: block;
+}
+
+.langEditor textarea {
+    height: 100%;
+    width: 95%;
+    min-width: 20rem;
+    min-height: 5rem;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+    padding: 0.4rem;
+}
+
+.langEditor th {
+    padding: 0.5rem;
+    background: darkslateblue;
+    color: #fff;
+    text-align: center;
+}
+
+.langEditor,
+.langEditor th,
+.langEditor td {
+    border-collapse: collapse;
+    border: 1px solid rgb(128, 128, 128);
+    vertical-align: top;
+
+}
+
+.langEditor {
+    width: 100%;
+    background: white;
+}
+
+.hidden {
+    display: none;
+}
+
+.button,
+.button:hover,
+.button:visited {
+    white-space: nowrap;
+    display: block;
+    width: 100%;
+    max-width: 12rem;
+    background: #c0bae4;
+    padding: 0.25rem 0;
+    text-align: center;
+    border-radius: 0.25rem;
+    color: black;
+    margin: 0.3rem auto;
+    border: 0;
+    font-size: 0.7rem;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0.3rem;
+    box-sizing: border-box;
+    font-weight: 100;
+    box-shadow: 0px 15px 20px rgba(77, 79, 78, 0.4);
+}
+
+button.enhanced{
+    font-weight:600;
+    background: #e4bac8;
+}
+
+button.enhanced:hover{
+    font-weight:600;
+    background: #fff;
+}
+
+
+
+.button:hover  {
+    background: #fff;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: white;
+    margin: 0.3rem 0.3rem 0;
+    text-shadow: 4px 6px 11px rgb(19 20 20 / 40%);
+}
+
+
+
+
+
+#ajaxPopulateNotificationFlyingBar {
+    background: linear-gradient(135deg, #000000 40%, #130a4c 70%);
+    position: fixed;
+    left: 2rem;
+    bottom: 3rem;
+    padding: 2rem;
+    color: white;
+    border: 4px white;
+    z-index: 9999;
+    border-radius: 1rem;
+    font-size: 1.3rem;
+    box-shadow: 0px 15px 20px rgba(77, 79, 78, 0.542);
+}
+
+#loadingSpinner {
+    position: fixed;
+    display: none;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #aaa7a7b0;
+    z-index: 9990;
+}
+
+td.keyName {
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 0.4rem;
+}
+
+#forkongithub a {
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-family: arial, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 40px;
+    font-size: 0.7rem;
+    line-height: 1rem;
+    position: relative;
+    transition: 0.5s;
+}
+
+textarea.isempty {
+    background: #e4bac8;
+    border: 2px dotted #ef6d98;
+}
+
+#forkongithub a:hover {
+    background: #483d8b;
+    color: #fff;
+}
+
+#forkongithub a::before,
+#forkongithub a::after {
+    content: "";
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 1px;
+    background: #fff;
+}
+
+#forkongithub a::after {
+    bottom: 1px;
+    top: auto;
+}
+
+
+@media screen and (min-width:300px) {
+    
+    #forkongithub {
+        position: absolute;
+        display: block;
+        top: 0;
+        right: 0;
+        width: 200px;
+        overflow: hidden;
+        height: 200px;
+        z-index: 9999;
+    }
+
+    #forkongithub a {
+        width: 200px;
+        position: absolute;
+        top: 30px;
+        right: -95px;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+    }
+}
