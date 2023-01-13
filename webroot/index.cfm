@@ -31,7 +31,7 @@
                 <cfset variables.langInLuceeSourceArray=LangEditorService.getAvailableLanguagesInLuceeGitSource()>
                 <option value="">Select resource file</option>
                 <cfloop array="#variables.langInLuceeSourceArray#" item="letterCode">
-                    <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( availableJavaLocales[ letterCode ] )# (#encodeForHTML( letterCode )#.xml)</option>
+                    <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( structKeyExists( availableJavaLocales, letterCode)?availableJavaLocales[ letterCode ]:letterCode )# (#encodeForHTML( letterCode )#.xml)</option>
                 </cfloop>
             </select>
             <br>
@@ -43,7 +43,7 @@
                 <option value="">Start from scratch</option>
                 <cfloop collection="#variables.availableJavaLocales#" item="letterCode">
                     <cfif !langInLuceeSourceArray.contains( lettercode ) && !availableLangResourceLanguage.contains( lettercode ) >
-                        <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( availableJavaLocales[ letterCode ] )# (#encodeForHTML( letterCode )#.xml)</option>
+                        <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( structKeyExists( availableJavaLocales, letterCode)?availableJavaLocales[ letterCode ]:letterCode )# (#encodeForHTML( letterCode )#.xml)</option>
                     </cfif>
                 </cfloop>
             </select>
@@ -69,14 +69,14 @@
                         <th>#encodeForHTML( itemLanguageKey )#.xml
                             <cfif itemLanguageKey == "en">
                                 <div style="font-weight:100;max-width:250px;margin:auto;">* This file is not editable/writeable, because it's the default language and should be edited in orginal source only.</div>
-                                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.encodeForXMLfilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
+                                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFiilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
     
                             <cfelse>
                                 <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateXmlWorkingFile&adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');">Save Changes to "#itemLanguageKey#.xml"</button>
                                 <a class="button" href="#encodeForHTMLAttribute( "/workingLangResources/" & encodeforURL( itemLanguageKey ) & ".xml")#" target="_blank">View File XML-Source</a>
                                 <button disabled class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=pullToAdmin&lang=#encodeforURL( itemLanguageKey )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', '');">Push To Admin</button>
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileXML&downloadLanguageXMLFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
-                                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.encodeForXMLfilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
+                                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFiilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
     
                             </cfif>
                         </th>
@@ -91,7 +91,7 @@
                         <td class="keyName">#encodeForHTML( itemLanguage )#</td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                             <td class="updateContainer-#ucase( itemLanguageKey )#">
-                                <textarea <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForXML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
+                                <textarea <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#variables.LangEditorService.encodeXMLValue( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
                             </td>
                         </cfloop>
                     </tr>
