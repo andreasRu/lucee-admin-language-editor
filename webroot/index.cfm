@@ -91,7 +91,7 @@
                         <td class="keyName">#encodeForHTML( itemLanguage )#</td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                             <td class="updateContainer-#ucase( itemLanguageKey )#">
-                                <textarea <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#variables.LangEditorService.encodeXMLValue( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
+                                <textarea <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
                             </td>
                         </cfloop>
                     </tr>
