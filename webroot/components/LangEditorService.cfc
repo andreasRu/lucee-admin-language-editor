@@ -35,6 +35,39 @@ component {
         return result;
     }
 
+
+    /**
+* returns a struct with the server/web context information that is bound to this template.
+*/
+public struct function getServerWebContextInfoAsStruct() localmode="true" {
+
+	//get pageContext/CFMLFactoryConfig of actual template
+	local.pageContext=getpagecontext();
+	local.pageCFMLFactory=local.pageContext.getCFMLFactory();
+	local.pageCFMLFactoryConfig=local.pageCFMLFactory.getConfig();
+
+	//get the Servlets configuration and initial Parameters (e.g. set in Tomcats conf/web.xml)
+	local.servletConfig = getpagecontext().getServletConfig();
+	local.servletInitParamNames = servletConfig.getInitParameterNames();
+
+	// populate struct with gathered information
+	local.info={
+			"context-label" : getpagecontext().getCFMLFactory().getLabel(),
+			"configFileLocation" : pageCFMLFactoryConfig.getConfigFile(),
+			"servletInitParameters": [:]
+			};
+
+	// if available, iterate enum of InitParamNames and get the values
+
+	cfloop( collection="#servletInitParamNames#" item="item" ){
+
+		structInsert( local.info["ServletInitParameters"] , item, local.servletConfig.getInitParameter( item.toString() ) );
+	};
+
+
+	return local.info;
+}
+
     
     public string function outputAsJson( struct data required) localmode="true"  {
         cfcontent( reset = "true" );
@@ -86,7 +119,7 @@ component {
                 }
         }
 
-        if( fileExists(  "/workingPath/#sanitizeFiilename( arguments.languageCode )#.xml") ){ 
+        if( fileExists(  "/workingPath/#sanitizeFilename( arguments.languageCode )#.xml") ){ 
             dataXML= getWorkingDataForLanguageByLettercode( arguments.languageCode ); 
         }else{
             // resource file is not available in working dir, so it need to be created a new empty file;
@@ -114,16 +147,16 @@ component {
         )
         }
 
-        fileWrite(  "#expandPath("/workingPath")#/#sanitizeFiilename( arguments.languageCode )#.xml",  xmlCode, "utf-8" );
+        fileWrite(  "#expandPath("/workingPath")#/#sanitizeFilename( arguments.languageCode )#.xml",  xmlCode, "utf-8" );
     
     }
 
     
     public any function downloadFileXML( string languageCode required ) localmode="true" {
     
-        if( fileExists( "/workingPath/" & sanitizeFiilename( arguments.languageCode ) & ".xml") ){
-            cfheader( name="Content-Disposition", value="attachment; filename=#sanitizeFiilename( arguments.languageCode )#.xml");
-            cfcontent( type = "text/xml" file = "/workingPath/" & sanitizeFiilename( arguments.languageCode ) & ".xml" deleteFile = "no" );
+        if( fileExists( "/workingPath/" & sanitizeFilename( arguments.languageCode ) & ".xml") ){
+            cfheader( name="Content-Disposition", value="attachment; filename=#sanitizeFilename( arguments.languageCode )#.xml");
+            cfcontent( type = "text/xml" file = "/workingPath/" & sanitizeFilename( arguments.languageCode ) & ".xml" deleteFile = "no" );
         }
         
     }
@@ -208,10 +241,12 @@ component {
     
     public void function pullResourceFileToWebAdmin( string language required ) localmode="true" {
 
-        if( fileExists(  "/workingPath/#sanitizeFiilename( arguments.language )#.xml") ){ 
+        contexts=getServerWebContextInfoAsStruct();
+        adminResourceLanguagePath=contexts["servletInitParameters"]["lucee-web-directory"] & "/context/admin/resources/language"
+        if( fileExists(  "/workingPath/#sanitizeFilename( arguments.language )#.xml") ){ 
 
-            fileCopy(   source="/workingPath/#sanitizeFiilename( arguments.language )#.xml", 
-            destination="#expandPath("/luceeWebAdmin")#/#sanitizeFiilename( arguments.language )#.xml" );
+            fileCopy(   source="/workingPath/#sanitizeFilename( arguments.language )#.xml", 
+            destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.xml" );
 
         }
         
@@ -219,7 +254,7 @@ component {
 
 
     
-    public string function sanitizeFiilename( string filename required ) localmode="true" {
+    public string function sanitizeFilename( string filename required ) localmode="true" {
         return reReplaceNoCase( filename,"[^a-zA-Z0-9\-]", "", "ALL"  );
     }
 
@@ -254,8 +289,8 @@ component {
         }
 
         for ( language in langFilesToDelete ) { 
-           if( fileExists(  "/workingPath/#sanitizeFiilename( language )#.xml") ){ 
-                fileDelete( "/workingPath/#sanitizeFiilename( language )#.xml" );
+           if( fileExists(  "/workingPath/#sanitizeFilename( language )#.xml") ){ 
+                fileDelete( "/workingPath/#sanitizeFilename( language )#.xml" );
             }
             
         }
@@ -281,7 +316,7 @@ component {
 	public struct function getWorkingDataForLanguageByLettercode( string languageISOLetterCode required ) localmode="true" {
 
         myXML=[:];
-        xmlString = fileread( "/workingPath/#sanitizeFiilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
+        xmlString = fileread( "/workingPath/#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
         myXML = xmlParse( xmlString );
         // writeoutput('dddaa');
         // dump(myXML);
