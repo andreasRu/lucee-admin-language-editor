@@ -148,7 +148,9 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
         }
 
         fileWrite(  "#expandPath("/workingPath")#/#sanitizeFilename( arguments.languageCode )#.xml",  xmlCode, "utf-8" );
-    
+        
+        pullResourceFileToWebAdmin( arguments.languageCode );
+        
     }
 
     
