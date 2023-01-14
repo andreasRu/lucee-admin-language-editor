@@ -1,3 +1,3 @@
-set CWD=%cd%
-box stop name=lucee-admin-language-editor
-box start name=lucee-admin-language-editor
+cd %cd%\webroot
+start cmd.exe /k "box server stop && box server start"
+
