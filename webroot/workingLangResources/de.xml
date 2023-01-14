@@ -288,7 +288,6 @@ Diese werden dann am Ende eines Request ausgegeben, falls sie ein Debug Template
             <data key="ext.projectUrl">Startseite</data>
             <data key="ext.prov.host">Provider URL</data>
             <data key="ext.prov.hostdesc">URL zum ExtensionProvider (Beispiel: http://www.myhost.com)</data>
-            <data key="ext.prov.introtext">Hier können Sie weitere ExtensionProvider registrieren, welche wiederum Extensions zur Verfügung stellen. Um mehr über Extensions und Extension Provider zu erfahren konsultieren Sie die Dokumentation hierzu auf unserer Webseite.</data>
             <data key="ext.prov.new">Neuer Extension Provider</data>
             <data key="ext.prov.url">URL</data>
             <data key="ext.prov.urldesc">URL zum ExtensionProvider inkl. path</data>
@@ -528,7 +527,7 @@ Diese werden dann am Ende eines Request ausgegeben, falls sie ein Debug Template
             <data key="overview.infomail">info@lucee.org</data>
             <data key="overview.installedfls">Installierte Funktions Bibliotheken</data>
             <data key="overview.installedtls">Installierte Tag Bibliotheken</data>
-            <data key="overview.introdesc.server">Der Server Administrator ermöglicht Ihnen Updates und Patches für Ihre Lucee Edition vorzunehmen und die Engine per Mauklick neu zu starten. Zusätzlich können Sie in der Develop und Enterprise Edition die einzelnen Webkontexte vorkonfigurieren und diverse Beschränkungen und Konfigurationen individuell pro Webkontext einrichten.</data>
+            <data key="overview.introdesc.server">Deasdasdasdsadsssssssr Server Administrator ermöglicht Ihnen Updates und Patches für Ihre Lucee Edition vorzunehmen und die Engine per Mauklick neu zu starten. Zusätzlich können Sie in der Develop und Enterprise Edition die einzelnen Webkontexte vorkonfigurieren und diverse Beschränkungen und Konfigurationen individuell pro Webkontext einrichten.</data>
             <data key="overview.introdesc.web">Lucee, die CFML engine. Schnell, preiswert und einfach zu bedienen. Mit Lucee haben sie sich für den performanten und qualitativ hochwertigen Weg von CFML entschieden. Passen Sie Ihren Webkontext nach Ihren Bedürfnissen und Wünschen an. Dafür steht Ihnen hier der Web Administrator zur Verfügung.</data>
             <data key="overview.issuetracker">Issue Tracker</data>
             <data key="overview.issuetrackerDesc">If you think you&apos;ve found a bug, please take the time to report it via our bug tracking system.</data>
