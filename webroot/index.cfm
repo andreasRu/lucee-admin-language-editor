@@ -71,7 +71,7 @@
                                 <a class="button" href="#encodeForHTMLAttribute( "/workingLangResources/" & encodeforURL( itemLanguageKey ) & ".xml")#" target="_blank">View File XML-Source</a>
                                 <!--- button disabled class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=pullToAdmin&lang=#encodeforURL( itemLanguageKey )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');">Push To Admin</button--->
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileXML&downloadLanguageXMLFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
-                                <cfif itemLanguageKey == "en">
+                                <cfif itemLanguageKey !== "en">
                                     <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
                                 </cfif>
                         </th>
