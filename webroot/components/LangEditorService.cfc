@@ -11,7 +11,12 @@ component {
 
 
     public struct function init( ){
-        this.version="0.0.1"
+        this.version="0.0.1";
+        this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
+        this.workingDir = "/workingPath/";
+        if ( !directoryExists( ".." & this.workingDir ) ){
+            directoryCreate( ".." & this.workingDir );
+        }
         return this;
     }
 
@@ -21,10 +26,9 @@ component {
     *  See: https://stackoverflow.com/a/28152666/2645359 https://www.w3.org/TR/xml/#syntax
     *
     *********/
-    public string function encodeXML( string value required ) {
+    public string function encodeXML( string value required ) localmode=true {
         
-        result=arguments.value;
-        result=replace( result, "&", "&amp;", "All"); // this MUST go first!!!
+        result=replace( arguments.value, "&", "&amp;", "All"); // this MUST go first!!!
         result=replace( result, "<", "&lt;", "All");
         result=replace( result, ">", "&gt;", "All");
         // apostrophes and quotes are allowed in tag bodies (values), so lets add it, 
@@ -39,7 +43,7 @@ component {
     /**
 * returns a struct with the server/web context information that is bound to this template.
 */
-public struct function getServerWebContextInfoAsStruct() localmode="true" {
+public struct function getServerWebContextInfoAsStruct() localmode=true {
 
 	//get pageContext/CFMLFactoryConfig of actual template
 	local.pageContext=getpagecontext();
@@ -69,7 +73,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
 }
 
     
-    public string function outputAsJson( struct data required) localmode="true"  {
+    public string function outputAsJson( struct data required) localmode=true  {
         cfcontent( reset = "true" );
         cfheader( name="content-type", value="application/json");
   	    echo( serializeJSON( arguments.data ) );
@@ -80,7 +84,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     /**
 	 * get languages of resource files available in working folder 
 	 */
-	public array function getLanguagesAvailableInWorkingData( ) localmode="true" {
+	public array function getLanguagesAvailableInWorkingData( ) localmode=true {
         result=[];
         result= listToArray( StructKeyList( getFullWorkingData() ) );
         if( !result.isEmpty() ){
@@ -105,7 +109,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
    
 
     
-    public void function createUpdateWorkingLanguageResourceFile( string languageCode required,  struct formObject ) localmode="true" {
+    public void function createUpdateWorkingLanguageResourceFile( string languageCode required,  struct formObject ) localmode=true {
 
         
         dataKeysXMLCode="";
@@ -114,22 +118,22 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
             for( name in local.KeyNames ){
                 keyName=replaceNoCase( name, "~", ".", "All" );
                     if( form[ name ] != "" ){
-                        dataKeysXMLCode=dataKeysXMLCode & "            <data key=""#encodeXML( keyName )#"">#encodeXML( form[ name ] )#</data>" & chr(10) 
+                        dataKeysXMLCode=dataKeysXMLCode & "            <data key=""#encodeXML( keyName )#"">#encodeXML( form[ name ] )#</data>" & chr(10);
                     }
                 }
         }
 
-        if( fileExists(  "/workingPath/#sanitizeFilename( arguments.languageCode )#.xml") ){ 
+        if( fileExists( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.xml") ){ 
             dataXML= getWorkingDataForLanguageByLettercode( arguments.languageCode ); 
         }else{
             // resource file is not available in working dir, so it need to be created a new empty file;
 
-            if( !fileExists(  "/workingPath/en.xml") ){ 
+            if( !fileExists(  this.workingDir & "en.xml") ){ 
                 pullLangResourcesFromGithubToWorkingDirectory( "en" );
                 
             }
             dataXML= getWorkingDataForLanguageByLettercode( "en" );
-            languageTagName=getAvailableJavaLocalesAsStruct();
+            // languageTagName=getAvailableJavaLocalesAsStruct(); // not used?
             StructUpdate( dataXML[ "xmlRoot" ][ "XmlAttributes" ], "key", arguments.languageCode );
             StructUpdate( dataXML[ "xmlRoot" ][ "XmlAttributes" ], "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode] );
 
@@ -147,18 +151,25 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
         )
         }
 
-        fileWrite(  "#expandPath("/workingPath")#/#sanitizeFilename( arguments.languageCode )#.xml",  xmlCode, "utf-8" );
+        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.xml",  xmlCode, "utf-8" );
         
         pullResourceFileToWebAdmin( arguments.languageCode );
         
     }
 
     
-    public any function downloadFileXML( string languageCode required ) localmode="true" {
+    public any function downloadFileXML( string languageCode required ) localmode=true {
     
-        if( fileExists( "/workingPath/" & sanitizeFilename( arguments.languageCode ) & ".xml") ){
-            cfheader( name="Content-Disposition", value="attachment; filename=#sanitizeFilename( arguments.languageCode )#.xml");
-            cfcontent( type = "text/xml" file = "/workingPath/" & sanitizeFilename( arguments.languageCode ) & ".xml" deleteFile = "no" );
+        if( fileExists( this.workingDir & sanitizeFilename( arguments.languageCode ) & ".xml") ){
+            cfheader( 
+                name="Content-Disposition", 
+                value="attachment; filename=#sanitizeFilename( arguments.languageCode )#.xml"
+            );
+            cfcontent( 
+                type = "text/xml", 
+                file = this.workingDir & sanitizeFilename( arguments.languageCode ) & ".xml",
+                deleteFile = "no" 
+            );
         }
         
     }
@@ -168,7 +179,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     /**
 	 * returns XML data of an imported language resource file as a struct
 	 */
-	public struct function parseXMLDataToStruct( struct XMLData required ) localmode="true" {
+	public struct function parseXMLDataToStruct( struct XMLData required ) localmode=true {
 		parsedXMLResult=[:];
         parsedXMLResult["XmlRoot.XmlComment"]=arguments.XMLData.XmlRoot.XmlComment;
 		parsedXMLResult["XmlRoot.XmlAttributes.key"]=arguments.XMLData.XmlRoot.XmlAttributes.key;
@@ -188,7 +199,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
 	/**
 	 * returns as struct of all available 2-letter codes of the underlying java.util with the referring Language DisplayName (target language)
 	 */
-	public struct function getAvailableJavaLocalesAsStruct() localmode="true" {
+	public struct function getAvailableJavaLocalesAsStruct() localmode=true {
 
 		// Get Locale List
 		JavaLocale = CreateObject("java", "java.util.Locale");
@@ -221,17 +232,17 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     /**
 	 * copies all known language resource files from Lucees github source to working directory
 	 */
-	public void function pullLangResourcesFromGithubToWorkingDirectory( string lang required ) localmode="true" {
+	public void function pullLangResourcesFromGithubToWorkingDirectory( string lang required ) localmode=true {
 
         for ( language in listToArray( arguments.lang ) ) { 
-            fileCopy(   source="https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/#language#.xml", 
-            destination="#expandPath("/workingPath")#/#language#.xml" );
+            fileCopy(   source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.xml", 
+            destination=this.workingDir & "#language#.xml" );
         }
 
-        if( !fileExists(  "/workingPath/en.xml" ) ){ 
+        if( !fileExists(  this.workingDir & "en.xml" ) ){ 
             fileCopy( 
-            source="https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/en.xml", 
-            destination="#expandPath("/workingPath")#/en.xml" );
+            source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/en.xml", 
+            destination= this.workingDir & "en.xml" );
         }
     }
 
@@ -241,14 +252,16 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
 
 
     
-    public void function pullResourceFileToWebAdmin( string language required ) localmode="true" {
+    public void function pullResourceFileToWebAdmin( string language required ) localmode=true {
 
         contexts=getServerWebContextInfoAsStruct();
         adminResourceLanguagePath=contexts["servletInitParameters"]["lucee-web-directory"] & "/context/admin/resources/language"
-        if( fileExists(  "/workingPath/#sanitizeFilename( arguments.language )#.xml") ){ 
+        if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.xml") ){ 
 
-            fileCopy(   source="/workingPath/#sanitizeFilename( arguments.language )#.xml", 
-            destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.xml" );
+            fileCopy( 
+                source=this.workingDir & "#sanitizeFilename( arguments.language )#.xml", 
+                destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.xml" 
+            );
 
         }
         
@@ -256,15 +269,15 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
 
 
     
-    public string function sanitizeFilename( string filename required ) localmode="true" {
-        return reReplaceNoCase( filename,"[^a-zA-Z0-9\-]", "", "ALL"  );
+    public string function sanitizeFilename( string filename required ) localmode=true {
+        return reReplaceNoCase( arguments.filename, "[^a-zA-Z0-9\-]", "", "ALL" );
     }
 
     
    
-   public array function getAvailableLangLocalesInWorkingDir() localmode="true" {
+   public array function getAvailableLangLocalesInWorkingDir() localmode=true {
 
-        cfdirectory( directory="/workingPath", action="list", name="filequery" );
+        cfdirectory( directory=this.workingDir, action="list", name="filequery" );
         result=[];
         for ( file in filequery ) { 
             result.append( listFirst( file.name, "." ) );
@@ -279,20 +292,20 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     /**
 	* Clean working directory
 	*/
-    public void function cleanWorkingDir( string lang ) localmode="true" {
+    public void function cleanWorkingDir( string lang="" ) localmode=true {
         
-        if( !structKeyExists( arguments, "lang" ) || arguments.lang == ""  ){
+        if( isEmpty( arguments.lang ) ){
 
            langFilesToDelete=getAvailableLangLocalesInWorkingDir();
         
         }else{
            
-            langFilesToDelete=[ "#arguments.lang#" ];
+            langFilesToDelete=[ arguments.lang ];
         }
 
         for ( language in langFilesToDelete ) { 
-           if( fileExists(  "/workingPath/#sanitizeFilename( language )#.xml") ){ 
-                fileDelete( "/workingPath/#sanitizeFilename( language )#.xml" );
+           if( fileExists(  this.workingDir & "#sanitizeFilename( language )#.xml") ){ 
+                fileDelete( this.workingDir & "#sanitizeFilename( language )#.xml" );
             }
             
         }
@@ -305,7 +318,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     
     public void function cleanWorkingDirAndPullResources( lang ) {
 
-        cleanWorkingDir( lang );
+        cleanWorkingDir( arguments.lang );
         pullLangResourcesFromGithubToWorkingDirectory( arguments.lang );
         
     }
@@ -315,10 +328,10 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     /**
 	* returns XML data of a language resource file as a struct
 	*/
-	public struct function getWorkingDataForLanguageByLettercode( string languageISOLetterCode required ) localmode="true" {
+	public struct function getWorkingDataForLanguageByLettercode( string languageISOLetterCode required ) localmode=true {
 
         myXML=[:];
-        xmlString = fileread( "/workingPath/#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
+        xmlString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
         myXML = xmlParse( xmlString );
         // writeoutput('dddaa');
         // dump(myXML);
@@ -332,7 +345,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
     /**
 	 * iterate all available language resource files  in the working directory return the referenced XML data as a struct
 	 */
-	public struct function getFullWorkingData() localmode="true" {
+	public struct function getFullWorkingData() localmode=true {
 
         availableWorkingLanguages=getAvailableLangLocalesInWorkingDir();
                 
@@ -354,7 +367,7 @@ public struct function getServerWebContextInfoAsStruct() localmode="true" {
 	* returns the data struct swtiched in such a manner that languages can be iterated to be shown in table
     * columnes and not in table rows
 	*/
-	public struct function parseDataForTableOutput( struct data required ) localmode="true" {
+	public struct function parseDataForTableOutput( struct data required ) localmode=true {
         result={};
         if( !structIsEmpty( arguments.data ) ){ 
             for( adminkeyName in arguments.data["en"]["XmlRoot.XmlAttributes.KeyData"] ){ 
