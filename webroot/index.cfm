@@ -51,11 +51,18 @@
             <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.xml\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize File</button>
         </div>
 
+        <div class="commandDiv">
+            <a class="button" href="/lucee/admin/server.cfm" target="_blank" style="margin-top:0;">Server Admin</a>
+            <a class="button" href="/lucee/admin/web.cfm" target="_blank">Web Admin</a>
+        </div>
+
         <cfif !arrayIsEmpty( availableLangResourceLanguage )>
             <div class="commandDiv">
-                <button disabled class="button" style="margin-top:0;" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Reset and empty all</button>
+                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Reset and empty all</button>
+            
             </div>
         </cfif>
+        
 
         
     </div>
@@ -84,6 +91,7 @@
                 <cfloop list="#adminKeyNameListOrdered#" item="itemLanguage" >
                     <tr id="#itemLanguage#">
                         <td class="keyName">#encodeForHTML( itemLanguage )# 
+                            <button title="Copy '#encodeForHTMLAttribute( itemLanguage)#' to Clipboard" class="copyButton" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" data-value="#encodeForHTMLAttribute( itemLanguage)#" onClick="window.langUpdater.copyToClipboard( $( this ).attr('data-value') );"></button>
                             <div>
                                 <a class="button left" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" target="_blank">Find in #encodeForHTML("</>")#</a>
                             </div>

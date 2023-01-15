@@ -113,6 +113,26 @@ button.enhanced:hover{
     margin-left: 0;
 }
 
+button.copyButton {
+    position: absolute;
+    display:inline-block;
+    border:0;
+    cursor: pointer;
+    right:0;
+}
+
+.copyButton:before{
+content: '\1F4CB'
+}
+.copyButton:after{
+    content: '\1F4CB';
+    position: relative;
+    top: -0.1rem;
+    left: -0.8rem;
+}
+    
+
+
 
 h1 {
     font-size: 2rem;
@@ -155,6 +175,7 @@ td.keyName {
     font-weight: 600;
     font-size: 0.7rem;
     padding: 0.4rem;
+    position: relative;
 }
 
 #forkongithub a {

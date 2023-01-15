@@ -8,7 +8,18 @@ import { myAjaxUtils } from "/js/myAjaxUtils.js";
                 /*************************
                  * Methods
                  **************************/
-                myAjaxUtils: myAjaxUtils
+                myAjaxUtils: myAjaxUtils,
+
+                copyToClipboard: function( value ){
+                    navigator.clipboard.writeText( value ).then(function() {
+                       // console.log('successfull copying');
+                      }, function(err) {
+                        console.error(err);
+                      });
+                      alert( 'Copied \'' + value + '\' to clipboard.' );
+                   
+
+                }
 
             };
 
