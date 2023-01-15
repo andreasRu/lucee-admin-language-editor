@@ -90,10 +90,12 @@
             <tbody>
                 <cfloop list="#adminKeyNameListOrdered#" item="itemLanguage" >
                     <tr id="#itemLanguage#">
-                        <td class="keyName">#encodeForHTML( itemLanguage )# 
-                            <button title="Copy '#encodeForHTMLAttribute( itemLanguage)#' to Clipboard" class="copyButton" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" data-value="#encodeForHTMLAttribute( itemLanguage)#" onClick="window.langUpdater.copyToClipboard( $( this ).attr('data-value') );"></button>
-                            <div>
-                                <a class="button left" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" target="_blank">Find in #encodeForHTML("</>")#</a>
+                        <td class="keyName">
+                            #encodeForHTML( itemLanguage )# 
+                            <div class="propertyCommands">
+                                <a  title="Search '#encodeForHTMLAttribute( itemLanguage)#' in Lucee Admin Source" class="propertyCommandsButton viewSourceButton" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" target="_blank"></a>
+                                <button title="Copy '#encodeForHTMLAttribute( itemLanguage)#' to Clipboard" class="propertyCommandsButton copyButton" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" data-value="#encodeForHTMLAttribute( itemLanguage)#" onClick="window.langUpdater.copyToClipboard( $( this ).attr('data-value') );"></button>
+                              
                             </div>
                         </td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
