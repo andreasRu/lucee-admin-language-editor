@@ -333,12 +333,22 @@ public struct function getServerWebContextInfoAsStruct() localmode=true {
         myXML=[:];
         xmlString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
         myXML = xmlParse( xmlString );
-        // writeoutput('dddaa');
         // dump(myXML);
         // abort;
          return myXML;
      
     }
+
+
+    /**
+	* returns the github advanced source search URL in Lucee admin source for a specific property
+	*/
+	public string function getGithubSourceSearchURL( string adminProperty required ) localmode=true {
+
+         return "https://github.com/search?q=#encodeForHTMLAttribute( encodeForURL( arguments.adminProperty ) )#+repo%3Alucee%2FLucee+path%3A%2Fcore%2Fsrc%2Fmain%2Fcfml%2Fcontext%2Fadmin%2F&type=Code&ref=advsearch&l=&l=";
+     
+    }
+
 
 
     

@@ -83,7 +83,11 @@
             <tbody>
                 <cfloop list="#adminKeyNameListOrdered#" item="itemLanguage" >
                     <tr id="#itemLanguage#">
-                        <td class="keyName">#encodeForHTML( itemLanguage )#</td>
+                        <td class="keyName">#encodeForHTML( itemLanguage )# 
+                            <div>
+                                <a class="button left" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" target="_blank">Find in #encodeForHTML("</>")#</a>
+                            </div>
+                        </td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                             <td class="updateContainer-#ucase( itemLanguageKey )#">
                                 <textarea <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
