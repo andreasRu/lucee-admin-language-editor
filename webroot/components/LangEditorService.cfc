@@ -14,9 +14,17 @@ component {
         this.version="0.0.3";
         this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
         this.workingDir = "/workingDir/";
+        
         if ( !directoryExists( ".." & this.workingDir ) ){
             directoryCreate( ".." & this.workingDir );
         }
+
+        this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin"
+        
+
+        createLanguageSwitcherInAdminContext();
+
+
         return this;
     }
 
@@ -39,38 +47,63 @@ component {
         return result;
     }
 
+     /*********  
+    *
+    *  Create a languageSwitcher for fast access loading the language file in the logged in Admin
+    *
+    *********/
+    public void function createLanguageSwitcherInAdminContext( ){
+
+        if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) ){
+            savecontent variable="languageSwitcherContent"{
+                    cfmlContent="";
+                    cfmlContent= cfmlContent & "   structDelete(application, ""stText"");   ";
+                    cfmlContent= cfmlContent & "   cfcookie(name = ""lucee_admin_lang"" value= ""##form.lang##"");   ";
+                    cfmlContent= cfmlContent & "   session.lucee_admin_lang = ""##form.lang##"";   ";
+                    cfmlContent= cfmlContent & "   include template=""resources/text.cfm"";";
+                    cfmlContent= cfmlContent & "   if(request.adminType==""server""){ ";
+                    cfmlContent= cfmlContent & "     location(""server.cfm"", ""false"", ""302"");";
+                    cfmlContent= cfmlContent & "     }";
+                    cfmlContent= cfmlContent & "      location(""##request.self##"", ""false"", ""302"");";
+                    echo( cfmlContent );
+            }
+            fileWrite( this.adminResourcePath & "/languageSwitcher.cfm", "<cfscript>" & languageSwitcherContent & "</cfscript>", "utf-8" );
+        }
+
+    }
+
 
     /**
-* returns a struct with the server/web context information that is bound to this template.
-*/
-public struct function getServerWebContextInfoAsStruct() localmode=true {
+    * returns a struct with the server/web context information that is bound to this template.
+    */
+    public struct function getServerWebContextInfoAsStruct() localmode=true {
 
-	//get pageContext/CFMLFactoryConfig of actual template
-	local.pageContext=getpagecontext();
-	local.pageCFMLFactory=local.pageContext.getCFMLFactory();
-	local.pageCFMLFactoryConfig=local.pageCFMLFactory.getConfig();
+        //get pageContext/CFMLFactoryConfig of actual template
+        local.pageContext=getpagecontext();
+        local.pageCFMLFactory=local.pageContext.getCFMLFactory();
+        local.pageCFMLFactoryConfig=local.pageCFMLFactory.getConfig();
 
-	//get the Servlets configuration and initial Parameters (e.g. set in Tomcats conf/web.xml)
-	local.servletConfig = getpagecontext().getServletConfig();
-	local.servletInitParamNames = servletConfig.getInitParameterNames();
+        //get the Servlets configuration and initial Parameters (e.g. set in Tomcats conf/web.xml)
+        local.servletConfig = getpagecontext().getServletConfig();
+        local.servletInitParamNames = servletConfig.getInitParameterNames();
 
-	// populate struct with gathered information
-	local.info={
-			"context-label" : getpagecontext().getCFMLFactory().getLabel(),
-			"configFileLocation" : pageCFMLFactoryConfig.getConfigFile(),
-			"servletInitParameters": [:]
-			};
+        // populate struct with gathered information
+        local.info={
+                "context-label" : getpagecontext().getCFMLFactory().getLabel(),
+                "configFileLocation" : pageCFMLFactoryConfig.getConfigFile(),
+                "servletInitParameters": [:]
+                };
 
-	// if available, iterate enum of InitParamNames and get the values
+        // if available, iterate enum of InitParamNames and get the values
 
-	cfloop( collection="#servletInitParamNames#" item="item" ){
+        cfloop( collection="#servletInitParamNames#" item="item" ){
 
-		structInsert( local.info["ServletInitParameters"] , item, local.servletConfig.getInitParameter( item.toString() ) );
-	};
+            structInsert( local.info["ServletInitParameters"] , item, local.servletConfig.getInitParameter( item.toString() ) );
+        };
 
 
-	return local.info;
-}
+        return local.info;
+    }
 
     
     public string function outputAsJson( struct data required) localmode=true  {
@@ -254,8 +287,7 @@ public struct function getServerWebContextInfoAsStruct() localmode=true {
     
     public void function pullResourceFileToWebAdmin( string language required ) localmode=true {
 
-        contexts=getServerWebContextInfoAsStruct();
-        adminResourceLanguagePath=contexts["servletInitParameters"]["lucee-web-directory"] & "/context/admin/resources/language"
+        adminResourceLanguagePath= this.adminResourcePath & "/resources/language"
         if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.xml") ){ 
 
             fileCopy( 

@@ -54,11 +54,6 @@
             <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.xml\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize File</button>
         </div>
 
-        <div class="commandDiv">
-            <a class="button" href="/lucee/admin/server.cfm" target="_blank" style="margin-top:0;">Server Admin</a>
-            <a class="button" href="/lucee/admin/web.cfm" target="_blank">Web Admin</a>
-        </div>
-
         <cfif !arrayIsEmpty( availableLangResourceLanguage )>
             <div class="commandDiv lastPullRight">
                 <button disabled class="button" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Reset and empty all</button>
@@ -79,8 +74,18 @@
                         <th>#encodeForHTML( itemLanguageKey )#.xml <cfif itemLanguageKey == "en">(default)</cfif>
                                  <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateXmlWorkingFile&adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');">Save Changes to "#itemLanguageKey#.xml"<br> &amp; push to Admin </button>
                                 <a class="button" href="#encodeForHTMLAttribute( "/workingDir/" & encodeforURL( itemLanguageKey ) & ".xml")#" target="_blank">View File XML-Source</a>
-                                <!--- button disabled class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=pullToAdmin&lang=#encodeforURL( itemLanguageKey )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');">Push To Admin</button--->
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileXML&downloadLanguageXMLFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
+                                
+                                <form action="lucee/admin/server.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\' Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin</button> 
+                                </form>
+
+                                <form action="lucee/admin/web.cfm?action=languageSwitcher" method="POST" target="web_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\' Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin</button> 
+                                 </form>
+                                
                                 <cfif itemLanguageKey !== "en">
                                     <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
                                 </cfif>
@@ -103,7 +108,7 @@
                         </td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                             <td class="updateContainer-#ucase( itemLanguageKey )#">
-                                <textarea <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
+                                <textarea onChange="window.langUpdater.setEditionAsUnsaved('#encodeForHTMLAttribute(encodeForJavaScript( itemLanguageKey ))#')" <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
                             </td>
                         </cfloop>
                     </tr>

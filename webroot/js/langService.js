@@ -10,6 +10,16 @@ import { myAjaxUtils } from "/js/myAjaxUtils.js";
                  **************************/
                 myAjaxUtils: myAjaxUtils,
 
+                updatedWithoutSaving: [],
+
+                setEditionAsUnsaved: function( language ){
+                    if( !window.langUpdater.updatedWithoutSaving.includes( language )  ){
+                        window.langUpdater.updatedWithoutSaving.push( language );
+                    }
+                    console.log( window.langUpdater.updatedWithoutSaving );
+
+                },
+
                 copyToClipboard: function( value ){
                     navigator.clipboard.writeText( value ).then(function() {
                        // console.log('successfull copying');
@@ -20,6 +30,8 @@ import { myAjaxUtils } from "/js/myAjaxUtils.js";
                    
 
                 }
+
+                
 
             };
 
