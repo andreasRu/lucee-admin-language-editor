@@ -11,9 +11,9 @@ component {
 
 
     public struct function init( ){
-        this.version="0.0.2";
+        this.version="0.0.3";
         this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
-        this.workingDir = "/workingPath/";
+        this.workingDir = "/workingDir/";
         if ( !directoryExists( ".." & this.workingDir ) ){
             directoryCreate( ".." & this.workingDir );
         }
