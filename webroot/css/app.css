@@ -24,7 +24,7 @@ table {
     box-shadow: 0px 15px 20px rgb(77 79 78 / 40%);
 }
 
-.commandDiv:last-of-type {
+.commandDiv.lastPullRight {
    margin-left: auto;
    background: #db2525;
   }
