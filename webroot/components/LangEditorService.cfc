@@ -57,7 +57,7 @@ component {
         if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) ){
             savecontent variable="languageSwitcherContent"{
                     cfmlContent="";
-                    cfmlContent= cfmlContent & "   structDelete(application, ""stText"");   ";
+                    cfmlContent= cfmlContent & "   if( structKeyExists( application.stText, form.lang ) ){ structDelete( application.stText, form.lang ) };   ";
                     cfmlContent= cfmlContent & "   cfcookie(name = ""lucee_admin_lang"" value= ""##form.lang##"");   ";
                     cfmlContent= cfmlContent & "   session.lucee_admin_lang = ""##form.lang##"";   ";
                     cfmlContent= cfmlContent & "   include template=""resources/text.cfm"";";
