@@ -1,0 +1,26 @@
+{
+  "name": "lucee-admin-language-editor",
+  "version": "0.0.3",
+  "description": "Lucee Administrator Language Editor",
+  "main": "langService.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreasRu/lucee-admin-language-editor.git"
+  },
+  "keywords": [
+    "Lucee",
+    "Administrator"
+  ],
+  "author": "C. Andreas Rüger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreasRu/lucee-admin-language-editor/issues"
+  },
+  "homepage": "https://github.com/andreasRu/lucee-admin-language-editor#readme",
+  "devDependencies": {
+    "eslint": "^8.32.0"
+  }
+}
