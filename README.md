@@ -1,4 +1,4 @@
-Aaaaaaaaaq# Lucee Admin Language Editor
+# Lucee Admin Language Editor
 
 A simple editor that helps adding new languages and translations to Lucee Administrator Extension by creating language XML resource files in the Administrator of the web-context (still in Beta).
 
