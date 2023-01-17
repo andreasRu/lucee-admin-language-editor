@@ -24,7 +24,7 @@
        Lucee Admin Language Editor #encodeForHTML(  variables.LangEditorService.version )#
     </h1>
     <cfif !arrayIsEmpty( availableLangResourceLanguage )>
-        <div class="scrollUpButton" onClick="window.scrollTo({ top: 0, behavior: 'smooth' });">&##8679;</div>
+        <div class="scrollUpButton" onClick="window.scrollTo({ top: 0 });">&##8679;</div>
     </cfif>
     <div class="commandDivWrapper">
         <cfset variables.availableJavaLocales=LangEditorService.getAvailableJavaLocalesAsStruct()>
