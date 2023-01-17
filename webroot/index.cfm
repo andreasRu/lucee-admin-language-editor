@@ -23,6 +23,9 @@
     <h1>
        Lucee Admin Language Editor #encodeForHTML(  variables.LangEditorService.version )#
     </h1>
+    <cfif !arrayIsEmpty( availableLangResourceLanguage )>
+        <div class="scrollUpButton" onClick="window.scrollTo({ top: 0, behavior: 'smooth' });">&##8679;</div>
+    </cfif>
     <div class="commandDivWrapper">
         <cfset variables.availableJavaLocales=LangEditorService.getAvailableJavaLocalesAsStruct()>
                
@@ -75,7 +78,7 @@
                     <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                         <th>#encodeForHTML( itemLanguageKey )#.xml
                                  <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateXmlWorkingFile&adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');">Save Changes to "#itemLanguageKey#.xml"<br> &amp; push to Admin </button>
-                                <a class="button" href="#encodeForHTMLAttribute( "/workingLangResources/" & encodeforURL( itemLanguageKey ) & ".xml")#" target="_blank">View File XML-Source</a>
+                                <a class="button" href="#encodeForHTMLAttribute( "/workingDir/" & encodeforURL( itemLanguageKey ) & ".xml")#" target="_blank">View File XML-Source</a>
                                 <!--- button disabled class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=pullToAdmin&lang=#encodeforURL( itemLanguageKey )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');">Push To Admin</button--->
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileXML&downloadLanguageXMLFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
                                 <cfif itemLanguageKey !== "en">
