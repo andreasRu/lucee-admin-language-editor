@@ -135,9 +135,9 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="/js/jquery-3.6.3.min.js"></script>
-    <script type="module" src="/js/langService.js"></script>
-    <script type="text/javascript" src="/js/jquery.floatThead.min.js"></script>
+    
+    <script type="text/javascript" src="/js/distro/jsbundle.js"></script>
+    <script type="text/javascript" src="/js/distro/vendors.js"></script>
     <script>
     /* call floatThead for fixed table head */ 
      $(function(){

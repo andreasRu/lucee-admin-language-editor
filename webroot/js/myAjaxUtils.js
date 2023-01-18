@@ -3,10 +3,10 @@
 * automated Ajax requests and content updates. Depends on jQuery.
 * MIT License / (c)2023 C. Andreas Rüger https://github.com/andreasRu/ 
 ************************************************************/
+import $ from 'jquery';
 
 export const myAjaxUtils= {
 
-   
     buildPayLoad: (
         ajaxURL,
         httpMethod,
@@ -14,6 +14,7 @@ export const myAjaxUtils= {
         selectorContentResult,
         jqueryHTMLCommand ) => {
         let formMethod = httpMethod;
+       
 
         $( '#loadingSpinner' ).show();
         
@@ -282,6 +283,9 @@ export const myAjaxUtils= {
         } );
 
 
- },
+ }
+
 
 };
+
+export default myAjaxUtils;

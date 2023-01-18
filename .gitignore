@@ -1,2 +1,3 @@
 /webroot/workingDir/*.xml
+/webroot/js/distro
 node_modules

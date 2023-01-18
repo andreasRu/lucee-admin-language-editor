@@ -1,15 +1,14 @@
-import { myAjaxUtils } from "/js/myAjaxUtils.js";
-    
-    $( document )
-        .ready( function () {
+import  myAjaxUtils from "./myAjaxUtils";
 
-            const langUpdater = {
+
+export const  langUpdater = {
 
                 /*************************
                  * Methods
                  **************************/
                 myAjaxUtils: myAjaxUtils,
 
+                
                 updatedWithoutSaving: [],
 
                 setEditionAsUnsaved: function( language ){
@@ -34,8 +33,7 @@ import { myAjaxUtils } from "/js/myAjaxUtils.js";
                 
 
             };
+    
+    window.langUpdater=langUpdater;
 
-            
-        window.langUpdater = langUpdater;
-
-        } );
+    export default  { langUpdater  };
