@@ -273,9 +273,6 @@ component {
     }
 
     
-        
-
-
 
     
     public void function pullResourceFileToWebAdmin( string language required ) localmode=true {
@@ -302,7 +299,7 @@ component {
    
    public array function getAvailableLangLocalesInWorkingDir() localmode=true {
 
-        cfdirectory( directory=this.workingDir, action="list", name="filequery" );
+        cfdirectory( directory=this.workingDir, action="list", name="filequery", filter="*.xml");
         result=[];
         for ( file in filequery ) { 
             result.append( listFirst( file.name, "." ) );
