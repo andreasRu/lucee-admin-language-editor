@@ -273,12 +273,10 @@ export const myAjaxUtils= {
 
             },
             error: function ( e ) {
-                $( '#modalMainContent' )
-                    .html( e.responseText );
+                $( 'body' ).html( '<div>Error resulting from Ajaxcall at:<br> ' + ajaxURL +' </div>' + e.responseText );
+                $( '#loadingSpinner' ).hide();
                 console.log( e );
-                window.globalfuncs.toggleModal( '#modalMain', 'error' );
-                
-
+         
             }
 
         } );
