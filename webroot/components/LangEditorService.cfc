@@ -14,16 +14,9 @@ component {
         this.version="0.0.3";
         this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
         this.workingDir = "/workingDir/";
-        
-        if ( !directoryExists( ".." & this.workingDir ) ){
-            directoryCreate( ".." & this.workingDir );
-        }
-
         this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin"
         
-
         createLanguageSwitcherInAdminContext();
-
 
         return this;
     }
@@ -280,9 +273,6 @@ component {
     }
 
     
-        
-
-
 
     
     public void function pullResourceFileToWebAdmin( string language required ) localmode=true {
@@ -309,7 +299,7 @@ component {
    
    public array function getAvailableLangLocalesInWorkingDir() localmode=true {
 
-        cfdirectory( directory=this.workingDir, action="list", name="filequery" );
+        cfdirectory( directory=this.workingDir, action="list", name="filequery", filter="*.xml");
         result=[];
         for ( file in filequery ) { 
             result.append( listFirst( file.name, "." ) );

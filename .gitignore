@@ -1,2 +1,2 @@
-/webroot/workingDir
+/webroot/workingDir/*.xml
 node_modules
