@@ -62,14 +62,22 @@
         
         <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
             <div>
-                <div style="margin-bottom: 0.2rem;">Lucee-Admin-Password: <b>langeditor</b> ( Click the "import" button if prompted! )
+                <cfset adminDeployer=variables.LangEditorService.loadedAdminFiles>
+                <cfif len( adminDeployer.languagesPulledToAdmin )>
+                    <div style="margin-bottom: 0.2rem;font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
+                        <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin during initialization:</b><br>
+                        <b>password.txt:</b>&nbsp;#adminDeployer["adminPasswordTxtLocation"]#<br>
+                        <b>langSwitcher.cfm:</b>&nbsp;#adminDeployer["langSwitcherInjectedLocation"]#<br>
+                        <b>admin_layout.cfm:</b>&nbsp;#adminDeployer["adminLayoutInjectedLocation"]#<br>
+                        <cfloop collection="#adminDeployer[ "languagesPulledToAdmin" ]#" item="currentKey">
+                            <b>#currentKey#.xml:</b>&nbsp;#adminDeployer["languagesPulledToAdmin"][ currentKey ]#<br>
+                        </cfloop>
+                    </div>
+                </cfif>
+                <div>
+                    Lucee-Server-Admin-Password: <b>langeditor</b><br>(Click the "import" button if prompted!)
                 </div>
-                <div style="font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
-                    <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin during initialization:</b><br>
-                    <b>password.txt:</b>&nbsp;#variables.LangEditorService.deploySwticherFilesToLuceeAdmin()["adminPasswordTxtLocation"]#<br>
-                    <b>langSwitcher.cfm:</b>&nbsp;#variables.LangEditorService.deploySwticherFilesToLuceeAdmin()["langSwitcherInjectedLocation"]#<br>
-                    <b>admin_layout.cfm:</b>&nbsp;#variables.LangEditorService.deploySwticherFilesToLuceeAdmin()["adminLayoutInjectedLocation"]#<br>
-                </div>
+                
                 
             </div>
                        
