@@ -1,0 +1,16 @@
+{
+    "force":"true",
+    "name":"lucee-admin-language-editor",
+    "JVM":{
+        "heapSize":"2048"
+    },
+    "web":{
+        "http":{
+            "port":"8080"
+        },
+        "webroot":"./webroot/"
+    },
+    "app":{
+        "cfengine":"lucee@5.3.10.97"
+    }
+}
