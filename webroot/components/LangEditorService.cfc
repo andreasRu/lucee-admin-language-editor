@@ -58,6 +58,9 @@ component {
             fileCopy(   source= expandPath("./") & "adminDeploy/admin_layout.cfm", 
             destination=this.adminResourcePath & "/admin_layout.cfm" );
 
+            fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/5.3/core/src/main/cfml/context/admin/resources/text.cfm", 
+            destination=this.adminResourcePath & "/resources/text.cfm" );
+
             fileCopy(   source= expandPath("./") & "adminDeploy/password.txt", 
             destination=this.adminServerContextPath & "/password.txt" );
 
@@ -68,6 +71,7 @@ component {
 
         result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
         result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
+        result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/resources/text.cfm";
         result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
 
 
@@ -130,6 +134,8 @@ component {
         return result;
     }
 
+
+    
     /**
 	 * returns a hardcoded lettercode list of available lang resources available at
      * at: https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/
