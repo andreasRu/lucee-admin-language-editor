@@ -36,4 +36,4 @@ export const  langUpdater = {
     
     window.langUpdater=langUpdater;
 
-    export default  { langUpdater  };
+    export default  langUpdater;

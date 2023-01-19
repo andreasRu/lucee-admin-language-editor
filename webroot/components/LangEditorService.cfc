@@ -11,12 +11,13 @@ component {
 
 
     public struct function init( ){
-        this.version="0.0.4";
+        
+        this.version="0.0.5";
         this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
         this.workingDir = "/workingDir/";
-        this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin"
-        
-        createLanguageSwitcherInAdminContext();
+        this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin";
+        this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
+        this.loadedAdminFiles = deploySwticherFilesToLuceeAdmin();
 
         return this;
     }
@@ -45,23 +46,32 @@ component {
     *  Create a languageSwitcher for fast access loading the language file in the logged in Admin
     *
     *********/
-    public void function createLanguageSwitcherInAdminContext( ){
+    public struct function deploySwticherFilesToLuceeAdmin( ){
+
+        result={};
 
         if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) ){
-            savecontent variable="languageSwitcherContent"{
-                    cfmlContent="";
-                    cfmlContent= cfmlContent & "   if( structKeyExists( application.stText, form.lang ) ){ structDelete( application.stText, form.lang ) };   ";
-                    cfmlContent= cfmlContent & "   cfcookie(name = ""lucee_admin_lang"" value= ""##form.lang##"");   ";
-                    cfmlContent= cfmlContent & "   session.lucee_admin_lang = ""##form.lang##"";   ";
-                    cfmlContent= cfmlContent & "   include template=""resources/text.cfm"";";
-                    cfmlContent= cfmlContent & "   if(request.adminType==""server""){ ";
-                    cfmlContent= cfmlContent & "     location(""server.cfm"", ""false"", ""302"");";
-                    cfmlContent= cfmlContent & "     }";
-                    cfmlContent= cfmlContent & "      location(""##request.self##"", ""false"", ""302"");";
-                    echo( cfmlContent );
-            }
-            fileWrite( this.adminResourcePath & "/languageSwitcher.cfm", "<cfscript>" & languageSwitcherContent & "</cfscript>", "utf-8" );
+
+            fileCopy(   source= expandPath("./") & "adminDeploy/languageSwitcher.cfm", 
+            destination=this.adminResourcePath & "/languageSwitcher.cfm" );
+
+            fileCopy(   source= expandPath("./") & "adminDeploy/admin_layout.cfm", 
+            destination=this.adminResourcePath & "/admin_layout.cfm" );
+
+            fileCopy(   source= expandPath("./") & "adminDeploy/password.txt", 
+            destination=this.adminServerContextPath & "/password.txt" );
+
+           
         }
+
+        
+
+        result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
+        result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
+        result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
+
+
+        return result;;
 
     }
 

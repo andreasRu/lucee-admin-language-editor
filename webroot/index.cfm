@@ -53,14 +53,28 @@
             <br>
             <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.xml\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize File</button>
         </div>
-
         <cfif !arrayIsEmpty( availableLangResourceLanguage )>
-            <div class="commandDiv lastPullRight">
-                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Reset and empty all</button>
+            <div class="commandDiv">
+                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}" style="white-space:normal;">Reset</button>
             
             </div>
         </cfif>
         
+        <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
+            <div>
+                <div style="margin-bottom: 0.2rem;">Lucee-Admin-Password: <b>langeditor</b> ( Click the "import" button if prompted! )
+                </div>
+                <div style="font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
+                    <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin during initialization:</b><br>
+                    <b>password.txt:</b>&nbsp;#variables.LangEditorService.deploySwticherFilesToLuceeAdmin()["adminPasswordTxtLocation"]#<br>
+                    <b>langSwitcher.cfm:</b>&nbsp;#variables.LangEditorService.deploySwticherFilesToLuceeAdmin()["langSwitcherInjectedLocation"]#<br>
+                    <b>admin_layout.cfm:</b>&nbsp;#variables.LangEditorService.deploySwticherFilesToLuceeAdmin()["adminLayoutInjectedLocation"]#<br>
+                </div>
+                
+            </div>
+                       
+            </div>
+        </div>
 
         
     </div>
@@ -78,12 +92,12 @@
                                 
                                 <form action="lucee/admin/server.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
                                     <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
-                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\' Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin</button> 
+                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin</button> 
                                 </form>
 
                                 <form action="lucee/admin/web.cfm?action=languageSwitcher" method="POST" target="web_#encodeForHTMLAttribute( itemLanguageKey )#">
                                     <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
-                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\' Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin</button> 
+                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin</button> 
                                  </form>
                                 
                                 <cfif itemLanguageKey !== "en">
