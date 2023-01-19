@@ -55,28 +55,31 @@
         </div>
         <cfif !arrayIsEmpty( availableLangResourceLanguage )>
             <div class="commandDiv">
-                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}" style="white-space:normal;">Reset</button>
+                <button disabled class="button" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}" style="white-space:normal;">Reset WorkingDirectory</button>
             
             </div>
         </cfif>
         
         <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
             <div>
-                <cfset adminDeployer=variables.LangEditorService.loadedAdminFiles>
-                <cfif len( adminDeployer.languagesPulledToAdmin )>
-                    <div style="margin-bottom: 0.2rem;font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
-                        <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin during initialization:</b><br>
-                        <b>password.txt:</b>&nbsp;#adminDeployer["adminPasswordTxtLocation"]#<br>
-                        <b>langSwitcher.cfm:</b>&nbsp;#adminDeployer["langSwitcherInjectedLocation"]#<br>
-                        <b>admin_layout.cfm:</b>&nbsp;#adminDeployer["adminLayoutInjectedLocation"]#<br>
-                        <cfloop collection="#adminDeployer[ "languagesPulledToAdmin" ]#" item="currentKey">
-                            <b>#currentKey#.xml:</b>&nbsp;#adminDeployer["languagesPulledToAdmin"][ currentKey ]#<br>
-                        </cfloop>
-                    </div>
-                </cfif>
-                <div>
+                <div style="margin-bottom: 0.2rem;>
                     Lucee-Server-Admin-Password: <b>langeditor</b><br>(Click the "import" button if prompted!)
                 </div>
+                <div style="font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
+                        
+                        <cfif len( variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ] ) >
+                            <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin on last load:</b><br>
+                            <cfloop collection="#variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ]#" item="currentKey">
+                                <b>#currentKey#.xml:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["languagesPulledToAdmin"][ currentKey ]#<br>
+                            </cfloop>
+                        </cfif>
+                        <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin during initialization:</b><br>
+                        <b>password.txt:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["adminPasswordTxtLocation"]#<br>
+                        <b>langSwitcher.cfm:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["langSwitcherInjectedLocation"]#<br>
+                        <b>admin_layout.cfm:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["adminLayoutInjectedLocation"]#<br>
+                       
+                    </div>
+              
                 
                 
             </div>

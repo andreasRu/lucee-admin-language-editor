@@ -46,14 +46,13 @@ component {
     *  Create a languageSwitcher for fast access loading the language file in the logged in Admin
     *
     *********/
-    public struct function deploySwitcherFilesToLuceeAdmin( ) {
+    public struct function deploySwitcherFilesToLuceeAdmin( ) localmode=true {
 
         result={};
         result[ "languagesPulledToAdmin" ]={};
-        
-
         languagesArray=getLanguagesAvailableInWorkingData();
 
+        // this is done on each init, but only if languageSwitcher has not been deployed already
         if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) ){
 
             fileCopy(   source= expandPath("./") & "adminDeploy/languageSwitcher.cfm", 
@@ -67,27 +66,24 @@ component {
 
             fileCopy(   source= expandPath("./") & "adminDeploy/password.txt", 
             destination=this.adminServerContextPath & "/password.txt" );
-
-            result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
-            result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
-            result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/resources/text.cfm";
-            result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
-
-            for ( language in languagesArray ){
-                fileCopy(   source= this.workingDir & "#sanitizeFilename( language )#.xml", 
-                            destination=this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml" );
-                            result[ "languagesPulledToAdmin" ] [ language ]= this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml";
-           
-            }
-
-           
-
            
         }
 
-        
+        // this is done on each init, and on load
+        for ( language in languagesArray ){
 
-        return result;;
+            fileCopy(   source= this.workingDir & "#sanitizeFilename( language )#.xml", 
+            destination=this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml" );
+            result[ "languagesPulledToAdmin" ][ language ]= this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml";
+         }
+
+        result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
+        result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
+        result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/resources/text.cfm";
+        result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
+
+
+        return result;
 
     }
 
