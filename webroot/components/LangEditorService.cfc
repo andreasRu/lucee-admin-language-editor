@@ -17,7 +17,7 @@ component {
         this.workingDir = "/workingDir/";
         this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin";
         this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
-        this.loadedAdminFiles = deploySwticherFilesToLuceeAdmin();
+        this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
 
         return this;
     }
@@ -46,9 +46,13 @@ component {
     *  Create a languageSwitcher for fast access loading the language file in the logged in Admin
     *
     *********/
-    public struct function deploySwticherFilesToLuceeAdmin( ){
+    public struct function deploySwitcherFilesToLuceeAdmin( ) {
 
         result={};
+        result[ "languagesPulledToAdmin" ]={};
+        
+
+        languagesArray=getLanguagesAvailableInWorkingData();
 
         if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) ){
 
@@ -64,16 +68,24 @@ component {
             fileCopy(   source= expandPath("./") & "adminDeploy/password.txt", 
             destination=this.adminServerContextPath & "/password.txt" );
 
+            result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
+            result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
+            result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/resources/text.cfm";
+            result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
+
+            for ( language in languagesArray ){
+                fileCopy(   source= this.workingDir & "#sanitizeFilename( language )#.xml", 
+                            destination=this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml" );
+                            result[ "languagesPulledToAdmin" ] [ language ]= this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml";
+           
+            }
+
+           
+
            
         }
 
         
-
-        result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
-        result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
-        result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/resources/text.cfm";
-        result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
-
 
         return result;;
 
