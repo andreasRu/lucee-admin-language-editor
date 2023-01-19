@@ -62,7 +62,7 @@
         
         <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
             <div>
-                <div style="margin-bottom: 0.2rem;>
+                <div style="margin-bottom: 0.2rem;">
                     Lucee-Server-Admin-Password: <b>langeditor</b><br>(Click the "import" button if prompted!)
                 </div>
                 <div style="font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
@@ -79,10 +79,8 @@
                         <b>admin_layout.cfm:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["adminLayoutInjectedLocation"]#<br>
                        
                     </div>
-              
                 
-                
-            </div>
+             </div>
                        
             </div>
         </div>
