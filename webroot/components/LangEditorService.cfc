@@ -64,6 +64,8 @@ component {
             fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/5.3/core/src/main/cfml/context/admin/resources/text.cfm", 
             destination=this.adminResourcePath & "/resources/text.cfm" );
 
+            createPasswordFile();
+
             fileCopy(   source= expandPath("./") & "adminDeploy/password.txt", 
             destination=this.adminServerContextPath & "/password.txt" );
            
@@ -86,6 +88,29 @@ component {
         return result;
 
     }
+
+   
+    public void function createPasswordFile() localmode=true {
+        if( !fileExists( expandPath("./") & "adminDeploy/password.txt" )){
+            allowedChars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890"   
+            randomStr="";
+            for (i = 1; i < 10 ; i++) {
+                randomStr=randomStr & mid( allowedChars, randRange( 1, len( allowedChars ) ),1);
+            }
+            fileWrite( expandPath("./") & "adminDeploy/password.txt",  randomStr, "utf-8" );
+        }
+    }
+
+
+    public string function getPasswordFromPasswordTXT() localmode=true {
+        if( fileExists( expandPath("./") & "adminDeploy/password.txt" )){
+            result=fileRead( expandPath("./") & "adminDeploy/password.txt", "utf-8" );
+        }else{
+            result=""
+        }
+        return result;
+    }
+
 
 
     /**

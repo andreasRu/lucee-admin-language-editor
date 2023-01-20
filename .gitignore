@@ -1,3 +1,4 @@
 /webroot/workingDir/*.xml
 /webroot/js/distro/*.map
+/webroot/adminDeploy/password.txt
 node_modules

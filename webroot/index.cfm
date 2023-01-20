@@ -62,9 +62,16 @@
         
         <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
             <div>
-                <div style="margin-bottom: 0.2rem;">
-                    Lucee-Server-Admin-Password: <b>langeditor</b><br>(Click the "import" button if prompted!)
-                </div>
+                <cfset variables.generatedPWD=variables.LangEditorService.getPasswordFromPasswordTXT()>
+                <cfif variables.generatedPWD != "" >
+                    <div style="margin-bottom: 0.2rem;">
+                        <div>Generated Lucee Password(password.txt):</div>
+                        <div>
+                            <b><pre style="display:inline-block;margin:0 0.1rem 0;">#encodeForHTML( variables.generatedPWD )#</pre></b>
+                            <button style="display:inline-block;background: transparent;margin: 0;" title="Copy password to Clipboard" class="propertyCommandsButton copyButton" data-value="#encodeForHTMLAttribute( variables.generatedPWD )#" onclick="window.langUpdater.copyToClipboard( $( this ).attr('data-value') );"></button>
+                        </div>
+                    </div>
+                </cfif>
                 <div style="font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
                         
                         <cfif len( variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ] ) >
