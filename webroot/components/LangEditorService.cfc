@@ -12,7 +12,7 @@ component {
 
     public struct function init( ){
         
-        this.version="0.0.5";
+        this.version="0.0.6";
         this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
         this.workingDir = "/workingDir/";
         this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin";
