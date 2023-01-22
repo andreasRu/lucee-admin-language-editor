@@ -4,7 +4,7 @@ A simple editor that helps adding new languages and translations to Lucee Admini
 
 ## How to run
 
-To run "Lucee Administrator Language Editor" locally you only need [CommandBox](https://www.ortussolutions.com/products/commandbox) as the only dependency. As soon as you have CommandBox installed and this repository downloaded/cloned to your local development machine, open a terminal session, change to the directory **"webroot/"** and type the command **box server start**.
+To run "Lucee Administrator Language Editor" locally you only need [CommandBox](https://www.ortussolutions.com/products/commandbox) as the only dependency. As soon as you have CommandBox installed and this repository downloaded/cloned to your local development machine and run **server.bat** (win) or **server.sh** (mac & linux). Alternatively you can open a terminal session, change to the directory **"webroot/"** and type the command **box server start**.
 
 ## About "Lucee Admin Language Editor"
 
