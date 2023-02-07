@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+id: "F1A3EEAF-5B7A-499C-9656DE3E103C8EA9"
+version: "1.0.0.0"
+name: "Lucee Admin Language Pack"
+description: "This extension installs languages for the Lucee Administrator."

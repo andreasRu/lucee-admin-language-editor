@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languages>
+	<language key="de">
+		<title>LanguagePack</title>
+		<description>Wählen Sie die Sprache die Sie in den Lucee Administrator laden möchten:</description>
+		<custom key="btnSubmit">Laden</custom>
+	</language>
+	<language key="en">
+		<title>LanguagePack</title>
+		<description>Select the language you would like to load to the Lucee Administrator:</description>
+		<custom key="btnSubmit">Load</custom>
+	</language>
+	<language key="es">
+		<title>LanguagePack</title>
+		<description>Seleccione el idioma que quiere cargar al Administrador Lucee:</description>
+		<custom key="btnSubmit">Load</custom>
+	</language>
+</languages>
+
