@@ -1,18 +1,20 @@
  component hint="LanguagePack" extends="lucee.admin.plugin.Plugin" {
 
     /**
-     * Initialize
+     * Initialize Plugin
      */
     public function init( struct lang, struct app ){
-    
+
+        this.webContextPath= expandPath("{lucee-web}/context");
+
         app.availableLanguages=getAvailableLanguages();
 
         // copy original text.cfm from lucee admin to be able to use it as the swticher
-        if( !fileExists( expandPath("{lucee-web}/context/admin/resources/text.cfm") ) ){
+        if( !fileExists( this.webContextPath & "/admin/resources/text.cfm" )  ){
              cfzip ( action="unzip",
-                destination=expandPath("{lucee-web}/context/admin/"),
+                destination= this.webContextPath & "/admin/",
                 entrypath="resources/text.cfm"
-                file=expandPath("{lucee-web}/context/lucee-admin.lar"));
+                file= this.webContextPath & "/lucee-admin.lar");
         }
         
     
@@ -21,9 +23,9 @@
     private function getAvailableLanguages( ) localmode=true { 
 
         result=[ : ];
-        availableLangRessources= getPluginResourceFiles();
+        availableLangRessources= getAvailableLanguagesFromResourceFiles();
         for( language in availableLangRessources ){
-              availableLanguages=parseXMLDataToStruct( getLanguageDataByLettercode( language ) ) ;
+              availableLanguages=parseXMLDataToStruct( getLanguageXMLDataByLettercode( language ) ) ;
               result.insert( language, availableLanguages[ "XmlRoot.XmlAttributes.label" ] );
         }
         return result;
@@ -52,9 +54,9 @@
     
 
 
-     private array function getPluginResourceFiles(){
+     private array function getAvailableLanguagesFromResourceFiles(){
         
-         local.langResourcePath=expandPath("{lucee-web}/context/admin/resources/language");
+         local.langResourcePath= this.webContextPath & "/admin/resources/language";
          cfdirectory( directory=local.langResourcePath, action="list", name="filequery", filter="*.xml");
          result=[];
          for ( file in filequery ) { 
@@ -63,11 +65,11 @@
          return result;
      }
 
-    // /**
-	// * returns XML data of a language resource file as a struct
-	// */
-	private struct function getLanguageDataByLettercode( string languageISOLetterCode required ) localmode=true {
-        langResourcePath= expandPath("{lucee-web}/context/admin/resources/language");
+    /**
+	* returns XML data of a language resource file as a struct
+	*/
+	private struct function getLanguageXMLDataByLettercode( string languageISOLetterCode required ) localmode=true {
+        langResourcePath= this.webContextPath & "/admin/resources/language";
         myXML=[:];
         xmlString = fileread( langResourcePath & "/#arguments.languageISOLetterCode#.xml", "UTF-8" );
         parsedXML=xmlParse( xmlString );
@@ -77,10 +79,7 @@
     }
 
     
-    public function overview( struct lang, struct app, struct req ){ 
-        
-        
-    }
+    public function overview( struct lang, struct app, struct req ){ }
 
  
  }
