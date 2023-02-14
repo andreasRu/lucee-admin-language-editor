@@ -47,7 +47,7 @@
             result["error"]=0;
             result["success"]=true;
             result["contentForHtmlOutput"]= "";
-            result["ajaxPopulateNotificationFlyingBar"]= "File saved! Reloading Page...";
+            result["ajaxPopulateNotificationFlyingBar"]= "XML-File '#encodeForHTML( url.adminlang )#.xml' saved!";
             LangEditorService.outputAsJson( result );
 
 

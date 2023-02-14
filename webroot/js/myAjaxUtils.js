@@ -116,6 +116,14 @@ export const myAjaxUtils= {
         }, 2000);
         
 
+    } else if ( jqueryHTMLCommand == "keepOnPage") {
+
+        //Do nothing, just remove spinner
+        setTimeout(function(){ 
+            $( '#loadingSpinner' ).hide();
+        }, 2000);
+       
+
     } else if ( result.contentForHtmlOutput ) {
 
                 $( selectorContentResult )
