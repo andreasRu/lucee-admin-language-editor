@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-
-<link rel="stylesheet" href="/css/animate.min.css" />
-<link rel="stylesheet" href="/css/app.css" />
-<link rel="stylesheet" href="/css/spinner.css" />
+<cfoutput>
+    <link rel="stylesheet" href="/css/animate.min.css?version=#hash(application.appversion)#" />
+    <link rel="stylesheet" href="/css/app.css?version=#hash(application.appversion)#" />
+    <link rel="stylesheet" href="/css/spinner.css?version=#hash(application.appversion)#" />
+</cfoutput>
 </head>
 
 <body>
@@ -169,8 +170,8 @@
     </div>
 
     
-    <script type="text/javascript" src="/js/distro/jsbundle.js"></script>
-    <script type="text/javascript" src="/js/distro/vendors.js"></script>
+    <script type="text/javascript" src="/js/distro/jsbundle.js?version=#hash(application.appversion)#"></script>
+    <script type="text/javascript" src="/js/distro/vendors.js?version=#hash(application.appversion)#"></script>
     <script>
     /* call floatThead for fixed table head */ 
      $(function(){

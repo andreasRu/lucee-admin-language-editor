@@ -1,5 +1,8 @@
 component {
-	this.name = "adminTranslator#server.lucee.version#";
+
+
+    this.appversion="0.0.8";
+    this.name = "adminTranslator#server.lucee.version#-#this.appversion#";
 	this.clientmanagement="no";
 	this.scriptprotect="all";
 	this.sessionmanagement="yes";
@@ -12,5 +15,11 @@ component {
     this.basePath=getDirectoryFromPath( getCurrentTemplatePath() );
     this.mappings["/components"]=this.basePath & "components";
     this.mappings["/ajaxApi"]=this.basePath &  "ajaxApi";
+
+    public boolean function OnApplicationStart(){
+        application["appversion"]=this.appversion;
+        return true;
+    }
+           
     
 }
