@@ -6,6 +6,8 @@ A simple editor that helps adding new languages and translations to Lucee Admini
 
 To run "Lucee Administrator Language Editor" locally you only need [CommandBox](https://www.ortussolutions.com/products/commandbox) as the only dependency. As soon as you have CommandBox installed and this repository downloaded/cloned to your local development machine and run **server.bat** (win) or **server.sh** (mac & linux).
 
+**Limitations**: At the moment the Editor works on Lucee Version 5.3. You may use it with Lucee Snapshots 6.0, but only in "multi"-Mode, because the resource file location in Lucee 6.0 "single" mode differs.
+
 ## How the "Lucee Admin Language Editor" works
 
 This are some of the main functionalities that the Lucee Admin Language Editor offers:
@@ -36,6 +38,8 @@ Because the HTML snippet above needs to be safely XML encoded/escaped, the edito
 <data key="some.example.property">Example:&amp;lt;br&amp;gt;
 &amp;lt;cfmail subject=sub from="#f#" to="#t#"/&amp;gt;</data>
 ```
+
+- **Plugin-Extension**: This repository also offers a LanguagePack-Plugin with a language switch functionality located at `/extension`. At the moment this plugin is just for testing purpose. If you want to test it with your own language, just add it the created XML file to `\extension\webcontexts\admin\resources\language\` directory and ZIP the extension directory and rename it to `F1A3EEAF-5B7A-499C-9656DE3E103C8EA9.lex`. Then you can add it as a plugin.
 
 ## About "Lucee Admin Language Editor"
 
