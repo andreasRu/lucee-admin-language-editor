@@ -12,20 +12,20 @@ export const myAjaxUtils= {
         httpMethod,
         selectorFormFields,
         selectorContentResult,
-        jqueryHTMLCommand ) => {
+        jqueryHTMLCommand,
+        callback ) => {
         let formMethod = httpMethod;
        
 
         $( '#loadingSpinner' ).show();
         
         
-
         if ( httpMethod == "POST" ) {
             //get all form data 
             let formData = new FormData();
             let itemsProcessed = 0;
             let $selector = $( selectorFormFields );
-
+           
             $selector.each( ( index, obj ) => {
                 console.log( 'adding Fields name:' + $(obj).attr('name') + ' value:' + $(obj).val() );
                 itemsProcessed++;
@@ -46,13 +46,13 @@ export const myAjaxUtils= {
                 /* if because of async calls, call only when finished */
                 if ( itemsProcessed === $selector.length ) {
 
-                    myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, formData )
+                    myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, formData, callback )
 
                         .done( function ( result ) {
 
                            //console.log('#populateDatass');
                            //console.log( [result , ajaxURL, formMethod, formData ] );
-                            myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand);  
+                            myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
                 
                         } );
 
@@ -68,7 +68,7 @@ export const myAjaxUtils= {
                 .done( function ( result ) {
                     
                     console.log('#######populateDatas GET');
-                    myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand);  
+                    myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
                    
                 } );
         }
@@ -76,7 +76,7 @@ export const myAjaxUtils= {
     },
 
 
-    populateDOMWithContent: ( result, selectorContentResult, jqueryHTMLCommand) => {
+    populateDOMWithContent: ( result, selectorContentResult, jqueryHTMLCommand, callback ) => {
 
         console.log('#### populated function populateDOMWithContent:');
         console.log(result, selectorContentResult, jqueryHTMLCommand );
@@ -105,6 +105,13 @@ export const myAjaxUtils= {
         $( '#loadingSpinner' ).hide();
         
 
+    } else if ( jqueryHTMLCommand == "replaceInner") {
+      
+        $( selectorContentResult )
+        .html( result.contentForHtmlOutput );
+        $( '#loadingSpinner' ).hide();
+        
+
     } else if ( jqueryHTMLCommand == "reloadURL") {
                 
         window.location.reload();
@@ -123,6 +130,7 @@ export const myAjaxUtils= {
             $( '#loadingSpinner' ).hide();
         }, 2000);
        
+        
 
     } else if ( result.contentForHtmlOutput ) {
 
@@ -131,7 +139,15 @@ export const myAjaxUtils= {
                     $( '#loadingSpinner' ).hide();
                     
 
+    }     
+
+
+    if( callback && typeof( callback ) === "function" ) {
+        $( '#loadingSpinner' ).hide();
+        callback();
+
     }
+
 
             /* populate Flying notification Bar if specified */
             if( result.notificationFlyingBarHTML ){
@@ -149,10 +165,11 @@ export const myAjaxUtils= {
         ajaxURL,
         selectorFormFields,
         selectorContentResult,
-        jqueryHTMLCommand ) => {
+        jqueryHTMLCommand, 
+        callback ) => {
         let itemsProcessed = 0;
         let $selector = $( selectorFormFields );
-        alert( $selector.length );
+        
         let allItemsOK = true;
         $('.formValidationErrorText').remove();
         
@@ -248,7 +265,8 @@ export const myAjaxUtils= {
                             'POST',
                             selectorFormFields,
                             selectorContentResult,
-                            jqueryHTMLCommand );
+                            jqueryHTMLCommand,
+                            callback );
                     
                     } else {
                        

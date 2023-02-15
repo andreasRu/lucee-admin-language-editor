@@ -121,7 +121,7 @@
                                  </form>
                                 
                                 <cfif itemLanguageKey !== "en">
-                                    <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&lang=#encodeForJavascript( encodeForURL( itemLanguageKey ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
+                                    <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
                                 </cfif>
                         </th>
                     </cfloop>
@@ -142,7 +142,11 @@
                         </td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                             <td class="updateContainer-#ucase( itemLanguageKey )#">
-                                <textarea onChange="window.langUpdater.setEditionAsUnsaved('#encodeForHTMLAttribute(encodeForJavaScript( itemLanguageKey ))#')" <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
+                                <cfset txtareaID="txtarea-#itemLanguageKey#-#replaceNoCase(itemLanguage, ".", "_", "All" )#">
+                                <textarea onChange="window.langUpdater.setEditionAsUnsaved('#encodeForHTMLAttribute(encodeForJavaScript( itemLanguageKey ))#')" <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> id="#encodeForHTMLAttribute( txtareaID )#" name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
+                                <div class="propertyCommands">
+                                   <button title="Get XML-Code Snippet for '#encodeForHTMLAttribute( itemLanguage)# (#ucase( itemLanguageKey )#)'" class="propertyCommandsButton getXMLCode" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getXMLCodeSnippet&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'POST', '###encodeForHTMLAttribute( encodeForJavascript( txtareaID ))#', '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });"></button>
+                                </div>
                             </td>
                         </cfloop>
                     </tr>
@@ -155,6 +159,12 @@
     <span id="forkongithub">
         <a href="https://github.com/andreasRu/lucee-admin-language-editor" target="_blank">Fork me on GitHub</a>
     </span>
+    <div id="modalContainer" class="modalContainer">
+        <div class="modalMainWrapper" class="modalMain">
+            <button onClick="$('##modalContainer').hide();" class="modalButton">X</button>
+         <div id="modalMainContent" class="modalMainContent"></div>
+        </div>
+    </div>
     <div id="ajaxPopulateNotificationFlyingBar" class="animated hidden">
         <div></div>
     </div>
@@ -193,7 +203,6 @@
         setTimeout(function(){ 
             $( '##ajaxPopulateNotificationFlyingBar' ).removeClass( 'fadeInLeft' ).addClass( 'fadeOutLeft' ).addClass( 'hidden' );
             }, 5000);
-    
     });
     /* configuration of the observer: */
     var config = { attributes: true, childList: true, characterData: true };

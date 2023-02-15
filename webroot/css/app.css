@@ -159,6 +159,43 @@ button.enhanced:hover{
     content: '\1F50D';
 }
 
+.getXMLCode:before{
+
+    content: '</>';
+}
+
+.modalContainer {
+    position: Fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    z-index: 9999;
+    transition: opacity 400ms ease-in;
+    
+}
+
+.modalButton{
+    position: absolute;
+    right: -0.3rem;
+    top: -0.3rem;
+    border-radius: 50rem;
+    cursor: pointer;
+}
+
+.modalMainWrapper {
+    position: fixed;
+    color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #786dbd;
+    border-radius: 1rem;
+    padding: 2rem;
+}
+
 
 .propertyCommandsButton.copyButton{
     display:block;
@@ -221,6 +258,17 @@ td.keyName {
     font-size: 0.7rem;
     padding: 0.4rem;
     position: relative;
+}
+
+td.keyName {
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 0.4rem;
+    position: relative;
+}
+
+td[class^="updateContainer-"]{
+     position: relative;
 }
 
 #forkongithub a {

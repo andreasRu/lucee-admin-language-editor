@@ -114,6 +114,20 @@ component {
         return result;
     }
 
+    
+    public string function getXMLCodeSnippet( required string dataPropertyName, required string dataPropertyValue  ) localmode=true {
+           
+            result="";
+            
+            if( arguments.dataPropertyValue != "" ){
+                    result="<data key=""" & encodeXML( dataPropertyName ) & """>" & encodeXML( dataPropertyValue ) & "</data>";
+                }else{
+                    result="";
+            }
+        
+            return result;
+
+    }
 
 
     /**
@@ -227,17 +241,11 @@ component {
         if( structKeyExists( arguments, "formObject") ){
             KeyNames= arguments.formObject.fieldnames;
             for( name in local.KeyNames ){
-                
+
                 keyName=replaceNoCase( name, "~", ".", "All" );
                 keyNameAsRegex=replaceNoCase( name, "~", "\.", "All" );
                 regex="(?m)<data key=""" & keyNameAsRegex & """.*?>.*?</data>";
-                
-                if( form[ name ] != "" ){
-                        replaceStringWith="<data key=""" & encodeXML( keyName ) & """>" & encodeXML( form[ name ] ) & "</data>";
-                    }else{
-                        replaceStringWith="";
-                    }
-
+                replaceStringWith=getXMLCodeSnippet( keyName, form[ name ] ); 
                 dataKeysXMLCode=reReplaceNoCase( dataKeysXMLCode, regex, replaceStringWith );
        
                 }

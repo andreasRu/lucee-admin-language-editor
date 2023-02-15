@@ -86,6 +86,21 @@
             
         }
 
+        if( url.method == "getXMLCodeSnippet" ){
+
+            formfieldname=listFirst( form.fieldnames, ",")
+            name=formfieldname.replaceNoCase( "~", ".", "All" );
+            xmlSnippet=LangEditorService.getXMLCodeSnippet( name, form[ formfieldname ] );
+            
+            result["error"]=0;
+            result["success"]=true;
+            result["contentForHtmlOutput"]= encodeForHTML( xmlSnippet );
+            LangEditorService.outputAsJson( result );
+            
+        }
+
+        
+
 
    
     }
