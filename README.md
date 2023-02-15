@@ -8,13 +8,13 @@ To run "Lucee Administrator Language Editor" locally you only need [CommandBox](
 
 ## How the "Lucee Admin Language Editor" works
 
-This are some of the functionalities that the Lucee Admin Language Editor gives:
+This are some of the main functionalities that the Lucee Admin Language Editor offers:
 
-- **Password and Password.txt Generation:** The "Lucee Administrator Language Editor" will generate a password and create the password.txt for you: When logging into the "Server Administrator" on the first time, just click on the "import" button. **Important:** You need to log into the "Server Administrator" first to make the "View in Server-/Web-Administrator"-Buttons work correctly.
+- **Password and Password.txt Generation:** The "Lucee Administrator Language Editor" will generate a password and create the password.txt for you: When logging into the "Server Administrator" on the first time, just click on the "import" button. 
 
 - **Fast Viewing With "WYSIWYG":** After logging into the "Server-/Web-Administrator" you'll be able to save and push the created/edited languages files to the Lucee Administrator (click the "Save Changes & Push to Admin"-Button). Then you can load the files and view the changes by clicking the "View in Server-/Web-Administrator"-Buttons (you need to be logged into the "Server Administrator" first to make the "View in Server-/Web-Administrator"-Buttons work correctly).
 
-- **Resource-File-Generation:** When saving a language, the editor takes the default English language resource file **en.xml** as the master/root file for generating/creating the corresponding resource file. The data is updated by RegEx-replacements. This ensures that comments, structure and sort order of the data is transported from the master file to the generating files.
+- **Resource-File-Generation:** When saving a language, the editor takes the default English language resource file **en.xml** as the master/root file for generating/creating the corresponding resource file. The data is updated by RegEx-replacements. This ensures that comments, structure and sort order of the data is transported from the master file to the generating files. That way Lucee Core Devs can focus on the en.xml file as beeing treated as the **master parent file** for the other language files.
 
 - **Data XML-Encoding/Escaping**: The editor helps creating data and XML-escaping it correctly, following the [XML-Syntax](https://www.w3.org/TR/xml/#syntax) (see also [this stackoverflow post](https://stackoverflow.com/a/28152666/2645359)) . As an example, a string to display the following output to the user:
 
