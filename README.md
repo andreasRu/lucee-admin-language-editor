@@ -28,7 +28,7 @@ Example:&lt;br&gt;
 &lt;cfmail subject=sub from="#f#" to="#t#"/&gt;
 ```
 
-Because snippet of HTML code needs to be safely XML encoded/escaped, the code above is saved as to:
+Because the HTML snippet above needs to be safely XML encoded/escaped, the editor saves the data as:
 
 ```html
 <data key="some.example.property">Example:&amp;lt;br&amp;gt;
