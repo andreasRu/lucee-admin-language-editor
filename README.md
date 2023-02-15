@@ -35,6 +35,6 @@ Because the HTML snippet above needs to be safely XML encoded/escaped, the edito
 &amp;lt;cfmail subject=sub from="#f#" to="#t#"/&amp;gt;</data>
 ```
 
-## About "Lucee Admin Language Edditor"
+## About "Lucee Admin Language Editor"
 
 I came up with the idea because I want to translate Lucee Administrator to Portuguese and Spanish to help my South American fellows (especially cf-brazil) to quickly dig and play around with Lucee Administrator in their own language.
