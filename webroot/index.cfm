@@ -159,15 +159,18 @@
     <span id="forkongithub">
         <a href="https://github.com/andreasRu/lucee-admin-language-editor" target="_blank">Fork me on GitHub</a>
     </span>
+
     <div id="modalContainer" class="modalContainer">
         <div class="modalMainWrapper" class="modalMain">
             <button onClick="$('##modalContainer').hide();" class="modalButton">X</button>
-         <div id="modalMainContent" class="modalMainContent"></div>
+            <div id="modalMainContent" class="modalMainContent"></div>
         </div>
     </div>
+    
     <div id="ajaxPopulateNotificationFlyingBar" class="animated hidden">
         <div></div>
     </div>
+    
     <div id="loadingSpinner">
         <div class="sk-chase">
             <div class="sk-chase-dot"></div>
