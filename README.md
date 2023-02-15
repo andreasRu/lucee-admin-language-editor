@@ -39,7 +39,7 @@ Because the HTML snippet above needs to be safely XML encoded/escaped, the edito
 &amp;lt;cfmail subject=sub from="#f#" to="#t#"/&amp;gt;</data>
 ```
 
-- **Plugin-Extension**: This repository also offers a LanguagePack-Plugin with a language switch functionality located at `/extension`. At the moment this plugin is just for testing purpose. If you want to test it with your own language, just add it the created XML file to `\extension\webcontexts\admin\resources\language\` directory and ZIP the extension directory and rename it to `F1A3EEAF-5B7A-499C-9656DE3E103C8EA9.lex`. Then you can add it as a plugin.
+- **Plugin-Extension**: This repository also offers a LanguagePack-Plugin with a language switch functionality located at `/extension`. At the moment this plugin is just for testing purpose. If you want to test it with your own language, just add it the created XML file to `\extension\webcontexts\admin\resources\language\` directory and ZIP the extension directory and rename it to `F1A3EEAF-5B7A-499C-9656DE3E103C8EA9.lex`. Then you can add by uploading it as an extension to your Lucee Administrator.
 
 ## About "Lucee Admin Language Editor"
 
