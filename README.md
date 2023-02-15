@@ -12,7 +12,7 @@ The "Lucee Administrator Language Editor" will generate a password and create th
 
 ## How the "Lucee Admin Language Editor" works
 
-**Resource-File-Generation:** When saving a language, the editor takes the default English language resource file **en.xml** as the master/root file for generating/creating the corresponding resource file. The data is updated with by RegEx-replacements. This ensures that comments, structure and sort order of the data is transported from the master file to the generating files.
+**Resource-File-Generation:** When saving a language, the editor takes the default English language resource file **en.xml** as the master/root file for generating/creating the corresponding resource file. The data is updated by RegEx-replacements. This ensures that comments, structure and sort order of the data is transported from the master file to the generating files.
 
 **Data XML-Encoding/Escaping**: The editor helps creating data and XML-escaping it correctly, following the [XML-Syntax](https://www.w3.org/TR/xml/#syntax) (see also [this stackoverflow post](https://stackoverflow.com/a/28152666/2645359)) . As an example, a string to display the following output to the user:
 
