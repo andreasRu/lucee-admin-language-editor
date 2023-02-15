@@ -10,7 +10,7 @@ To run "Lucee Administrator Language Editor" locally you only need [CommandBox](
 
 ## How the "Lucee Admin Language Editor" works
 
-This are some of the main functionalities that the Lucee Admin Language Editor offers:
+These are some of the main functionalities that the Lucee Admin Language Editor offers:
 
 - **Password and Password.txt Generation:** The "Lucee Administrator Language Editor" will generate a password and create the password.txt for you: When logging into the "Server Administrator" on the first time, just click on the "import" button. 
 
