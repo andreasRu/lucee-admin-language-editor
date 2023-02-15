@@ -6,11 +6,9 @@ A simple editor that helps adding new languages and translations to Lucee Admini
 
 To run "Lucee Administrator Language Editor" locally you only need [CommandBox](https://www.ortussolutions.com/products/commandbox) as the only dependency. As soon as you have CommandBox installed and this repository downloaded/cloned to your local development machine and run **server.bat** (win) or **server.sh** (mac & linux).
 
-The "Lucee Administrator Language Editor" will generate a password and create the password.txt for you: When logging into the "Server Administrator" on the first time, just click on the "import" button.
-
-**Important:** You need to log into the "Server Administrator" first to make the "View in Server-/Web-Administrator"-Buttons work.
-
 ## How the "Lucee Admin Language Editor" works
+
+**Password and Password.txt Generation:** The "Lucee Administrator Language Editor" will generate a password and create the password.txt for you: When logging into the "Server Administrator" on the first time, just click on the "import" button. **Important:** You need to log into the "Server Administrator" first to make the "View in Server-/Web-Administrator"-Buttons work correctly.
 
 **Resource-File-Generation:** When saving a language, the editor takes the default English language resource file **en.xml** as the master/root file for generating/creating the corresponding resource file. The data is updated by RegEx-replacements. This ensures that comments, structure and sort order of the data is transported from the master file to the generating files.
 
