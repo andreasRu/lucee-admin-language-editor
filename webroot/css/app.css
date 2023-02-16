@@ -1,4 +1,6 @@
 @charset "UTF-8";
+/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select{margin:0}html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}img,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}
+
 
 body,
 table {
@@ -38,6 +40,7 @@ table {
     text-align: center;
     color: #ffffff91;
     cursor: pointer;
+    z-index: 3;
 }
 
 
@@ -51,14 +54,19 @@ table {
 }
 
 .langEditor textarea {
-    height: 100%;
-    width: 95%;
-    min-width: 20rem;
+    bottom: 0;
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    /* min-width: 20rem; */
     min-height: 5rem;
     white-space: pre;
     overflow-wrap: normal;
     overflow-x: auto;
-    padding: 0.4rem;
+    /* padding: 0.4rem; */
+   /* margin-right: 3rem; */
 }
 
 .langEditor th {
@@ -133,6 +141,7 @@ button.enhanced:hover{
     position: absolute;
     display:inline-block;
     right:0;
+    top: 0.1rem;
 }
 
 .propertyCommandsButton,
@@ -157,6 +166,46 @@ button.enhanced:hover{
 .viewSourceButton:before{
 
     content: '\1F50D';
+}
+
+.getXMLCode:before{
+
+    content: '</>';
+}
+
+.modalContainer {
+    position: Fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: none;
+    z-index: 9999;
+    transition: opacity 400ms ease-in;
+    
+}
+
+.modalButton{
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    padding: 0.2rem;
+    font-weight: 700;
+    font-size: 0.5rem;
+    margin: 0.3rem;
+}
+
+.modalMainWrapper {
+    position: fixed;
+    color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #786dbd;
+    border-radius: 1rem;
+    padding: 2rem 1rem;
 }
 
 
@@ -223,6 +272,38 @@ td.keyName {
     position: relative;
 }
 
+td.keyName {
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 0.4rem;
+    position: relative;
+}
+
+td[class^="updateContainer-"]{
+     position: relative;
+     padding-right: 2rem;
+}
+
+.getXMLCode,
+.getXMLCode:hover,
+.getXMLCode:focus,
+.getXMLCode:active,
+.getXMLCode:visited {
+    display: block;
+    margin: 0 0.04rem 1rem;
+    position: relative;
+    z-index: 3;
+    font-size: 0.6rem;
+    font-weight: 700;
+    background: #c0bae4;
+}
+
+.getXMLCode:hover{
+    background: #b0a4f7;
+    color:black;
+}
+
+
 #forkongithub a {
     background: #000;
     color: #fff;
@@ -281,8 +362,8 @@ textarea.isempty {
     #forkongithub a {
         width: 200px;
         position: fixed;
-        top: 30px;
-        right: -95px;
+        top: 35px;
+        right: -50px;
         transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
         -ms-transform: rotate(45deg);

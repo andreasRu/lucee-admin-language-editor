@@ -1,6 +1,6 @@
 {
   "name": "lucee-admin-language-editor",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "description": "Lucee Administrator Language Editor",
   "main": "app.js",
   "scripts": {
