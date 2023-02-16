@@ -94,7 +94,7 @@
             
             result["error"]=0;
             result["success"]=true;
-            result["contentForHtmlOutput"]= "<textarea style=""width:320px;height:6rem;"" readonly>" & encodeForHTML( xmlSnippet ) & "</textarea>";
+            result["contentForHtmlOutput"]= "<textarea style=""width:80vw;max-width:900px;height:6rem;"" readonly>" & encodeForHTML( xmlSnippet ) & "</textarea>";
             LangEditorService.outputAsJson( result );
             
         }

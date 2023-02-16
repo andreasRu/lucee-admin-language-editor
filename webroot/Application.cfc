@@ -1,7 +1,7 @@
 component {
 
 
-    this.appversion="0.0.9";
+    this.appversion="1.0.0";
     this.name = "adminTranslator#server.lucee.version#-#this.appversion#";
 	this.clientmanagement="no";
 	this.scriptprotect="all";
