@@ -28,14 +28,14 @@ Example:
 Needs an HTML-Code saved as follows:
 
 ```html
-Example:&lt;br&gt;
+Example:<br>
 &lt;cfmail subject=sub from="#f#" to="#t#"/&gt;
 ```
 
 Because the HTML snippet above needs to be safely XML encoded/escaped, the editor saves the data as:
 
 ```html
-<data key="some.example.property">Example:&amp;lt;br&amp;gt;
+<data key="some.example.property">Example:&lt;br&gt;
 &amp;lt;cfmail subject=sub from="#f#" to="#t#"/&amp;gt;</data>
 ```
 
