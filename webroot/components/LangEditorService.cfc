@@ -1,7 +1,7 @@
 /**********************************************************
 *  LangEditorService.cfc: 
 *  A component used for creating and editing the language 
-*  resource XML files used in the Lucee admininistrator. 
+*  resource JSON files used in the Lucee admininistrator. 
 *  License: MIT License  
 *  (c)2023 C. Andreas Rüger
 *  https://github.com/andreasRu/lucee-admin-language-editor
@@ -18,32 +18,14 @@ component {
         if ( !directoryExists( ".." & this.workingDir ) ){
             directoryCreate( ".." & this.workingDir );
         }
-        this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin";
+        this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context/context/admin";
         this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
         this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
 
         return this;
     }
 
-    /*********  
-    *
-    *  An alternative encoding of encodeForXML (specifically XML 1.0) simplified
-    *  See: https://stackoverflow.com/a/28152666/2645359 https://www.w3.org/TR/xml/#syntax
-    *
-    *********/
-    public string function encodeXML( string value required ) localmode=true {
-        
-        result=replace( arguments.value, "&", "&amp;", "All"); // this MUST go first!!!
-        result=replace( result, "<", "&lt;", "All");
-        result=replace( result, ">", "&gt;", "All");
-        // apostrophes and quotes are allowed in tag bodies (values), so lets add it, 
-        // so the same function may be used for attributes
-        result=replace( result, """", "&quot;", "All");
-        result=replace( result, "'", "&apos;", "All");
-        
-        return result;
-    }
-
+    
      /*********  
     *
     *  Create a languageSwitcher for fast access loading the language file in the logged in Admin
@@ -56,7 +38,10 @@ component {
         languagesArray=getLanguagesAvailableInWorkingData();
 
         // this is done on each init, but only if languageSwitcher has not been deployed already
-        if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) ){
+        if ( !fileExists( this.adminResourcePath & "/languageSwitcher.cfm" ) 
+             || !fileExists( this.adminResourcePath & "/admin_layout.cfm" ) 
+             || !fileExists( this.adminResourcePath & "/resources/text.cfm" ) 
+             ){
 
             fileCopy(   source= expandPath("./") & "adminDeploy/languageSwitcher.cfm", 
             destination=this.adminResourcePath & "/languageSwitcher.cfm" );
@@ -64,7 +49,10 @@ component {
             fileCopy(   source= expandPath("./") & "adminDeploy/admin_layout.cfm", 
             destination=this.adminResourcePath & "/admin_layout.cfm" );
 
-            fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/5.3/core/src/main/cfml/context/admin/resources/text.cfm", 
+            directoryCreate(this.adminResourcePath & "/resources");
+            directoryCreate(this.adminResourcePath & "/resources/language");
+            
+            fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/text.cfm", 
             destination=this.adminResourcePath & "/resources/text.cfm" );
 
             createPasswordFile();
@@ -77,9 +65,9 @@ component {
         // this is done on each init, and on load
         for ( language in languagesArray ){
 
-            fileCopy(   source= this.workingDir & "#sanitizeFilename( language )#.xml", 
-            destination=this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml" );
-            result[ "languagesPulledToAdmin" ][ language ]= this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.xml";
+            fileCopy(   source= this.workingDir & "#sanitizeFilename( language )#.json", 
+            destination=this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.json" );
+            result[ "languagesPulledToAdmin" ][ language ]= this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.json";
          }
 
         result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
@@ -115,12 +103,12 @@ component {
     }
 
     
-    public string function getXMLCodeSnippet( required string dataPropertyName, required string dataPropertyValue  ) localmode=true {
+    public string function getJSONCodeSnippet( required string dataPropertyName, required string dataPropertyValue  ) localmode=true {
            
             result="";
             
             if( arguments.dataPropertyValue != "" ){
-                    result="<data key=""" & encodeXML( dataPropertyName ) & """>" & encodeXML( dataPropertyValue ) & "</data>";
+                    result="Property Path: """ & dataPropertyName & """:" & chr(10) & chr(10) & serializeJSON( dataPropertyValue ) ;
                 }else{
                     result="";
             }
@@ -140,7 +128,7 @@ component {
         local.pageCFMLFactory=local.pageContext.getCFMLFactory();
         local.pageCFMLFactoryConfig=local.pageCFMLFactory.getConfig();
 
-        //get the Servlets configuration and initial Parameters (e.g. set in Tomcats conf/web.xml)
+        //get the Servlets configuration and initial Parameters (e.g. set in Tomcats conf/web.json)
         local.servletConfig = getpagecontext().getServletConfig();
         local.servletInitParamNames = servletConfig.getInitParameterNames();
 
@@ -193,75 +181,53 @@ component {
 	
     public array function getAvailableLanguagesInLuceeGitSource() {
         
-        return [ "de","en","nl","ch-be","es" ];
+        return [ "de","en", "es" ];
+       
     }
+
+
+    
+    public struct function convertXMLLanguageToJson( langName ) localmode=true {
+        
+        langNameData  = getWorkingDataForLanguageByLettercode( langName );
+
+        dump( langNameData );
+        abort;
+    }
+
 
    
 
    
 
     /**
-	 * Loads the default English xml file and updates the inner data by RegEx-Replacements
+	 * Loads the default English json file and updates the inner data by RegEx-Replacements
      * in order to keep comments and order of the original English default file as it is.
 	 */
     public void function createUpdateWorkingLanguageResourceFile( string languageCode required,  struct formObject ) localmode=true {
 
-        //make sure an english version exists
-        if( !fileExists( this.workingDir & "en.xml") ){ 
-            if( !fileExists(  this.workingDir & "en.xml") ){ 
-                pullLangResourcesFromGithubToWorkingDirectory( "en" );
-            }
-           
-        }
-        
-        dataXML= getWorkingDataForLanguageByLettercode( "en" );
-        
-        // languageTagName=getAvailableJavaLocalesAsStruct(); // not used?
-        StructUpdate( dataXML[ "xmlRoot" ][ "XmlAttributes" ], "key", arguments.languageCode );
-        StructUpdate( dataXML[ "xmlRoot" ][ "XmlAttributes" ], "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode] );
-        
-        // Read original content from english file
-        masterXMLFileContent=fileRead( this.workingDir & "en.xml" );
-        
-        // Strip Comment
-        if( arguments.languageCode!="en" ){ 
-            masterXMLFileContent=replaceNoCase( masterXMLFileContent, "<!-- this file contains the English/default language definition for the Admin March-2013 !-->","" )
-        }
-
-        // get the data content of the file
-        refindArray= masterXMLFileContent.refind("(?m)<language .*?>(.*)?</language>?",1,true, "all");
-        if( refindArray[1]["len"][1] gt 0 ){
-            dataKeysXMLCode=refindArray[1]["match"][2];
-        }else{
-            // original has no data, set content as empty string
-            dataKeysXMLCode="";
-        }
+ 
+        dataJSON= [:];
+        StructInsert( dataJSON, "key", arguments.languageCode );
+        StructInsert( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode] );
+        StructInsert( dataJSON, "data", {});
 
         // iterate formobject and replace the data
         if( structKeyExists( arguments, "formObject") ){
             KeyNames= arguments.formObject.fieldnames;
-            for( name in local.KeyNames ){
-
-                keyName=replaceNoCase( name, "~", ".", "All" );
-                keyNameAsRegex=replaceNoCase( name, "~", "\.", "All" );
-                regex="(?m)<data key=""" & keyNameAsRegex & """.*?>.*?</data>";
-                replaceStringWith=getXMLCodeSnippet( keyName, form[ name ] ); 
-                dataKeysXMLCode=reReplaceNoCase( dataKeysXMLCode, regex, replaceStringWith );
-       
-                }
+            
+            for( keyname in local.KeyNames ){
+                property=replaceNoCase( keyname, "~", ".", "all");
+                    if( form[ keyname ]!="" ){
+                    StructAppend( dataJSON.data, { "#property#" : form[ keyname ] } );
+                    structkeytranslate( dataJSON.data );
+                    }
+                
+            }
         }
 
-        
-        savecontent variable="xmlCode"{ 
-            echo( "<?xml version=""1.0"" encoding=""UTF-8""?>" & chr(10) & 
-                "    <!-- File generated by Lucee Admin Language Editor " & this.version & " (Please visit: https://github.com/andreasRu/lucee-admin-language-editor) -->" & chr(10) & 
-                "        <language key=""" & encodeXML( dataXML.XmlRoot.XmlAttributes.key ) & """ label=""" & encodeXML( dataXML.XmlRoot.XmlAttributes.label ) & """>" & chr(10) & 
-                                    dataKeysXMLCode & chr(10) & 
-                "        </language>"
-            )
-        }
-
-        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.xml",  xmlCode, "utf-8" );
+      
+        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeJSON( dataJSON ) , "utf-8" );
         
         pullResourceFileToWebAdmin( arguments.languageCode );
         
@@ -269,42 +235,22 @@ component {
 
     
     
-    public any function downloadFileXML( string languageCode required ) localmode=true {
+    public any function downloadFileJSON( string languageCode required ) localmode=true {
     
-        if( fileExists( this.workingDir & sanitizeFilename( arguments.languageCode ) & ".xml") ){
+        if( fileExists( this.workingDir & sanitizeFilename( arguments.languageCode ) & ".json") ){
             cfheader( 
                 name="Content-Disposition", 
-                value="attachment; filename=#sanitizeFilename( arguments.languageCode )#.xml"
+                value="attachment; filename=#sanitizeFilename( arguments.languageCode )#.json"
             );
             cfcontent( 
-                type = "text/xml", 
-                file = this.workingDir & sanitizeFilename( arguments.languageCode ) & ".xml",
+                type = "text/json", 
+                file = this.workingDir & sanitizeFilename( arguments.languageCode ) & ".json",
                 deleteFile = "no" 
             );
         }
         
     }
 
-    
-
-    /**
-	 * returns XML data of an imported language resource file as a struct
-	 */
-	public struct function parseXMLDataToStruct( struct XMLData required ) localmode=true {
-		parsedXMLResult=[:];
-        parsedXMLResult["XmlRoot.XmlComment"]=arguments.XMLData.XmlRoot.XmlComment;
-		parsedXMLResult["XmlRoot.XmlAttributes.key"]=arguments.XMLData.XmlRoot.XmlAttributes.key;
-		parsedXMLResult["XmlRoot.XmlAttributes.label"]=arguments.XMLData.XmlRoot.XmlAttributes.label;
-		parsedXMLResult["XmlRoot.XmlAttributes.KeyData"]={};
-		loop array="#arguments.XMLData.XmlRoot.XmlChildren#" index="itemChildrenKey" {
-
-		 	keyName=itemChildrenKey["XmlAttributes"]["key"];
-		 	parsedXMLResult["XmlRoot.XmlAttributes.KeyData"][ keyName ]=itemChildrenKey.XmlText;
-
-		}
-
-		return parsedXMLResult;
-	}
 
 	
 	/**
@@ -346,14 +292,14 @@ component {
 	public void function pullLangResourcesFromGithubToWorkingDirectory( string lang required ) localmode=true {
 
         for ( language in listToArray( arguments.lang ) ) { 
-            fileCopy(   source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.xml", 
-            destination=this.workingDir & "#language#.xml" );
+            fileCopy(   source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.json", 
+            destination=this.workingDir & "#language#.json" );
         }
 
-        if( !fileExists(  this.workingDir & "en.xml" ) ){ 
+        if( !fileExists(  this.workingDir & "en.json" ) ){ 
             fileCopy( 
-            source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/en.xml", 
-            destination= this.workingDir & "en.xml" );
+            source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/en.json", 
+            destination= this.workingDir & "en.json" );
         }
     }
 
@@ -363,11 +309,11 @@ component {
     public void function pullResourceFileToWebAdmin( string language required ) localmode=true {
 
         adminResourceLanguagePath= this.adminResourcePath & "/resources/language"
-        if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.xml") ){ 
+        if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.json") ){ 
 
             fileCopy( 
-                source=this.workingDir & "#sanitizeFilename( arguments.language )#.xml", 
-                destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.xml" 
+                source=this.workingDir & "#sanitizeFilename( arguments.language )#.json", 
+                destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.json" 
             );
 
         }
@@ -384,7 +330,7 @@ component {
    
    public array function getAvailableLangLocalesInWorkingDir() localmode=true {
 
-        cfdirectory( directory=this.workingDir, action="list", name="filequery", filter="*.xml");
+        cfdirectory( directory=this.workingDir, action="list", name="filequery", filter="*.json");
         result=[];
         for ( file in filequery ) { 
             result.append( listFirst( file.name, "." ) );
@@ -411,8 +357,8 @@ component {
         }
 
         for ( language in langFilesToDelete ) { 
-           if( fileExists(  this.workingDir & "#sanitizeFilename( language )#.xml") ){ 
-                fileDelete( this.workingDir & "#sanitizeFilename( language )#.xml" );
+           if( fileExists(  this.workingDir & "#sanitizeFilename( language )#.json") ){ 
+                fileDelete( this.workingDir & "#sanitizeFilename( language )#.json" );
             }
             
         }
@@ -435,18 +381,51 @@ component {
 
    
     /**
-	* returns XML data of a language resource file as a struct
+	* returns JSON data of a language resource file as a struct
 	*/
 	public struct function getWorkingDataForLanguageByLettercode( string languageISOLetterCode required ) localmode=true {
+        myJson=[:];
+        if( fileExists( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.json" ) ){
+        
+            jsonString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.json", "UTF-8" );
+        
+        }else{
 
-        myXML=[:];
-        xmlString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
-        myXML = xmlParse( xmlString );
-        // dump(myXML);
-        // abort;
-         return myXML;
+            myXML=[:];
+            xmlString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
+            myXML = parseXMLDataToStruct( xmlParse( xmlString ) );
+            structkeytranslate( myXML["XmlRoot.XmlAttributes.keyData"] );
+            StructInsert( myJson, "key", arguments.languageISOLetterCode );
+            StructInsert( myJson, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageISOLetterCode] );
+            StructInsert( myJson, "data", myXML["XmlRoot.XmlAttributes.keyData"]);
+            fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.json",  serializeJSON( myJson ) , "utf-8" );
+            abort;
+        
+        }
+        
+        myJson = deserializeJson( jsonString );
+        return myJson;
      
     }
+
+    /**
+	 * returns XML data of an imported language resource file as a struct
+	 */
+	public struct function parseXMLDataToStruct( struct XMLData required ) localmode=true {
+		parsedXMLResult=[:];
+        parsedXMLResult["XmlRoot.XmlComment"]=arguments.XMLData.XmlRoot.XmlComment;
+		parsedXMLResult["XmlRoot.XmlAttributes.key"]=arguments.XMLData.XmlRoot.XmlAttributes.key;
+		parsedXMLResult["XmlRoot.XmlAttributes.label"]=arguments.XMLData.XmlRoot.XmlAttributes.label;
+		parsedXMLResult["XmlRoot.XmlAttributes.KeyData"]={};
+		loop array="#arguments.XMLData.XmlRoot.XmlChildren#" index="itemChildrenKey" {
+
+		 	keyName=itemChildrenKey["XmlAttributes"]["key"];
+		 	parsedXMLResult["XmlRoot.XmlAttributes.KeyData"][ keyName ]=itemChildrenKey.XmlText;
+
+		}
+
+		return parsedXMLResult;
+	}
 
 
     /**
@@ -462,7 +441,7 @@ component {
 
     
     /**
-	 * iterate all available language resource files  in the working directory return the referenced XML data as a struct
+	 * iterate all available language resource files  in the working directory return the referenced JSON data as a struct
 	 */
 	public struct function getFullWorkingData() localmode=true {
 
@@ -473,7 +452,6 @@ component {
         for ( langName in availableWorkingLanguages ) { 
             
             result[ langName ] = getWorkingDataForLanguageByLettercode( langName );
-            result[ langName ] = parseXMLDataToStruct( result[ langName ] );
             
         }
 
@@ -481,23 +459,39 @@ component {
 
     }
 
+    public struct function getMappedProperties( struct data, prefix = "", propertyStruct = {}) localmode=true {
+        
+        for( key in arguments.data ) {
+          
+            value = data[ key ];
+            
+            if ( isStruct( value ) ) {
+                getMappedProperties( value, prefix & key & ".", propertyStruct );
+            } else {
+                propertyStruct.append( { "#prefix##key#":  value } );
+          }
+        }
+        
+        return propertyStruct;
+      }
+
 
     /**
 	* returns the data struct swtiched in such a manner that languages can be iterated to be shown in table
     * columnes and not in table rows
 	*/
 	public struct function parseDataForTableOutput( struct data required ) localmode=true {
+        
         result={};
-        if( !structIsEmpty( arguments.data ) ){ 
-            for( adminkeyName in arguments.data["en"]["XmlRoot.XmlAttributes.KeyData"] ){ 
-                result[ adminkeyName ][ "en" ]= arguments.data["en"]["XmlRoot.XmlAttributes.KeyData"][ adminkeyName ];
-                for( langCollection in arguments.data ){ 
-                    if( langCollection!="en"){
-                        result[ adminkeyName ][ langCollection ] = arguments.data[ langCollection ]["XmlRoot.XmlAttributes.KeyData"][ adminkeyName ]?:"";
-                    } 
-                } 
-            }       
-        } 
+        
+        if( !structIsEmpty( arguments.data ) ){
+
+            for( langData in arguments.data ) {
+
+                result[ langData ]=getMappedProperties( arguments.data[ langData ]["data"]);
+            
+            }
+        }
 
         return  result;
        

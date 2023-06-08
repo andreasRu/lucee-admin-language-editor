@@ -39,7 +39,7 @@
 
         
 
-        if( url.method == "updateXmlWorkingFile" and structKeyExists( url, "adminLang") ){
+        if( url.method == "updateJsonWorkingFile" and structKeyExists( url, "adminLang") ){
 
             
             LangEditorService.createUpdateWorkingLanguageResourceFile( url.adminlang,  form );
@@ -47,16 +47,16 @@
             result["error"]=0;
             result["success"]=true;
             result["contentForHtmlOutput"]= "";
-            result["ajaxPopulateNotificationFlyingBar"]= "XML-File '#encodeForHTML( url.adminlang )#.xml' saved!";
+            result["ajaxPopulateNotificationFlyingBar"]= "JSON-File '#encodeForHTML( url.adminlang )#.json' saved!";
             LangEditorService.outputAsJson( result );
 
 
         }
 
-        if( url.method == "downloadFileXML" and structKeyExists( url, "downloadLanguageXMLFile") ){
+        if( url.method == "downloadFileJSON" and structKeyExists( url, "downloadLanguageJSONFile") ){
 
             
-            LangEditorService.downloadFileXML( url.downloadLanguageXMLFile );
+            LangEditorService.downloadFileJSON( url.downloadLanguageJSONFile );
             
         }
 
@@ -86,15 +86,15 @@
             
         }
 
-        if( url.method == "getXMLCodeSnippet" ){
+        if( url.method == "getJSONCodeSnippet" ){
 
             formfieldname=listFirst( form.fieldnames, ",")
             name=formfieldname.replaceNoCase( "~", ".", "All" );
-            xmlSnippet=LangEditorService.getXMLCodeSnippet( name, form[ formfieldname ] );
+            jsonSnippet=LangEditorService.getJSONCodeSnippet( name, form[ formfieldname ] );
             
             result["error"]=0;
             result["success"]=true;
-            result["contentForHtmlOutput"]= "<textarea style=""width:80vw;max-width:900px;height:6rem;"" readonly>" & encodeForHTML( xmlSnippet ) & "</textarea>";
+            result["contentForHtmlOutput"]= "<textarea style=""width:80vw;max-width:900px;height:6rem;"" readonly>" & encodeForHTML( jsonSnippet ) & "</textarea>";
             LangEditorService.outputAsJson( result );
             
         }

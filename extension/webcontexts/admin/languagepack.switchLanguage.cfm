@@ -8,4 +8,4 @@ that has been pulled as an original copy from the shipped lucee admin extension 
     </cfscript>
     <cfinclude template="/lucee/admin/resources/text.cfm">
 </cfif>
-<cflocation url="#request.self#" addtoken=false>
+<cflocation url="#request.self#?reinit=true" addtoken=false>

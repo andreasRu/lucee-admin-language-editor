@@ -17,8 +17,18 @@
     <!--- initialize LangEditor Component --->
     <cfset variables.LangEditorService=new components.LangEditorService()>
     <cfset variables.langData= LangEditorService.parseDataForTableOutput( LangEditorService.getFullWorkingData( ) )>
+    <cfset variables.availableLangResourceLanguage=LangEditorService.getLanguagesAvailableInWorkingData()>
+    <!---cfset variables.LangEditorService.convertXMLLanguageToJson("es")--->
+    
+
+    <!--- Pull en.json from github if not in working directory --->
+    <cfif !arrayContains( variables.availableLangResourceLanguage, "en")>
+        <cfset variables.LangEditorService.pullLangResourcesFromGithubToWorkingDirectory("en")>
+        <cflocation URL="index.cfm">
+    </cfif>
+    
     <!--- sort keynames for output --->
-    <cfset variables.adminKeyNameListOrdered=langData.keylist().listSort( "textnocase" )>
+    <cfset variables.adminKeyNameListOrdered=langData["en"].keylist().listSort( "textnocase" )>
     <!--- get languages of resource files available in working folder --->
     <cfset variables.availableLangResourceLanguage=LangEditorService.getLanguagesAvailableInWorkingData()>
     <h1>
@@ -33,11 +43,11 @@
                 <cfset variables.langInLuceeSourceArray=LangEditorService.getAvailableLanguagesInLuceeGitSource()>
                 <option value="">Select resource file</option>
                 <cfloop array="#variables.langInLuceeSourceArray#" item="letterCode">
-                    <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( structKeyExists( availableJavaLocales, letterCode)?availableJavaLocales[ letterCode ]:letterCode )# (#encodeForHTML( letterCode )#.xml)</option>
+                    <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( structKeyExists( availableJavaLocales, letterCode)?availableJavaLocales[ letterCode ]:letterCode )# (#encodeForHTML( letterCode )#.json)</option>
                 </cfloop>
             </select>
             <br>
-            <button disabled class="button" onClick="var lang=$('##selectLangResource').val();if(lang==''){$('##selectLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will download and overwrite any existing \'' + lang + '.xml\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDirAndPullResources&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Pull From Lucee at github</button>
+            <button disabled class="button" onClick="var lang=$('##selectLangResource').val();if(lang==''){$('##selectLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will download and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDirAndPullResources&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Pull From Lucee at github</button>
         </div>
 
         <div class="commandDiv">
@@ -45,12 +55,12 @@
                 <option value="">Start from scratch</option>
                 <cfloop collection="#variables.availableJavaLocales#" item="letterCode">
                     <cfif !langInLuceeSourceArray.contains( lettercode ) && !availableLangResourceLanguage.contains( lettercode ) >
-                        <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( structKeyExists( availableJavaLocales, letterCode)?availableJavaLocales[ letterCode ]:letterCode )# (#encodeForHTML( letterCode )#.xml)</option>
+                        <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML( structKeyExists( availableJavaLocales, letterCode)?availableJavaLocales[ letterCode ]:letterCode )# (#encodeForHTML( letterCode )#.json)</option>
                     </cfif>
                 </cfloop>
             </select>
             <br>
-            <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.xml\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize File</button>
+            <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize File</button>
         </div>
         <cfif !arrayIsEmpty( availableLangResourceLanguage )>
             <div class="commandDiv">
@@ -80,7 +90,7 @@
                         <cfif len( variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ] ) >
                             <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin on last load:</b><br>
                             <cfloop collection="#variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ]#" item="currentKey">
-                                <b>#currentKey#.xml:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["languagesPulledToAdmin"][ currentKey ]#<br>
+                                <b>#currentKey#.json:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["languagesPulledToAdmin"][ currentKey ]#<br>
                             </cfloop>
                         </cfif>
                         <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin during initialization:</b><br>
@@ -106,24 +116,34 @@
                     <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                         <th>
                             #encodeForHTML( structKeyExists( availableJavaLocales, itemLanguageKey)?availableJavaLocales[ itemLanguageKey ]:"" )#</div>
-                            #encodeForHTML( itemLanguageKey )#.xml
+                            #encodeForHTML( itemLanguageKey )#.json
                             <cfif itemLanguageKey == "en">(default)</cfif>
-                                <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateXmlWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'keepOnPage' );">Save Changes to "#itemLanguageKey#.xml"<br> &amp; push to Admin </button>
-                                <a class="button" href="#encodeForHTMLAttribute( "/workingDir/" & encodeforURL( itemLanguageKey ) & ".xml")#" target="_blank">View File XML-Source</a>
-                                <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileXML&downloadLanguageXMLFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
-                                
-                                <form action="lucee/admin/server.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
-                                    <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
-                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin</button> 
-                                </form>
+                                <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save Changes to "#itemLanguageKey#.json"<br> &amp; push to Admin </button>
+                                <a class="button" href="#encodeForHTMLAttribute( "/workingDir/" & encodeforURL( itemLanguageKey ) & ".json")#" target="_blank">View File JSON-Source</a>
+                                <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileJSON&downloadLanguageJSONFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
+                                <cfif getApplicationSettings().singleContext >
+                                    
+                                    <form action="lucee/admin/index.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                        <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
+                                        <button  class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin (Single-Mode)</button> 
+                                    </form>
+                               
+                                <cfelse>
 
-                                <form action="lucee/admin/web.cfm?action=languageSwitcher" method="POST" target="web_#encodeForHTMLAttribute( itemLanguageKey )#">
-                                    <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
-                                    <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin</button> 
-                                 </form>
+                               
+                                    <form action="lucee/admin/server.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                        <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
+                                        <button  class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin (Multi-Mode)</button> 
+                                    </form>
+
+                                    <form action="lucee/admin/web.cfm?action=languageSwitcher" method="POST" target="web_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                        <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
+                                        <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin  (Multi-Mode)</button> 
+                                    </form>
                                 
+                                </cfif>
                                 <cfif itemLanguageKey !== "en">
-                                    <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".xml") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.xml"</button>
+                                    <button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".json") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.json"</button>
                                 </cfif>
                         </th>
                     </cfloop>
@@ -136,18 +156,19 @@
                     <tr id="#itemLanguage#">
                         <td class="keyName">
                             #encodeForHTML( itemLanguage )# 
-                            <div class="propertyCommands">
+                            <!--- Search needs to be adapted to be searchable in JSON --->
+                            <!---div class="propertyCommands">
                                 <a  title="Search '#encodeForHTMLAttribute( itemLanguage)#' in Lucee Admin Source" class="propertyCommandsButton viewSourceButton" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" target="_blank"></a>
                                 <button title="Copy '#encodeForHTMLAttribute( itemLanguage)#' to Clipboard" class="propertyCommandsButton copyButton" href="#variables.LangEditorService.getGithubSourceSearchURL( itemLanguage )#" data-value="#encodeForHTMLAttribute( itemLanguage)#" onClick="window.langUpdater.copyToClipboard( $( this ).attr('data-value') );"></button>
                               
-                            </div>
+                            </div--->
                         </td>
                         <cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
                             <td class="updateContainer-#ucase( itemLanguageKey )#">
                                 <cfset txtareaID="txtarea-#itemLanguageKey#-#replaceNoCase(itemLanguage, ".", "_", "All" )#">
-                                <textarea onChange="window.langUpdater.setEditionAsUnsaved('#encodeForHTMLAttribute(encodeForJavaScript( itemLanguageKey ))#')" <cfif trim( langData[ itemLanguage ][ itemLanguageKey ] ) is "">class="isempty"</cfif> id="#encodeForHTMLAttribute( txtareaID )#" name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#">#encodeForHTML( langData[ itemLanguage ][ itemLanguageKey ] )#</textarea>
+                                <textarea onChange="window.langUpdater.setEditionAsUnsaved('#encodeForHTMLAttribute(encodeForJavaScript( itemLanguageKey ))#')" <cfif !structKeyExists( langData[ itemLanguageKey ], itemLanguage ) or  trim( langData[ itemLanguageKey  ][ itemLanguage ] ) is "">class="isempty"</cfif> id="#encodeForHTMLAttribute( txtareaID )#" name="#encodeForHTMLAttribute( replaceNoCase(itemLanguage, ".", "~", "All" ) )#"><cfif structKeyExists( langData[ itemLanguageKey ], itemLanguage )>#encodeForHTML( langData[ itemLanguageKey ][ itemLanguage ] )#</cfif></textarea>
                                 <div class="propertyCommands">
-                                   <button title="Get XML-Code Snippet for '#encodeForHTMLAttribute( itemLanguage)# (#ucase( itemLanguageKey )#)'" class="propertyCommandsButton getXMLCode" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getXMLCodeSnippet&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'POST', '###encodeForHTMLAttribute( encodeForJavascript( txtareaID ))#', '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });"></button>
+                                   <button title="Get JSON-Code Snippet for '#encodeForHTMLAttribute( itemLanguage)# (#ucase( itemLanguageKey )#)'" class="propertyCommandsButton getJSONCode" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getJSONCodeSnippet&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'POST', '###encodeForHTMLAttribute( encodeForJavascript( txtareaID ))#', '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });"></button>
                                 </div>
                             </td>
                         </cfloop>
