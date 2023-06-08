@@ -433,7 +433,7 @@ component {
 	*/
 	public string function getGithubSourceSearchURL( string adminProperty required ) localmode=true {
 
-         return "https://github.com/search?q=#encodeForHTMLAttribute( encodeForURL( arguments.adminProperty ) )#+repo%3Alucee%2FLucee+path%3A%2Fcore%2Fsrc%2Fmain%2Fcfml%2Fcontext%2Fadmin%2F&type=Code&ref=advsearch&l=&l=";
+         return "https://github.com/search?q=#encodeForHTMLAttribute( encodeForURL( arguments.adminProperty ) )#+repo%3Alucee%2FLucee+path%3A%2Fcore%2F&type=Code&ref=advsearch&l=&l=";
      
     }
 
