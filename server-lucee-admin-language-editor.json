@@ -11,6 +11,6 @@
         "webroot":"./webroot/"
     },
     "app":{
-        "cfengine":"https://update.lucee.org/rest/update/provider/forgebox/6.0.0.444-SNAPSHOT"
+        "cfengine":"https://update.lucee.org/rest/update/provider/forgebox/6.0.0.450-SNAPSHOT"
     }
 }

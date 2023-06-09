@@ -213,14 +213,17 @@ component {
         StructInsert( dataJSON, "data", {});
 
         // iterate formobject and replace the data
+     
         if( structKeyExists( arguments, "formObject") ){
             KeyNames= arguments.formObject.fieldnames;
             
             for( keyname in local.KeyNames ){
                 property=replaceNoCase( keyname, "~", ".", "all");
-                    if( form[ keyname ]!="" ){
+                    if(  arguments.languageCode=="en" 
+                    || ( arguments.languageCode!="en" && form[ keyname ]!="" )){
                     StructAppend( dataJSON.data, { "#property#" : form[ keyname ] } );
                     structkeytranslate( dataJSON.data );
+                        
                     }
                 
             }
@@ -434,7 +437,7 @@ component {
 	public string function getGithubSourceSearchURL( string adminProperty required ) localmode=true {
 
          return "https://github.com/search?q=#encodeForHTMLAttribute( encodeForURL( arguments.adminProperty ) )#+repo%3Alucee%2FLucee+path%3A%2Fcore%2F&type=Code&ref=advsearch&l=&l=";
-     
+     e
     }
 
 
