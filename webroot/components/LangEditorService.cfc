@@ -196,42 +196,84 @@ component {
     }
 
 
-   
+     /**
+	 * Sorts a struct recursively 
+	 */
+    public struct function sortNestedStruct( struct datastruct ) localmode=true {
+        
+        // define sorted struct
+        sortedStruct = [:];
+        
+        // Get the keys of the struct and sort them
+        keys = structKeyArray( arguments.datastruct ).sort( "textnocase" );
+        
+        // Iterate over the sorted keys
+        for (var key in keys) {
+            
+            value = arguments.datastruct[ key ];
+            
+            // If the value is a nested struct, recursively sort it
+            if ( isStruct( value ) ) {
+                value = sortNestedStruct( value );
+            }
+            
+            // Add the key-value pair to the sorted struct
+            sortedStruct[ key ] = value;
+        }
+        
+        return sortedStruct;
+    }
 
    
 
     /**
-	 * Loads the default English json file and updates the inner data by RegEx-Replacements
-     * in order to keep comments and order of the original English default file as it is.
-	 */
+	 * Updates/Saves the data to an ordered formatted JSON
+     * */
     public void function createUpdateWorkingLanguageResourceFile( string languageCode required,  struct formObject ) localmode=true {
 
- 
+        // define variables
         dataJSON= [:];
+        tmpStructuredData=[:];
+
+        // add language header
         StructInsert( dataJSON, "key", arguments.languageCode );
         StructInsert( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode] );
-        StructInsert( dataJSON, "data", {});
+        StructInsert( dataJSON, "data", [:]);
 
         // iterate formobject and replace the data
-     
         if( structKeyExists( arguments, "formObject") ){
-            KeyNames= arguments.formObject.fieldnames;
             
-            for( keyname in local.KeyNames ){
+            // get a sprted list of all form keys
+            KeyNames= arguments.formObject.fieldnames.listToArray(",").sort("textnocase");
+           
+
+            // iterate keys of form object
+            for( keyname in KeyNames ){
                 property=replaceNoCase( keyname, "~", ".", "all");
+                    // english version of JSON needs to be always complete, even with empty strings
                     if(  arguments.languageCode=="en" 
-                    || ( arguments.languageCode!="en" && form[ keyname ]!="" )){
-                    StructAppend( dataJSON.data, { "#property#" : form[ keyname ] } );
-                    structkeytranslate( dataJSON.data );
-                        
+                        || ( arguments.languageCode!="en" && form[ keyname ]!="" )){
+                        StructAppend( dataJSON.data, { "#property#" : form[ keyname ] } );
                     }
-                
-            }
+                }
         }
 
-      
-        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeJSON( dataJSON ) , "utf-8" );
+        // translate path keynames to a deep struct 
+        structkeytranslate( dataJSON.data );
+
+        // sort the struct
+        tmpStructuredData= sortNestedStruct( dataJSON.data );
+        dataJSON.data=tmpStructuredData;
         
+        // prettify JSON
+        prettifier = createObject( "java", "com.google.gson.GsonBuilder", "/../libs/gson-2.10.1.jar" )
+                    .init()
+                    .setPrettyPrinting()
+                    .create();
+        
+        formattedJson=prettifier.toJson( dataJSON );
+        
+        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  formattedJson , "utf-8" );
         pullResourceFileToWebAdmin( arguments.languageCode );
         
     }
