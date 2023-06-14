@@ -6,20 +6,14 @@
         };   
         cfcookie(name = "lucee_admin_lang" value= "#form.lang#");
         session.lucee_admin_lang = "#form.lang#";
-        if( structKeyExists( cookie, "LUCEE_ADMIN_LASTPAGE"  )){
-            actionStr="&action=#encodeForURL( cookie.LUCEE_ADMIN_LASTPAGE )#";
-        }else{
-            actionStr="";
-        }
-        
         include template="resources/text.cfm";
         
         if(getApplicationSettings().singleContext) {
-            location url="index.cfm?reinit=true#actionStr#" addtoken="no";
+            location url="index.cfm?action=overview&amp;reinit=true" addtoken="no";
         }
         else {
            
-            location url="#request.adminType#.cfm?reinit=true#actionStr#" addtoken="no";
+            location url="#request.adminType#.cfm?action=overview&amp;reinit=true" addtoken="no";
         }
         
 

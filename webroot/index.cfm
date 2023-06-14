@@ -123,7 +123,7 @@
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileJSON&downloadLanguageJSONFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
                                 <cfif getApplicationSettings().singleContext >
                                     
-                                    <form action="lucee/admin/index.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <form action="lucee/admin/index.cfm?action=languageSwitcher&amp;reinit=true" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
                                         <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
                                         <button  class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin (Single-Mode)</button> 
                                     </form>
@@ -131,12 +131,12 @@
                                 <cfelse>
 
                                
-                                    <form action="lucee/admin/server.cfm?action=languageSwitcher" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <form action="lucee/admin/server.cfm?action=languageSwitcher&amp;reinit=true" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
                                         <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
                                         <button  class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin (Multi-Mode)</button> 
                                     </form>
 
-                                    <form action="lucee/admin/web.cfm?action=languageSwitcher" method="POST" target="web_#encodeForHTMLAttribute( itemLanguageKey )#">
+                                    <form action="lucee/admin/web.cfm?action=languageSwitcher&amp;reinit=true" method="POST" target="web_#encodeForHTMLAttribute( itemLanguageKey )#">
                                         <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
                                         <button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin  (Multi-Mode)</button> 
                                     </form>

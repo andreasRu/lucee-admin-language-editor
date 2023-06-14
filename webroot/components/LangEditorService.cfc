@@ -108,7 +108,11 @@ component {
             result="";
             
             if( arguments.dataPropertyValue != "" ){
-                    result="Property Path: """ & dataPropertyName & """:" & chr(10) & chr(10) & serializeJSON( dataPropertyValue ) ;
+                    dataAsStruct=[:];
+                    dataAsStruct= { "#dataPropertyName#": dataPropertyValue  };
+                    structkeytranslate( dataAsStruct );
+                    result="Property Path: """ & replaceNoCase( dataPropertyName, ".", " => ", "ALL") & """";
+                    result= result & chr(10) & chr(10) & serializeToPrettyJson( dataAsStruct ) ;
                 }else{
                     result="";
             }
@@ -265,17 +269,21 @@ component {
         tmpStructuredData= sortNestedStruct( dataJSON.data );
         dataJSON.data=tmpStructuredData;
         
-        // prettify JSON
-        prettifier = createObject( "java", "com.google.gson.GsonBuilder", "/../libs/gson-2.10.1.jar" )
-                    .init()
-                    .setPrettyPrinting()
-                    .create();
         
-        formattedJson=prettifier.toJson( dataJSON );
-        
-        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  formattedJson , "utf-8" );
+        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeToPrettyJson( dataJSON ) , "utf-8" );
         pullResourceFileToWebAdmin( arguments.languageCode );
         
+    }
+
+    public string function serializeToPrettyJson( struct dataStruct ){
+
+         // prettify JSON
+         prettifier = createObject( "java", "com.google.gson.GsonBuilder", "/../libs/gson-2.10.1.jar" )
+         .init()
+         .setPrettyPrinting()
+         .create();
+
+        return prettifier.toJson( arguments.datastruct );
     }
 
     
