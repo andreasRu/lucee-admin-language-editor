@@ -1,7 +1,7 @@
 /**********************************************************
 *  LangEditorService.cfc: 
 *  A component used for creating and editing the language 
-*  resource XML files used in the Lucee admininistrator. 
+*  resource XML files used in the Lucee administrator.
 *  License: MIT License  
 *  (c)2023 C. Andreas Rüger
 *  https://github.com/andreasRu/lucee-admin-language-editor
@@ -423,7 +423,7 @@ component {
 
 
     /**
-	* Function to abstract 2 methos
+	* Function to abstract 2 methods
 	*/
     public void function cleanWorkingDirAndPullResources( lang ) {
 
@@ -483,8 +483,8 @@ component {
 
 
     /**
-	* returns the data struct swtiched in such a manner that languages can be iterated to be shown in table
-    * columnes and not in table rows
+	* returns the data struct switched in such a manner that languages can be iterated to be shown in table
+    * columns and not in table rows
 	*/
 	public struct function parseDataForTableOutput( struct data required ) localmode=true {
         result={};

@@ -9,7 +9,7 @@
 
         app.availableLanguages=getAvailableLanguages();
 
-        // copy original text.cfm from lucee admin to be able to use it as the swticher
+        // copy original text.cfm from lucee admin to be able to use it as the switcher
         if( !fileExists( this.webContextPath & "/admin/resources/text.cfm" )  ){
              cfzip ( action="unzip",
                 destination= this.webContextPath & "/admin/",
