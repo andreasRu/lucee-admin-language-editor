@@ -12,13 +12,14 @@
                             #encodeForHTML( structKeyExists( availableJavaLocales, itemLanguageKey)?availableJavaLocales[ itemLanguageKey ]:"" )#</div>
                             #encodeForHTML( itemLanguageKey )#.json
                             <cfif itemLanguageKey == "en">(default)</cfif>
+                                
                                 <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save Changes to "#itemLanguageKey#.json"<br><cfif !variables.LangEditorService.runningOnlineProductionMode> &amp; push to Admin</cfif></button>
                                 <a class="button" href="#encodeForHTMLAttribute( right( variables.LangEditorService.workingDir, -1) & encodeforURL( itemLanguageKey ) & ".json")#" target="_blank">View File JSON-Source</a>
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileJSON&downloadLanguageJSONFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
                                 
                                 <cfif !variables.LangEditorService.runningOnlineProductionMode>
-                                    <cfif getApplicationSettings().singleContext >
-                                        
+                                    <cfif variables.LangEditorService.isSingleContext>
+                                   
                                         <form action="lucee/admin/index.cfm?action=languageSwitcher&amp;reinit=true" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">
                                             <input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
                                             <button  class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the server admin.' ); event.preventDefault(); };">View in Server Admin (Single-Mode)</button> 

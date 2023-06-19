@@ -17,12 +17,25 @@ component {
         this.workingDir = "/workingDir/#session.tmpDirectoryPath#";
        
 
-        this.runningOnlineProductionMode=application["runningOnlineProductionMode"];
+        this.runningOnlineProductionMode= application["runningOnlineProductionMode"];
+        
+        this.applicationSettings= getApplicationSettings();
+        this.isSingleContext=( structKeyExists( this.applicationSettings, "singleContext" )  && this.applicationSettings.singleContext )?true:false;
+
         
         if( !this.runningOnlineProductionMode ){
 
-            this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context/context/admin";
-            this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
+            if( this.isSingleContext ){
+                
+                this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context/context/admin";
+                this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
+            
+            }else{
+
+                this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin";
+                this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
+          
+            }
             this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
         }
 
@@ -67,9 +80,15 @@ component {
             fileCopy(   source= expandPath("./") & "adminDeploy/admin_layout.cfm", 
             destination=this.adminResourcePath & "/admin_layout.cfm" );
 
-            directoryCreate(this.adminResourcePath & "/resources");
-            directoryCreate(this.adminResourcePath & "/resources/language");
-            
+
+            if( !directoryExists( this.adminResourcePath & "/resources" ) ){
+                directoryCreate( this.adminResourcePath & "/resources" );
+            }
+
+            if( !directoryExists( this.adminResourcePath & "/resources/language" ) ){
+                directoryCreate(this.adminResourcePath & "/resources/language" );
+            }
+           
             fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/text.cfm", 
             destination=this.adminResourcePath & "/resources/text.cfm" );
 
@@ -373,7 +392,7 @@ component {
 
         createWorkingDirectoryIfNotExists();
 
-        for ( language in listToArray( arguments.lang ) ) { 
+        for ( language in listToArray( arguments.lang ) && getAvailableLangLocalesInWorkingDir() <= 2 ) { 
             fileCopy(   source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.json", 
             destination=this.workingDir & "#language#.json" );
         }

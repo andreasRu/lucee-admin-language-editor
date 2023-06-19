@@ -15,6 +15,8 @@ component {
     this.basePath=getDirectoryFromPath( getCurrentTemplatePath() );
     this.mappings["/components"]=this.basePath & "components";
     this.mappings["/ajaxApi"]=this.basePath &  "ajaxApi";
+    
+    
 
 
 
@@ -28,7 +30,7 @@ component {
         // get contributors from github
         cfhttp(method="GET", charset="utf-8", url=" https://api.github.com/repos/andreasRu/lucee-admin-language-editor/contributors", result="result");
         application["contributors"]=DeserializeJSON( result.filecontent );
-
+        
         return true;
 
     }
