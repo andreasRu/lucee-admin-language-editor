@@ -14,15 +14,29 @@ component {
         
         this.version=application.appversion;
         this.luceeSourceUrl="https://raw.githubusercontent.com/lucee/Lucee/6.0";
-        this.workingDir = "/workingDir/";
+        this.workingDir = "/workingDir/#session.tmpDirectoryPath#";
+       
+
+        this.runningOnlineProductionMode=application["runningOnlineProductionMode"];
+        
+        if( !this.runningOnlineProductionMode ){
+
+            this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context/context/admin";
+            this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
+            this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
+        }
+
+        return this;
+    }
+
+
+
+    public void function createWorkingDirectoryIfNotExists() {
+
         if ( !directoryExists( ".." & this.workingDir ) ){
             directoryCreate( ".." & this.workingDir );
         }
-        this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context/context/admin";
-        this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
-        this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
 
-        return this;
     }
 
     
@@ -32,6 +46,10 @@ component {
     *
     *********/
     public struct function deploySwitcherFilesToLuceeAdmin( ) localmode=true {
+
+        if( this.runningOnlineProductionMode ){
+            abort;
+        }
 
         result={};
         result[ "languagesPulledToAdmin" ]={};
@@ -63,8 +81,9 @@ component {
         }
 
         // this is done on each init, and on load
-        for ( language in languagesArray ){
 
+        for ( language in languagesArray ){
+            
             fileCopy(   source= this.workingDir & "#sanitizeFilename( language )#.json", 
             destination=this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.json" );
             result[ "languagesPulledToAdmin" ][ language ]= this.adminResourcePath & "/resources/language/#sanitizeFilename( language )#.json";
@@ -185,22 +204,12 @@ component {
 	
     public array function getAvailableLanguagesInLuceeGitSource() {
         
-        return [ "de","en", "es" ];
+        return [ "de","en" ];
        
     }
 
 
-    
-    public struct function convertXMLLanguageToJson( langName ) localmode=true {
-        
-        langNameData  = getWorkingDataForLanguageByLettercode( langName );
-
-        dump( langNameData );
-        abort;
-    }
-
-
-     /**
+    /**
 	 * Sorts a struct recursively 
 	 */
     public struct function sortNestedStruct( struct datastruct ) localmode=true {
@@ -234,6 +243,15 @@ component {
 	 * Updates/Saves the data to an ordered formatted JSON
      * */
     public void function createUpdateWorkingLanguageResourceFile( string languageCode required,  struct formObject ) localmode=true {
+
+        createWorkingDirectoryIfNotExists();
+
+        // Pull source file if still not available
+        if( !fileExists(  this.workingDir & "en.json" ) ){ 
+            fileCopy( 
+            source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/en.json", 
+            destination= this.workingDir & "en.json" );
+        }
 
         // define variables
         dataJSON= [:];
@@ -271,10 +289,17 @@ component {
         
         
         fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeToPrettyJson( dataJSON ) , "utf-8" );
-        pullResourceFileToWebAdmin( arguments.languageCode );
+        
+        if( !this.runningOnlineProductionMode ){
+            pullResourceFileToWebAdmin( arguments.languageCode );
+        }
         
     }
 
+    /**
+	 * Serializes a CFML struct to a JSON output as an alternative to native cfml serialization
+     * for usage of a JSON formatter
+     * */
     public string function serializeToPrettyJson( struct dataStruct ){
 
          // prettify JSON
@@ -287,7 +312,9 @@ component {
     }
 
     
-    
+    /**
+	 * Creates a file download for downloading the resource file 
+     * */
     public any function downloadFileJSON( string languageCode required ) localmode=true {
     
         if( fileExists( this.workingDir & sanitizeFilename( arguments.languageCode ) & ".json") ){
@@ -312,14 +339,14 @@ component {
 	public struct function getAvailableJavaLocalesAsStruct() localmode=true {
 
 		// Get Locale List
-		JavaLocale = CreateObject("java", "java.util.Locale");
-		availableJavaLocalesArray=JavaLocale.getAvailableLocales();
+		JavaLocale = CreateObject( "java", "java.util.Locale" );
+		availableJavaLocalesArray= JavaLocale.getAvailableLocales();
         //dump( JavaLocale );
 		//dump( availableJavaLocalesArray );
 
         // initialize an ordered struct with shorthand [:]
        
-		availableJavaLocalesStruct ={};
+		availableJavaLocalesStruct = {};
         cfloop( array= "#availableJavaLocalesArray#" item="itemLocale" ){
             //echo( dump( [ itemLocale.toLanguageTag(), itemLocale.getDisplayName(), itemLocale.getISO3Language() ] ) );
 			if( len( itemLocale.toLanguageTag() ) == 2 )  {
@@ -329,8 +356,8 @@ component {
 		}
         // sort by locale;
         result=[:];
-        availableJavaLocalesSortedArray=structSort(availableJavaLocalesStruct);
-        for( localeLanguage in availableJavaLocalesSortedArray){
+        availableJavaLocalesSortedArray= structSort( availableJavaLocalesStruct );
+        for( localeLanguage in availableJavaLocalesSortedArray ){
             result.insert( localeLanguage, availableJavaLocalesStruct[ localeLanguage ] );
         }
         
@@ -344,6 +371,8 @@ component {
 	 */
 	public void function pullLangResourcesFromGithubToWorkingDirectory( string lang required ) localmode=true {
 
+        createWorkingDirectoryIfNotExists();
+
         for ( language in listToArray( arguments.lang ) ) { 
             fileCopy(   source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.json", 
             destination=this.workingDir & "#language#.json" );
@@ -356,12 +385,30 @@ component {
         }
     }
 
-    
+    /**
+	 * Pulls the files for a WYSIWYG view into the Lucee Administrator
+	 */
+	
+     public void function abortIfInProduction(){
 
-    
+        if( !this.runningOnlineProductionMode ){
+            abort;
+        }
+       
+        return;
+     }
+
+    /**
+	 * Pulls the files for a WYSIWYG view into the Lucee Administrator
+	 */
+	
     public void function pullResourceFileToWebAdmin( string language required ) localmode=true {
 
+       
+        abortIfInProduction();
+        
         adminResourceLanguagePath= this.adminResourcePath & "/resources/language"
+        
         if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.json") ){ 
 
             fileCopy( 
@@ -374,14 +421,17 @@ component {
     }
 
 
-    
+    // make sure the filename is sanitzed by allowing only alphanumeric characters
     public string function sanitizeFilename( string filename required ) localmode=true {
         return reReplaceNoCase( arguments.filename, "[^a-zA-Z0-9\-]", "", "ALL" );
     }
 
     
    
-   public array function getAvailableLangLocalesInWorkingDir() localmode=true {
+    /**
+    * Returns an array of all available languages in the working directory 
+    */
+    public array function getAvailableLangLocalesInWorkingDir() localmode=true {
 
         cfdirectory( directory=this.workingDir, action="list", name="filequery", filter="*.json");
         result=[];
@@ -396,10 +446,12 @@ component {
 
 
     /**
-	* Clean working directory
+	* Clean/reinit working directory
 	*/
     public void function cleanWorkingDir( string lang="" ) localmode=true {
         
+        createWorkingDirectoryIfNotExists();
+
         if( isEmpty( arguments.lang ) ){
 
            langFilesToDelete=getAvailableLangLocalesInWorkingDir();
@@ -424,7 +476,7 @@ component {
     /**
 	* Function to abstract 2 methos
 	*/
-    public void function cleanWorkingDirAndPullResources( lang ) {
+    public void function cleanWorkingDirAndPullResources( lang ) localmode=true {
 
         cleanWorkingDir( arguments.lang );
         pullLangResourcesFromGithubToWorkingDirectory( arguments.lang );
@@ -434,15 +486,17 @@ component {
 
    
     /**
-	* returns JSON data of a language resource file as a struct
+	* parses JSON/XML (.json/.xml) data from a language resource file to a cfml struct
 	*/
 	public struct function getWorkingDataForLanguageByLettercode( string languageISOLetterCode required ) localmode=true {
+        
         myJson=[:];
+
         if( fileExists( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.json" ) ){
         
             jsonString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.json", "UTF-8" );
         
-        }else{
+        }else if( fileExists( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.xml" ) ){
 
             myXML=[:];
             xmlString = fileread( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.xml", "UTF-8" );
@@ -451,43 +505,27 @@ component {
             StructInsert( myJson, "key", arguments.languageISOLetterCode );
             StructInsert( myJson, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageISOLetterCode] );
             StructInsert( myJson, "data", myXML["XmlRoot.XmlAttributes.keyData"]);
+            
             fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageISOLetterCode )#.json",  serializeJSON( myJson ) , "utf-8" );
-            abort;
+            
+            location("/", "false", "302");;
         
         }
         
         myJson = deserializeJson( jsonString );
+
         return myJson;
      
     }
 
-    /**
-	 * returns XML data of an imported language resource file as a struct
-	 */
-	public struct function parseXMLDataToStruct( struct XMLData required ) localmode=true {
-		parsedXMLResult=[:];
-        parsedXMLResult["XmlRoot.XmlComment"]=arguments.XMLData.XmlRoot.XmlComment;
-		parsedXMLResult["XmlRoot.XmlAttributes.key"]=arguments.XMLData.XmlRoot.XmlAttributes.key;
-		parsedXMLResult["XmlRoot.XmlAttributes.label"]=arguments.XMLData.XmlRoot.XmlAttributes.label;
-		parsedXMLResult["XmlRoot.XmlAttributes.KeyData"]={};
-		loop array="#arguments.XMLData.XmlRoot.XmlChildren#" index="itemChildrenKey" {
-
-		 	keyName=itemChildrenKey["XmlAttributes"]["key"];
-		 	parsedXMLResult["XmlRoot.XmlAttributes.KeyData"][ keyName ]=itemChildrenKey.XmlText;
-
-		}
-
-		return parsedXMLResult;
-	}
-
-
+    
     /**
 	* returns the github advanced source search URL in Lucee admin source for a specific property
 	*/
 	public string function getGithubSourceSearchURL( string adminProperty required ) localmode=true {
 
          return "https://github.com/search?q=#encodeForHTMLAttribute( encodeForURL( arguments.adminProperty ) )#+repo%3Alucee%2FLucee+path%3A%2Fcore%2F&type=Code&ref=advsearch&l=&l=";
-     e
+   
     }
 
 
@@ -512,14 +550,15 @@ component {
 
     }
 
-    public struct function getMappedProperties( struct data, prefix = "", propertyStruct = {}) localmode=true {
+
+    public struct function mapStructToDotPathVariable( struct data, prefix = "", propertyStruct = {}) localmode=true {
         
         for( key in arguments.data ) {
           
             value = data[ key ];
             
             if ( isStruct( value ) ) {
-                getMappedProperties( value, prefix & key & ".", propertyStruct );
+                mapStructToDotPathVariable( value, prefix & key & ".", propertyStruct );
             } else {
                 propertyStruct.append( { "#prefix##key#":  value } );
           }
@@ -541,7 +580,7 @@ component {
 
             for( langData in arguments.data ) {
 
-                result[ langData ]=getMappedProperties( arguments.data[ langData ]["data"]);
+                result[ langData ]=mapStructToDotPathVariable( arguments.data[ langData ]["data"]);
             
             }
         }

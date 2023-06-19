@@ -5,27 +5,50 @@
 body,
 table {
     font-family: Tahoma;
-    background: #9b92d6;
+    background: #c771d6;
     font-size: 0.8rem;
     border-radius: 1rem;
 
 }
 
+.contributors img{
+
+    object-fit: cover; 
+    border-radius:50%;
+    width: 25px;
+    height: 25px;
+    margin:5px 5px 0 0;
+}
+
+body h3{
+    margin-left:0.3rem;
+    color: #050505;
+}
+
+.header{
+    margin: 1rem 1rem 0 1rem;
+}
+
 .commandDivWrapper {
-    background: #9b92d6;
     display: flex;
     justify-content: flex-start;
+    margin-left: 0.3rem;
 }
 
 .commandDiv {
     border-radius: 1rem;
-    background: #786dbd;
+    background: #9c27b0;
     color: white;
     padding: 1rem;
     margin: 1rem 1rem 1rem 0;
     box-shadow: 0px 15px 20px rgb(77 79 78 / 40%);
 }
 
+.commandDiv button.enhanced {
+    color: #ffffff;
+    font-weight: 700;
+    background: black !important;
+}
 
 
 .scrollUpButton{
@@ -71,10 +94,12 @@ table {
 
 .langEditor th {
     padding: 0.5rem;
-    background: darkslateblue;
+    background: #5e156b;
     color: #fff;
     text-align: center;
 }
+
+
 
 .langEditor,
 .langEditor th,

@@ -1,26 +1,23 @@
 <cfscript>
     
-    
-
-
     if( structKeyExists( url, "method" )){
 
+        // load component
         LangEditorService=new components.LangEditorService();
 
        
         if( url.method == "cleanWorkingDirAndPullResources" and structKeyExists( url, "lang") ){
             
             LangEditorService.cleanWorkingDirAndPullResources( url.lang );
+
             result={};
             result["error"]=0;
             result["success"]=true;
             result["contentForHtmlOutput"]= "";
             result["ajaxPopulateNotificationFlyingBar"]= "Resource Files pulled. Reloading page!";
             LangEditorService.outputAsJson( result );
-
-
+        
         }
-
 
 
         if( url.method == "pullToAdmin" and structKeyExists( url, "lang") ){
@@ -33,7 +30,6 @@
             result["contentForHtmlOutput"]= "";
             result["ajaxPopulateNotificationFlyingBar"]= "Language file pushed to Web Administrator.";
             LangEditorService.outputAsJson( result );
-
 
         }
 
@@ -54,10 +50,9 @@
         }
 
         if( url.method == "downloadFileJSON" and structKeyExists( url, "downloadLanguageJSONFile") ){
-
             
             LangEditorService.downloadFileJSON( url.downloadLanguageJSONFile );
-            
+           
         }
 
         if( url.method == "cleanWorkingDir"){
