@@ -472,8 +472,7 @@ component {
     }
 
 
-	* Function to abstract 2 methods
-    /**
+	/**
 	* Function to abstract 2 methos
 	*/
     public void function cleanWorkingDirAndPullResources( lang ) localmode=true {

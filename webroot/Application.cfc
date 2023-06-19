@@ -26,9 +26,7 @@ component {
         application["runningOnlineProductionMode"]=( cgi.http_host=="127.0.0.1:8080" )?false:true;
 
         // get contributors from github
-        cfhttp(method="GET", charset="utf-8", url=" https://api.github.com/repos/andreasRu/lucee-admin-language-editor/contributors", result="result") {
-
-        }
+        cfhttp(method="GET", charset="utf-8", url=" https://api.github.com/repos/andreasRu/lucee-admin-language-editor/contributors", result="result");
         application["contributors"]=DeserializeJSON( result.filecontent );
 
         return true;

@@ -43,7 +43,7 @@
                     <button disabled class="button" onClick="var lang=$('##selectLangResource').val();availableLangs=#encodeForHTMLAttribute( serializeJSON( availableLangResourceLanguage ) )#;if(lang==''){$('##selectLangResource').css({'border':'2px dotted red'})}else{ if( !availableLangs.includes( lang ) || confirm( 'Warning: This will download and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDirAndPullResources&amp;lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Pull From Lucee at github</button>
                 </div>
 
-                <cfif len( availableLangResourceLanguage ) <= 4>
+                <cfif len( availableLangResourceLanguage ) <= 3>
                         
                     <div class="commandDiv">
                         <select name="selectCreateLangResource" id="selectCreateLangResource">
@@ -56,7 +56,7 @@
                         </select>
                         <br>
                         <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();availableLangs=#encodeForHTMLAttribute( serializeJSON( availableLangResourceLanguage ) )#;if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( !availableLangs.includes( lang ) || confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&amp;lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize File</button>
-                        #len( availableLangResourceLanguage )#/4 files
+                        #len( availableLangResourceLanguage )#/3 files
                     </div>
                 </cfif>
                 
