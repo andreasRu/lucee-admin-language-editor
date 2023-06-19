@@ -13,11 +13,11 @@
                             #encodeForHTML( itemLanguageKey )#.json
                             <cfif itemLanguageKey == "en">(default)</cfif>
                                 
-                                <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save Changes to "#itemLanguageKey#.json"<br><cfif !variables.LangEditorService.runningOnlineProductionMode> &amp; push to Admin</cfif></button>
+                                <button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save Changes to "#itemLanguageKey#.json"<br><cfif !variables.LangEditorService.runningOnlineProductionMode  && server.lucee.version gt "6"> &amp; push to Admin</cfif></button>
                                 <a class="button" href="#encodeForHTMLAttribute( right( variables.LangEditorService.workingDir, -1) & encodeforURL( itemLanguageKey ) & ".json")#" target="_blank">View File JSON-Source</a>
                                 <a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileJSON&downloadLanguageJSONFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
                                 
-                                <cfif !variables.LangEditorService.runningOnlineProductionMode>
+                                <cfif !variables.LangEditorService.runningOnlineProductionMode && server.lucee.version gt "6">
                                     <cfif variables.LangEditorService.isSingleContext>
                                    
                                         <form action="lucee/admin/index.cfm?action=languageSwitcher&amp;reinit=true" method="POST" target="server_#encodeForHTMLAttribute( itemLanguageKey )#">

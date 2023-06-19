@@ -27,7 +27,7 @@
         <h1>
         #encodeForHTML( application[ "appTitleName" ] )#
         </h1>
-        <h3 style="margin-left:0.3rem"><i>Let's internationalize Lucee's Admin!</i></h3>
+        <h3 style="margin-left:0.3rem;font-weight:600;"><i>Let's internationalize Lucee's 6.0 Administrator!</i></h3>
         
             <div class="commandDivWrapper">
                     
@@ -78,7 +78,8 @@
                     </div>
                 </div>
                 
-                <cfif !variables.LangEditorService.runningOnlineProductionMode>
+                <cfif !variables.LangEditorService.runningOnlineProductionMode 
+                && server.lucee.version gt "6">
 
                 <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
                     <div>

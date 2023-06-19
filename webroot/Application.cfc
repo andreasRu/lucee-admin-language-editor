@@ -1,6 +1,5 @@
 component {
-
-
+    
     this.appversion="2.0.1";
     this.name = "adminTranslator#server.lucee.version#-#this.appversion#";
 	this.clientmanagement="no";
@@ -63,7 +62,16 @@ component {
         if( !application["runningOnlineProductionMode"] ){
 
             // show full error dump
-            echo( dump( arguments.exception ) );
+            content reset = "true";
+            cfheader( statuscode="500" statustext="Internal Server Error" );
+            echo( "An internal Server Error has occured. 500 Error.<hr>" );
+            echo( "Message: <b>" & replaceNoCase( arguments.exception.message, expandPath(".."), "", "ALL" ) & "</b><br><br>" );
+            echo( "Type of Exception: <b>" & encodeForHtml(  arguments.exception.type )  & "</b><br><br>" );
+                
+            for( TagContextError in  arguments.exception.TagContext ){
+                echo( "<i>" & TagContextError.codePrintHTML & "</i><br>" );
+                echo( "Template: <b>" & replaceNoCase( TagContextError.template, expandPath(".."), "", "ALL" ) & "</b><br><br>" );
+            }
 
         }else{
 

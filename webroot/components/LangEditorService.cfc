@@ -22,22 +22,29 @@ component {
         this.applicationSettings= getApplicationSettings();
         this.isSingleContext=( structKeyExists( this.applicationSettings, "singleContext" )  && this.applicationSettings.singleContext )?true:false;
 
-        
-        if( !this.runningOnlineProductionMode ){
+       
+        if( !this.runningOnlineProductionMode && server.lucee.version gt "6" ){
 
+          
             if( this.isSingleContext ){
-                
+           
+               
+
                 this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context/context/admin";
                 this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
-            
+                this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
+
+
             }else{
 
                 this.adminResourcePath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-web-directory"] & "/context/admin";
                 this.adminServerContextPath=getServerWebContextInfoAsStruct()["servletInitParameters"]["lucee-server-directory"] & "/lucee-server/context";
-          
+                this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
+
+
             }
-            this.loadedAdminFiles = deploySwitcherFilesToLuceeAdmin();
         }
+        
 
         return this;
     }
@@ -60,6 +67,7 @@ component {
     *********/
     public struct function deploySwitcherFilesToLuceeAdmin( ) localmode=true {
 
+        
         if( this.runningOnlineProductionMode ){
             abort;
         }
@@ -85,10 +93,9 @@ component {
                 directoryCreate( this.adminResourcePath & "/resources" );
             }
 
-            if( !directoryExists( this.adminResourcePath & "/resources/language" ) ){
-                directoryCreate(this.adminResourcePath & "/resources/language" );
-            }
-           
+            // fileCopy(   source= expandPath("./") & "adminDeploy/text.cfm" , 
+                // destination=this.adminResourcePath & "/resources/text.cfm" );
+
             fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/text.cfm", 
             destination=this.adminResourcePath & "/resources/text.cfm" );
 
@@ -100,6 +107,12 @@ component {
         }
 
         // this is done on each init, and on load
+
+        // make sure the lang directory exists
+        if( !directoryExists( this.adminResourcePath & "/resources/language" ) ){
+            directoryCreate(this.adminResourcePath & "/resources/language" );
+        }
+
 
         for ( language in languagesArray ){
             
@@ -306,10 +319,9 @@ component {
         tmpStructuredData= sortNestedStruct( dataJSON.data );
         dataJSON.data=tmpStructuredData;
         
-        
         fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeToPrettyJson( dataJSON ) , "utf-8" );
         
-        if( !this.runningOnlineProductionMode ){
+        if( !this.runningOnlineProductionMode && server.lucee.version gt "6" ){
             pullResourceFileToWebAdmin( arguments.languageCode );
         }
         
@@ -392,9 +404,12 @@ component {
 
         createWorkingDirectoryIfNotExists();
 
-        for ( language in listToArray( arguments.lang ) && getAvailableLangLocalesInWorkingDir() <= 2 ) { 
+
+        for ( language in listToArray( arguments.lang ) ) { 
+            
             fileCopy(   source="#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.json", 
             destination=this.workingDir & "#language#.json" );
+            
         }
 
         if( !fileExists(  this.workingDir & "en.json" ) ){ 
@@ -426,15 +441,18 @@ component {
        
         abortIfInProduction();
         
-        adminResourceLanguagePath= this.adminResourcePath & "/resources/language"
+        if( server.lucee.version gt "6" ){
         
-        if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.json") ){ 
+            adminResourceLanguagePath= this.adminResourcePath & "/resources/language"
+            
+            if( fileExists(  this.workingDir & "#sanitizeFilename( arguments.language )#.json") ){ 
 
-            fileCopy( 
-                source=this.workingDir & "#sanitizeFilename( arguments.language )#.json", 
-                destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.json" 
-            );
+                fileCopy( 
+                    source=this.workingDir & "#sanitizeFilename( arguments.language )#.json", 
+                    destination="#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.json" 
+                );
 
+            }
         }
         
     }
