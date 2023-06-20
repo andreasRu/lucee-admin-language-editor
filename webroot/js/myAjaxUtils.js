@@ -7,306 +7,306 @@ import $ from 'jquery';
 
 export const myAjaxUtils= {
 
-    buildPayLoad: (
-        ajaxURL,
-        httpMethod,
-        selectorFormFields,
-        selectorContentResult,
-        jqueryHTMLCommand,
-        callback ) => {
-        let formMethod = httpMethod;
-       
+	buildPayLoad: (
+		ajaxURL,
+		httpMethod,
+		selectorFormFields,
+		selectorContentResult,
+		jqueryHTMLCommand,
+		callback ) => {
+		let formMethod = httpMethod;
+	   
 
-        $( '#loadingSpinner' ).show();
-        
-        
-        if ( httpMethod == "POST" ) {
-            //get all form data 
-            let formData = new FormData();
-            let itemsProcessed = 0;
-            let $selector = $( selectorFormFields );
-           
-            $selector.each( ( index, obj ) => {
-                console.log( 'adding Fields name:' + $(obj).attr('name') + ' value:' + $(obj).val() );
-                itemsProcessed++;
+		$( '#loadingSpinner' ).show();
+		
+		
+		if ( httpMethod == "POST" ) {
+			//get all form data 
+			let formData = new FormData();
+			let itemsProcessed = 0;
+			let $selector = $( selectorFormFields );
+		   
+			$selector.each( ( index, obj ) => {
+				console.log( 'adding Fields name:' + $(obj).attr('name') + ' value:' + $(obj).val() );
+				itemsProcessed++;
 
-                let type = $( obj )
-                    .attr( 'type' );
+				let type = $( obj )
+					.attr( 'type' );
 
-                if ( type != "checkbox" || ( type = "checkbox" && $( obj )
-                        .is( ':checked' ) ) ) {
-                    formData.append( $( obj )
-                        .attr( 'name' ), $( obj )
-                        .val() );
-                }
+				if ( type != "checkbox" || ( type = "checkbox" && $( obj )
+						.is( ':checked' ) ) ) {
+					formData.append( $( obj )
+						.attr( 'name' ), $( obj )
+						.val() );
+				}
 
-                
-               
+				
+			   
 
-                /* if because of async calls, call only when finished */
-                if ( itemsProcessed === $selector.length ) {
+				/* if because of async calls, call only when finished */
+				if ( itemsProcessed === $selector.length ) {
 
-                    myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, formData, callback )
+					myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, formData, callback )
 
-                        .done( function ( result ) {
+						.done( function ( result ) {
 
-                           //console.log('#populateDatass');
-                           //console.log( [result , ajaxURL, formMethod, formData ] );
-                            myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
-                
-                        } );
+						   //console.log('#populateDatass');
+						   //console.log( [result , ajaxURL, formMethod, formData ] );
+							myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
+				
+						} );
 
-                       
-                }
-
-
-            } );
-
-        } else if ( httpMethod == "GET" ){
-           
-            myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, undefined )
-                .done( function ( result ) {
-                    
-                    console.log('#######populateDatas GET');
-                    myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
-                   
-                } );
-        }
-
-    },
+					   
+				}
 
 
-    populateDOMWithContent: ( result, selectorContentResult, jqueryHTMLCommand, callback ) => {
+			} );
 
-        console.log('#### populated function populateDOMWithContent:');
-        console.log(result, selectorContentResult, jqueryHTMLCommand );
-        
-        if ( jqueryHTMLCommand == "append" 
-                && result.contentForHtmlOutput ) {
-                
-                    $( selectorContentResult )
-                    .append( result.contentForHtmlOutput );
-                    $( '#loadingSpinner' ).hide();
-                    
-                
-            
-        } else if ( jqueryHTMLCommand == "prepend"  
-        && result.contentForHtmlOutput) {
+		} else if ( httpMethod == "GET" ){
+		   
+			myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, undefined )
+				.done( function ( result ) {
+					
+					console.log('#######populateDatas GET');
+					myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
+				   
+				} );
+		}
 
-        $( selectorContentResult )
-        .prepend( result.contentForHtmlOutput );
-        $( '#loadingSpinner' ).hide();
-        
+	},
 
-    } else if ( jqueryHTMLCommand == "replaceWith") {
-            
-        $( selectorContentResult )
-        .replaceWith( result.contentForHtmlOutput );
-        $( '#loadingSpinner' ).hide();
-        
 
-    } else if ( jqueryHTMLCommand == "replaceInner") {
-      
-        $( selectorContentResult )
-        .html( result.contentForHtmlOutput );
-        $( '#loadingSpinner' ).hide();
-        
+	populateDOMWithContent: ( result, selectorContentResult, jqueryHTMLCommand, callback ) => {
 
-    } else if ( jqueryHTMLCommand == "reloadURL") {
-                
-        window.location.reload();
+		console.log('#### populated function populateDOMWithContent:');
+		console.log(result, selectorContentResult, jqueryHTMLCommand );
+		
+		if ( jqueryHTMLCommand == "append" 
+				&& result.contentForHtmlOutput ) {
+				
+					$( selectorContentResult )
+					.append( result.contentForHtmlOutput );
+					$( '#loadingSpinner' ).hide();
+					
+				
+			
+		} else if ( jqueryHTMLCommand == "prepend"  
+		&& result.contentForHtmlOutput) {
+
+		$( selectorContentResult )
+		.prepend( result.contentForHtmlOutput );
+		$( '#loadingSpinner' ).hide();
+		
+
+	} else if ( jqueryHTMLCommand == "replaceWith") {
+			
+		$( selectorContentResult )
+		.replaceWith( result.contentForHtmlOutput );
+		$( '#loadingSpinner' ).hide();
+		
+
+	} else if ( jqueryHTMLCommand == "replaceInner") {
+	  
+		$( selectorContentResult )
+		.html( result.contentForHtmlOutput );
+		$( '#loadingSpinner' ).hide();
+		
+
+	} else if ( jqueryHTMLCommand == "reloadURL") {
+				
+		window.location.reload();
    
-    } else if ( jqueryHTMLCommand == "reloadURLDelayed") {
+	} else if ( jqueryHTMLCommand == "reloadURLDelayed") {
 
-        setTimeout(function(){ 
-            window.location.reload();
-        }, 2000);
-        
+		setTimeout(function(){ 
+			window.location.reload();
+		}, 2000);
+		
 
-    } else if ( jqueryHTMLCommand == "keepOnPage") {
+	} else if ( jqueryHTMLCommand == "keepOnPage") {
 
-        //Do nothing, just remove spinner
-        setTimeout(function(){ 
-            $( '#loadingSpinner' ).hide();
-        }, 2000);
-       
-        
+		//Do nothing, just remove spinner
+		setTimeout(function(){ 
+			$( '#loadingSpinner' ).hide();
+		}, 2000);
+	   
+		
 
-    } else if ( result.contentForHtmlOutput ) {
+	} else if ( result.contentForHtmlOutput ) {
 
-                $( selectorContentResult )
-                    .html( result.contentForHtmlOutput );
-                    $( '#loadingSpinner' ).hide();
-                    
+				$( selectorContentResult )
+					.html( result.contentForHtmlOutput );
+					$( '#loadingSpinner' ).hide();
+					
 
-    }     
-
-
-    if( callback && typeof( callback ) === "function" ) {
-        $( '#loadingSpinner' ).hide();
-        callback();
-
-    }
+	}	 
 
 
-            /* populate Flying notification Bar if specified */
-            if( result.notificationFlyingBarHTML ){
-                $( '#ajaxPopulateNotificationFlyingBar div' ).html(  result.notificationFlyingBarHTML );
-            }else if( result.ajaxPopulateNotificationFlyingBar ){
-                $( '#ajaxPopulateNotificationFlyingBar div' ).html(  result.ajaxPopulateNotificationFlyingBar );
-            }
+	if( callback && typeof( callback ) === "function" ) {
+		$( '#loadingSpinner' ).hide();
+		callback();
 
-         
-                        
-    },
+	}
 
 
-    validateAndsendAjaxForm: (
-        ajaxURL,
-        selectorFormFields,
-        selectorContentResult,
-        jqueryHTMLCommand, 
-        callback ) => {
-        let itemsProcessed = 0;
-        let $selector = $( selectorFormFields );
-        
-        let allItemsOK = true;
-        $('.formValidationErrorText').remove();
-        
-        $selector.each( ( index, obj ) => {
+			/* populate Flying notification Bar if specified */
+			if( result.notificationFlyingBarHTML ){
+				$( '#ajaxPopulateNotificationFlyingBar div' ).html(  result.notificationFlyingBarHTML );
+			}else if( result.ajaxPopulateNotificationFlyingBar ){
+				$( '#ajaxPopulateNotificationFlyingBar div' ).html(  result.ajaxPopulateNotificationFlyingBar );
+			}
 
-            itemsProcessed++;
-
-            //set to normal outline
-            $( obj )
-                .css( {
-                    'outline': ''
-                } );
-
-            // if element is obligatory test for check
-            if ( $( obj )
-                .attr( 'data-isObligatory' ) == 'true' ) {
-
-                let type = $( obj )
-                    .attr( 'type' );
-                let tagname = $( obj )
-                    .prop( "tagName" );
-
-                
-                //checkbox
-                if ( tagname == 'INPUT' && type == "checkbox" && !$( obj )
-                    .is( ':checked' ) ) {
-                    $( obj )
-                        .css( {
-                            'outline' : 'var( --formValidationHintOutline )',
-                            'background' : 'var(--formValidationHintBG)'
-                        } );
-                    if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
-                        $( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
-                    }
-                    allItemsOK = false;
-                }
-
-                //textarea
-                if ( tagname == 'TEXTAREA' && $( obj )
-                    .val()
-                    .trim() == '' ) {
-                    $( obj )
-                        .css( {
-                            'outline' : 'var( --formValidationHintOutline )',
-                            'background' : 'var(--formValidationHintBG)'
-                        } );
-                        if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
-                            $( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
-                        }
-                    allItemsOK = false;
-                }
-
-                //inputs
-                if ( tagname == 'INPUT' && $( obj )
-                    .val()
-                    .trim() == '' ) {
-                    $( obj )
-                        .css( {
-                            'outline' : 'var( --formValidationHintOutline )',
-                            'background' : 'var(--formValidationHintBG)'
-                        } );
-                        if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
-                            $( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
-                        }
-                    allItemsOK = false;
-                }
-
-                //inputs
-                if ( tagname == 'SELECT' && $( obj )
-                    .val()
-                    .trim() == '' ) {
-                    $( obj )
-                        .css( {
-                            'outline' : 'var( --formValidationHintOutline )',
-                            'background' : 'var(--formValidationHintBG)'
-                        } );
-                        if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
-                            $( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
-                        }
-                    allItemsOK = false;
-                }
-
-                
-
-                /* if because of async calls, call only when finished */
-                if ( itemsProcessed === $selector.length ) {
-                    if ( allItemsOK ) {
-                       
-                        $( '#loadingSpinner' ).show();
-                       
-                        myAjaxUtils.buildPayLoad(
-                            ajaxURL,
-                            'POST',
-                            selectorFormFields,
-                            selectorContentResult,
-                            jqueryHTMLCommand,
-                            callback );
-                    
-                    } else {
-                       
-                        
-                        return false;
-                       
-                    }
-                }
-            }
+		 
+						
+	},
 
 
-        } );
+	validateAndsendAjaxForm: (
+		ajaxURL,
+		selectorFormFields,
+		selectorContentResult,
+		jqueryHTMLCommand, 
+		callback ) => {
+		let itemsProcessed = 0;
+		let $selector = $( selectorFormFields );
+		
+		let allItemsOK = true;
+		$('.formValidationErrorText').remove();
+		
+		$selector.each( ( index, obj ) => {
+
+			itemsProcessed++;
+
+			//set to normal outline
+			$( obj )
+				.css( {
+					'outline': ''
+				} );
+
+			// if element is obligatory test for check
+			if ( $( obj )
+				.attr( 'data-isObligatory' ) == 'true' ) {
+
+				let type = $( obj )
+					.attr( 'type' );
+				let tagname = $( obj )
+					.prop( "tagName" );
+
+				
+				//checkbox
+				if ( tagname == 'INPUT' && type == "checkbox" && !$( obj )
+					.is( ':checked' ) ) {
+					$( obj )
+						.css( {
+							'outline' : 'var( --formValidationHintOutline )',
+							'background' : 'var(--formValidationHintBG)'
+						} );
+					if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
+						$( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
+					}
+					allItemsOK = false;
+				}
+
+				//textarea
+				if ( tagname == 'TEXTAREA' && $( obj )
+					.val()
+					.trim() == '' ) {
+					$( obj )
+						.css( {
+							'outline' : 'var( --formValidationHintOutline )',
+							'background' : 'var(--formValidationHintBG)'
+						} );
+						if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
+							$( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
+						}
+					allItemsOK = false;
+				}
+
+				//inputs
+				if ( tagname == 'INPUT' && $( obj )
+					.val()
+					.trim() == '' ) {
+					$( obj )
+						.css( {
+							'outline' : 'var( --formValidationHintOutline )',
+							'background' : 'var(--formValidationHintBG)'
+						} );
+						if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
+							$( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
+						}
+					allItemsOK = false;
+				}
+
+				//inputs
+				if ( tagname == 'SELECT' && $( obj )
+					.val()
+					.trim() == '' ) {
+					$( obj )
+						.css( {
+							'outline' : 'var( --formValidationHintOutline )',
+							'background' : 'var(--formValidationHintBG)'
+						} );
+						if( $( obj ).attr( 'data-formValidationErrorMessage' ) ){
+							$( '<div class="formValidationErrorText">' + $( obj ).attr( 'data-formValidationErrorMessage' ) + '</div>' ).insertBefore( $( obj ) );
+						}
+					allItemsOK = false;
+				}
+
+				
+
+				/* if because of async calls, call only when finished */
+				if ( itemsProcessed === $selector.length ) {
+					if ( allItemsOK ) {
+					   
+						$( '#loadingSpinner' ).show();
+					   
+						myAjaxUtils.buildPayLoad(
+							ajaxURL,
+							'POST',
+							selectorFormFields,
+							selectorContentResult,
+							jqueryHTMLCommand,
+							callback );
+					
+					} else {
+					   
+						
+						return false;
+					   
+					}
+				}
+			}
 
 
-    },
+		} );
 
-    
-    sendAjaxCommand: ( ajaxURL, formMethod, formData ) => {
 
-        return $.ajax( {
-            url: ajaxURL,
-            type: formMethod,
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function ( contentdata ) {
-                // console.log('#######returned data');
-                // console.log( contentdata );
-                
-                return contentdata;
+	},
 
-            },
-            error: function ( e ) {
-                $( 'body' ).html( '<div>Error resulting from Ajaxcall at:<br> ' + ajaxURL +' </div>' + e.responseText );
-                $( '#loadingSpinner' ).hide();
-                console.log( e );
-         
-            }
+	
+	sendAjaxCommand: ( ajaxURL, formMethod, formData ) => {
 
-        } );
+		return $.ajax( {
+			url: ajaxURL,
+			type: formMethod,
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function ( contentdata ) {
+				// console.log('#######returned data');
+				// console.log( contentdata );
+				
+				return contentdata;
+
+			},
+			error: function ( e ) {
+				$( 'body' ).html( '<div>Error resulting from Ajaxcall at:<br> ' + ajaxURL +' </div>' + e.responseText );
+				$( '#loadingSpinner' ).hide();
+				console.log( e );
+		 
+			}
+
+		} );
 
 
  }

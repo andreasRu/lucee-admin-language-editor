@@ -1,25 +1,25 @@
 <cfif (thisTag.executionMode == "end" || !thisTag.hasEndTag)>
 
-    <!--- Injected Admin Language Editor Code --->
-    <cfscript>
-        if( !structKeyExists( application.stText, session.lucee_admin_lang )  ){
+	<!--- Injected Admin Language Editor Code --->
+	<cfscript>
+		if( !structKeyExists( application.stText, session.lucee_admin_lang )  ){
 
-            cfcookie(name = "lucee_admin_lang" value= "en");
-            session.lucee_admin_lang = "en";
-            location("#request.adminType#.cfm", "false", "302");
+			cfcookie(name = "lucee_admin_lang" value= "en");
+			session.lucee_admin_lang = "en";
+			location("#request.adminType#.cfm", "false", "302");
 
-        }
-    </cfscript>
-    <!--- Injected Admin Language Editor Code --->
+		}
+	</cfscript>
+	<!--- Injected Admin Language Editor Code --->
 
-    <cfscript>
+	<cfscript>
 
 		param name="session.lucee_admin_lang" default="en";
-		param name="attributes.navigation"    default="";
-		param name="attributes.title"         default="";
-		param name="attributes.content"       default="";
-		param name="attributes.right"         default="";
-		param name="attributes.width"         default="780";
+		param name="attributes.navigation"	default="";
+		param name="attributes.title"		 default="";
+		param name="attributes.content"	   default="";
+		param name="attributes.right"		 default="";
+		param name="attributes.width"		 default="780";
 
 		variables.stText = application.stText[session.lucee_admin_lang];
 		ad=request.adminType;
