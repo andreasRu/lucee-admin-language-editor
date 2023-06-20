@@ -93,9 +93,6 @@ component {
                 directoryCreate( this.adminResourcePath & "/resources" );
             }
 
-            // fileCopy(   source= expandPath("./") & "adminDeploy/text.cfm" , 
-                // destination=this.adminResourcePath & "/resources/text.cfm" );
-
             fileCopy(   source= "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/text.cfm", 
             destination=this.adminResourcePath & "/resources/text.cfm" );
 
