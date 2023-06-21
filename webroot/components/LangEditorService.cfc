@@ -98,8 +98,6 @@ component {
 		}
 
 		result[ "langSwitcherInjectedLocation" ] = this.adminResourcePath & "/languageSwitcher.cfm";
-		result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/admin_layout.cfm";
-		result[ "adminLayoutInjectedLocation" ] = this.adminResourcePath & "/resources/text.cfm";
 		result[ "adminPasswordTxtLocation" ] = this.adminServerContextPath & "/password.txt";
 
 

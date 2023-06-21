@@ -92,7 +92,7 @@
 
                     <cfif !variables.LangEditorService.runningOnlineProductionMode && server.lucee.version gt "6">
 
-                        <div class="commandDiv lastPullRight" style="background: transparent;color:black;">
+                        <div class="commandDiv lastPullRight" style="background: transparent;color:##b2aeae;">
                             <div>
                                 <cfset variables.generatedPWD=variables.LangEditorService.getPasswordFromPasswordTXT() />
                                 <cfif variables.generatedPWD !="">
@@ -111,7 +111,7 @@
                                         </div>
                                     </div>
                                 </cfif>
-                                <div style="font-style: italic;max-height:3rem;overflow-y:scroll;background:white;font-size:0.6rem;overflow-wrap:anywhere;">
+                                <div style="font-style: italic;max-height:3rem;overflow-y:scroll;padding: 0.2rem;background:##2c2c2c;font-size:0.6rem;overflow-wrap:anywhere;">
 
                                     <cfif len( variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ] )>
                                         <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin
@@ -125,9 +125,7 @@
                                         during initialization:</b><br>
                                     <b>password.txt:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["adminPasswordTxtLocation"]#<br>
                                     <b>langSwitcher.cfm:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["langSwitcherInjectedLocation"]#<br>
-                                    <b>admin_layout.cfm:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["adminLayoutInjectedLocation"]#<br>
-
-                                </div>
+								</div>
 
                             </div>
 
