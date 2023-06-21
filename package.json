@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "cfformat": "box fmt ./webroot/components/ --overwrite"
+    "cfformat": "box fmt ./webroot/ --overwrite"
   },
   "repository": {
     "type": "git",
