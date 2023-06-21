@@ -2,13 +2,23 @@
 	
 	if( structKeyExists( url, "method" )){
 
-		// load component
 		LangEditorService=new components.LangEditorService();
-
-	   
+		
+		if( LangEditorService.getWorkingSpaceInMB() >= application.maxWorkingSizeMB ){
+			
+			result={};
+			result["error"]=1;
+			result["success"]=false;
+			result["contentForHtmlOutput"]= "";
+			result["ajaxPopulateNotificationFlyingBar"]= "At the moment there is no available workingspace left on this server!";
+			LangEditorService.outputAsJson( result );
+			abort;
+		}
+		
 		if( url.method == "cleanWorkingDirAndPullResources" and structKeyExists( url, "lang") ){
 			
 			LangEditorService.cleanWorkingDirAndPullResources( url.lang );
+			
 
 			result={};
 			result["error"]=0;
