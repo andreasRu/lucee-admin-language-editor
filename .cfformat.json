@@ -74,6 +74,6 @@
     "struct.padding":true,
     "struct.quote_keys":false,
     "struct.separator":": ",
-    "tab_indent":false,
+    "tab_indent":true,
     "tags.lowercase":true
 }
