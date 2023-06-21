@@ -81,7 +81,7 @@
                                         <div style="position: relative;top:-2px;">Contributors:</div>
                                         <div>
                                             <cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
-                                                <a class="contributors" href="#encodeForHTMLAttribute( application.contributors[i][" html_url"] )#" target="_blank" title="#encodeForHTML( application.contributors[i][" login"] )#"><img src="#encodeForHTMLAttribute( application.contributors[i][" avatar_url"] )#"></a>
+                                                <a class="contributors" href="#encodeForHTMLAttribute( application.contributors[i]["html_url"] )#" target="_blank" title="#encodeForHTML( application.contributors[i]["login"] )#"><img src="#encodeForHTMLAttribute( application.contributors[i]["avatar_url"] )#"></a>
                                             </cfloop>
                                         </div>
                                     </div>
@@ -112,7 +112,7 @@
                                                         <cfif len( variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ] )>
                                                             <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin
                                                                 on last load:</b><br>
-                                                            <cfloop collection="#variables.LangEditorService.loadedAdminFiles[ " languagesPulledToAdmin" ]#" item="currentKey">
+                                                            <cfloop collection="#variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ]#" item="currentKey">
                                                                 <b>#currentKey#.json:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["languagesPulledToAdmin"][
                                                                 currentKey ]#<br>
                                                             </cfloop>
