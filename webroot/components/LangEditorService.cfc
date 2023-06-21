@@ -9,14 +9,27 @@
 
 component {
     public struct function init() {
+		
+
         this.version = application.appversion;
         this.luceeSourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0";
 		
 		if( !cgi.http_host == "127.0.0.1:8080" && isdefined("session.tmpDirectoryPath")) {
-			this.workingDir = "/workingDir/" & session.tmpDirectoryPath;
+			this.workingDir = GetTempDirectory() & "/workingDir/" & session.tmpDirectoryPath;
        	}else{
 			this.workingDir = "/workingDir/temp/";
 		}
+		
+		
+		// cfdirectory(
+		// 		directory = this.workingDir,
+		// 		action = "list",
+		// 		name = "filequery",
+		// 		recurse="true"
+		// 	);
+
+		// dump( filequery );
+
 		
 		this.runningOnlineProductionMode = ( cgi.http_host == "127.0.0.1:8080" ) ? false : true;
         this.applicationSettings = getApplicationSettings();
@@ -35,19 +48,13 @@ component {
             }
         }
 
-
-		
-		
-
-
         return this;
     }
 
 
-
     public void function createWorkingDirectoryIfNotExists() {
-        if( !directoryExists( ".." & this.workingDir ) ) {
-            directoryCreate( ".." & this.workingDir );
+        if( !directoryExists( this.workingDir ) ) {
+            directoryCreate( this.workingDir );
         }
     }
 
@@ -140,6 +147,23 @@ component {
 
         return result;
     }
+
+
+	public string function getFullJSON( required string lang ) localmode = true {
+        return serializeToPrettyJson( getWorkingDataForLanguageByLettercode( lang ) );
+    }
+
+	public void function saveJSON( required string languageCode, required string JsonObject ) localmode = true {
+		
+		dataJSON= deserializeJSON( arguments.JsonObject );
+		structUpdate( dataJSON, "key", arguments.languageCode );
+        structUpdate( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode ] );
+        fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json", serializeToPrettyJson( dataJSON ), "utf-8" );
+
+    }
+
+
+	
 
 
 
@@ -312,7 +336,6 @@ component {
     public string function serializeToPrettyJson( struct dataStruct ) {
         // prettify JSON
         prettifier = createObject( "java", "com.google.gson.GsonBuilder", "/../libs/gson-2.10.1.jar" ).init().setPrettyPrinting().create();
-
         return prettifier.toJson( arguments.datastruct );
     }
 
@@ -393,15 +416,16 @@ component {
      */
 
     public void function pullResourceFileToWebAdmin( string language required ) localmode = true {
-        abortIfInProduction();
+        
+		abortIfInProduction();
 
-        if( server.lucee.version gt "6" ) {
+        
             adminResourceLanguagePath = this.adminResourcePath & "/resources/language"
 
             if( fileExists( this.workingDir & "#sanitizeFilename( arguments.language )#.json" ) ) {
                 fileCopy( source = this.workingDir & "#sanitizeFilename( arguments.language )#.json", destination = "#adminResourceLanguagePath#/#sanitizeFilename( arguments.language )#.json" );
             }
-        }
+        
     }
 
 
@@ -528,7 +552,8 @@ component {
 
 
     public struct function mapStructToDotPathVariable( struct data, prefix = "", propertyStruct = {} ) localmode = true {
-        for( key in arguments.data ) {
+        
+		for( key in arguments.data ) {
             value = data[ key ];
 
             if( isStruct( value ) ) {

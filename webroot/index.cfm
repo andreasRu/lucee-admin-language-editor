@@ -13,8 +13,7 @@
         <body>
             <!--- initialize LangEditor Component --->
             <cfset variables.LangEditorService=new components.LangEditorService() />
-
-            <cfset variables.langData=LangEditorService.parseDataForTableOutput( LangEditorService.getFullWorkingData( ) ) />
+			<cfset variables.langData=LangEditorService.parseDataForTableOutput( LangEditorService.getFullWorkingData( ) ) />
             <!--- get languages of resource files available in working folder --->
             <cfset variables.availableLangResourceLanguage=LangEditorService.getLanguagesAvailableInWorkingData() />
             <!--- get all available Language resources from Java for new langcreation--->
@@ -24,28 +23,28 @@
                 <h1>
                     #encodeForHTML( application[ "appTitleName" ] )#
                 </h1>
-                <h3 style="margin-left:0.3rem;font-weight:600;"><i>Let's internationalize Lucee's 6.0
-                        Administrator!</i></h3>
+                <h3 style="margin-left:0.3rem;font-weight:600;"><i>Let's internationalize Lucee's 6.0 Administrator!</i></h3>
 
                 <div class="commandDivWrapper">
+                    <cfif len( availableLangResourceLanguage ) < application.maxFileCountInWorkingDir>
+						<div class="commandDiv">
+							<select name="selectLangResource" id="selectLangResource">
+								<cfset variables.langInLuceeSourceArray=LangEditorService.getAvailableLanguagesInLuceeGitSource() />
+								<option value="">Select resource file</option>
+								<cfloop array="#variables.langInLuceeSourceArray#" item="letterCode">
+									<option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML(
+										structKeyExists( availableJavaLocales,
+										letterCode)?availableJavaLocales[ letterCode ]:letterCode )#
+										(#encodeForHTML( letterCode )#.json)</option>
+								</cfloop>
+							</select>
+							<br>
+							<button disabled class="button" onClick="var lang=$('##selectLangResource').val();availableLangs=#encodeForHTMLAttribute( serializeJSON( availableLangResourceLanguage ) )#;if(lang==''){$('##selectLangResource').css({'border':'2px dotted red'})}else{ if( !availableLangs.includes( lang ) || confirm( 'Warning: This will download and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDirAndPullResources&amp;lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Pull
+								From Lucee at github</button>
+						</div>
+					</cfif>
 
-                    <div class="commandDiv">
-                        <select name="selectLangResource" id="selectLangResource">
-                            <cfset variables.langInLuceeSourceArray=LangEditorService.getAvailableLanguagesInLuceeGitSource() />
-                            <option value="">Select resource file</option>
-                            <cfloop array="#variables.langInLuceeSourceArray#" item="letterCode">
-                                <option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML(
-                                    structKeyExists( availableJavaLocales,
-                                    letterCode)?availableJavaLocales[ letterCode ]:letterCode )#
-                                    (#encodeForHTML( letterCode )#.json)</option>
-                            </cfloop>
-                        </select>
-                        <br>
-                        <button disabled class="button" onClick="var lang=$('##selectLangResource').val();availableLangs=#encodeForHTMLAttribute( serializeJSON( availableLangResourceLanguage ) )#;if(lang==''){$('##selectLangResource').css({'border':'2px dotted red'})}else{ if( !availableLangs.includes( lang ) || confirm( 'Warning: This will download and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDirAndPullResources&amp;lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Pull
-                            From Lucee at github</button>
-                    </div>
-
-                    <cfif len( availableLangResourceLanguage ) <=2>
+                    <cfif len( availableLangResourceLanguage ) < application.maxFileCountInWorkingDir>
 
                         <div class="commandDiv">
                             <select name="selectCreateLangResource" id="selectCreateLangResource">
@@ -62,7 +61,6 @@
                             <br>
                             <button disabled class="button" onClick="var lang=$('##selectCreateLangResource').val();availableLangs=#encodeForHTMLAttribute( serializeJSON( availableLangResourceLanguage ) )#;if(lang==''){$('##selectCreateLangResource').css({'border':'2px dotted red'})}else{ if( !availableLangs.includes( lang ) || confirm( 'Warning: This will create and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=createUpdateWorkingLanguageResourceFile&amp;lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Initialize
                                 File</button>
-                            #len( availableLangResourceLanguage )#/3 files
                         </div>
                     </cfif>
 
@@ -81,6 +79,14 @@
                             <cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
                                 <a class="contributors" href="#encodeForHTMLAttribute( application.contributors[i]["html_url"] )#" target="_blank" title="#encodeForHTML( application.contributors[i]["login"] )#"><img src="#encodeForHTMLAttribute( application.contributors[i]["avatar_url"] )#"></a>
                             </cfloop>
+							<div style="margin-top:0.5rem;">
+								<cfif len( availableLangResourceLanguage ) gt application.maxFileCountInWorkingDir>
+									<cfset fullFileCount=len( availableLangResourceLanguage ) >
+								<cfelse>
+									<cfset fullFileCount=application.maxFileCountInWorkingDir>
+								</cfif>
+								Working Files:  #len( availableLangResourceLanguage )#/#fullFileCount#
+							</div>
                         </div>
                     </div>
 

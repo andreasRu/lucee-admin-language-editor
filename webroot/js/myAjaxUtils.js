@@ -63,10 +63,10 @@ export const myAjaxUtils= {
             } );
 
         } else if ( httpMethod == "GET" ){
-           
+			
             myAjaxUtils.sendAjaxCommand( ajaxURL, formMethod, undefined )
                 .done( function ( result ) {
-                    
+                  
                     console.log('#######populateDatas GET');
                     myAjaxUtils.populateDOMWithContent( result, selectorContentResult, jqueryHTMLCommand, callback);  
                    

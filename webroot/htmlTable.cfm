@@ -14,7 +14,7 @@
 							<cfif itemLanguageKey == "en">(default)</cfif>
 								
 								<button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save Changes to "#itemLanguageKey#.json"<br><cfif !variables.LangEditorService.runningOnlineProductionMode  && server.lucee.version gt "6"> &amp; push to Admin</cfif></button>
-								<a class="button" href="#encodeForHTMLAttribute( right( variables.LangEditorService.workingDir, -1) & encodeforURL( itemLanguageKey ) & ".json")#" target="_blank">View File JSON-Source</a>
+								<a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=viewFileJSON&viewFileJSON=" & encodeforURL( itemLanguageKey ) )#" target="_blank">View File JSON-Source</a>
 								<a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileJSON&downloadLanguageJSONFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a>
 								
 								<cfif !variables.LangEditorService.runningOnlineProductionMode && server.lucee.version gt "6">
@@ -37,9 +37,14 @@
 											<input type="hidden" name="lang" value="#encodeForHTMLAttribute( itemLanguageKey )#">
 											<button  class="button" onClick="if( window.langUpdater.updatedWithoutSaving.includes( '#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#' ) ){ alert( 'There are unsaved changes for \'#encodeForHTMLAttribute( encodeForJavascript( itemLanguageKey ) )#\'. Please save the changes before opening the web admin.' ); event.preventDefault(); };">View in Web Admin  (Multi-Mode)</button> 
 										</form>
+
 									
 									</cfif>
+
+								
 								</cfif>
+								<button title="View/Paste JSON-Code #ucase( itemLanguageKey)#" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getJSONForm&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });">Add/Paste JSON-Code (#ucase( itemLanguageKey )#)</button>
+								
 								<cfif itemLanguageKey !== "en">
 									<button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".json") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.json"</button>
 								</cfif>

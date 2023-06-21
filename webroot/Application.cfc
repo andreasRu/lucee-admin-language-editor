@@ -63,6 +63,7 @@ component {
 		application[ "appversion" ] = this.appversion;
 		application[ "appTitleName" ] = "Lucee Admin Language Editor " & this.appversion;
 		application[ "maxWorkingSizeMB" ] = 50;
+		application[ "maxFileCountInWorkingDir" ] = 2;
 
 
 		// get contributors from github
@@ -98,14 +99,6 @@ component {
 		
 	}
 
-
-	public boolean function OnSessionEnd() {		
-
-		if( !directoryExists( this.workingDir & session.tmpDirectoryPath ) ) {
-            DirectoryDelete( this.workingDir & session.tmpDirectoryPath );
-        }
-
-	}
 
 	public boolean function isRunningLocal() localmode=true {
 
