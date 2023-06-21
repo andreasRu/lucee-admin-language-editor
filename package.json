@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "webpack --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "cfformat": "box fmt ./webroot/components/ --overwrite"
   },
   "repository": {
     "type": "git",
