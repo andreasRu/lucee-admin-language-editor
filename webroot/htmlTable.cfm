@@ -6,7 +6,17 @@
 		<table class="langEditor">
 			<thead>
 				<tr>
-					<th>Property</th>
+					<th>
+						
+						Property
+
+						<button title="Add new Property" id="addPropertyButton" class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.length ){ alert( 'There are unsaved changes. Please save the changes before adding variables.' ); event.preventDefault(); };$('##addProperty').fadeIn();$(this).fadeOut();">Add new Property</button>
+						<div id="addProperty" style="display:none;margin-top:1rem;">
+							<input type="text" name="addPropertyName" id="addPropertyName" value="" placeholder="some.new.attribute.name">
+							<button title="Add" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=addProperty', 'POST', '##addPropertyName', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Add</button>
+						</div>
+					
+					</th>
 					<cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
 						<th>
 							#encodeForHTML( structKeyExists( availableJavaLocales, itemLanguageKey)?availableJavaLocales[ itemLanguageKey ]:"" )#</div>
@@ -54,10 +64,10 @@
 			</thead>
 
 			
-			<tbody>
+			<tbody id="tbodyData">
 				<cfloop list="#adminKeyNameListOrdered#" item="itemLanguage" >
 					<tr id="#itemLanguage#">
-						<td class="keyName">
+						<td class="keyNameAddPropertx">
 							#encodeForHTML( itemLanguage )# 
 							<!--- Search needs to be adapted to be searchable in JSON --->
 							<div class="propertyCommands">

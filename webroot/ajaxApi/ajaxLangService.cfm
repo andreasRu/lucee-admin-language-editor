@@ -5,7 +5,7 @@
 		LangEditorService=new components.LangEditorService();
 		
 		if( LangEditorService.getWorkingSpaceInMB() >= application.maxWorkingSizeMB ){
-			
+
 			result={};
 			result["error"]=1;
 			result["success"]=false;
@@ -14,12 +14,39 @@
 			LangEditorService.outputAsJson( result );
 			abort;
 		}
+
+		if( url.method == "addProperty" and structKeyExists( form, "addPropertyName") ){
+
+			workingData=LangEditorService.mapStructToDotPathVariable( LangEditorService.getWorkingDataForLanguageByLettercode("en").data );
+			
+			if( LangEditorService.createProperty( form.addPropertyName ) ){
+
+				result={};
+				result["error"]=0;
+				result["success"]=true;
+				result["contentForHtmlOutput"]= "";
+				result["ajaxPopulateNotificationFlyingBar"]= "PropertyAdded. Reloading page!";
+
+			}else{
+
+				result={};
+				result["error"]=1;
+				result["success"]=false;
+				result["contentForHtmlOutput"]= "";
+				result["ajaxPopulateNotificationFlyingBar"]= "Cannot add property <i style=""color:red;"">#encodeForHTML( form.addPropertyName )#</i> ( Conflict )";
+
+
+			}
+			
+			LangEditorService.outputAsJson( result );
+			
+		}
 		
+
 		if( url.method == "cleanWorkingDirAndPullResources" and structKeyExists( url, "lang") ){
 			
 			LangEditorService.cleanWorkingDirAndPullResources( url.lang );
-			
-
+		
 			result={};
 			result["error"]=0;
 			result["success"]=true;
@@ -30,7 +57,7 @@
 		}
 
 
-		if( url.method == "viewFileJSON" and structKeyExists( url, "viewFileJSON") ){
+		if( url.method == "viewFileJSON" ){
 			
 			file= "#LangEditorService.workingDir##LangEditorService.sanitizeFilename( url.viewFileJSON)#.json"
 			

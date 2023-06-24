@@ -398,7 +398,6 @@ component {
 		if( !this.runningOnlineProductionMode ) {
 			abort;
 		}
-
 		return;
 	}
 
@@ -470,6 +469,65 @@ component {
 		}
 	}
 
+
+	public boolean function createProperty( string propertyName required ) localmode = true {
+		result = false;
+		loadedData = [ : ];
+		loadedData = mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( "en" ).data );
+
+		propertyHasConflict = false;
+		propertyPaths = listToArray( arguments.propertyName, "." );
+
+		// create an array of possible keys. E.g. if "admin.search.desc" is added,
+		// the following keys must be checked for existance, so no overwriting will take place: 
+		// "admin", "admin.search", "admin.search.desc", 
+		keysToCheckConflict = arrayReduce(
+			propertyPaths,
+			function(prev, item, index, theArray) {
+				for( i = 1; i <= index; i++ ) {
+					if( i == 1 ) {
+						prev = prev & theArray[ i ];
+					} else {
+						prev = prev & "." & theArray[ i ];
+					}
+				}
+
+				return prev & ",";
+			},
+			""
+		).listtoarray();
+
+		for( item in keysToCheckConflict ) {
+			if( structKeyExists( loadedData, item ) ) {
+				propertyHasConflict = true;
+			}
+		}
+
+		// check if the added property is a parent of any existing property.
+		listOfKeyPaths = "," & structKeyArray( loadedData ).toList();
+		if( findNoCase( arguments.propertyName & ".", listOfKeyPaths ) ) {
+			propertyHasConflict = true;
+		}
+
+		if( !propertyHasConflict ) {
+
+			structInsert( loadedData, arguments.propertyName, "" );
+			structKeyTranslate( loadedData );
+			dataJSON = [ : ];
+			dataJSON[ "key" ] = "en";
+			dataJSON[ "label" ] = "English";
+			dataJSON[ "data" ] = sortNestedStruct( loadedData );
+			fileWrite( this.workingDir & "en.json", serializeToPrettyJson( dataJSON ), "utf-8" );
+			result = true;
+
+		}else{
+
+			result = false;
+
+		}
+
+		return result;
+	}
 
 	/**
 	 * Function to abstract 2 methos
