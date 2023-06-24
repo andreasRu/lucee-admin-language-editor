@@ -4,9 +4,12 @@
   "description": "Lucee Administrator Language Editor",
   "main": "app.js",
   "scripts": {
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
-    "cfformat": "box fmt ./webroot/ --overwrite"
+    "devWithWebpack": "webpack --mode development",
+    "buildWithWebpack": "webpack --mode production",
+    "cfformat": "box fmt ./webroot/ --overwrite",
+	 "startLuceeWindows": "serve.bat",
+	 "startLuceeLuceeMacLinux": "serve.sh"
+    
   },
   "repository": {
     "type": "git",
