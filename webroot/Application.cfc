@@ -9,7 +9,7 @@ component {
 		}
 
 		// abort if unallowed scanner/bot or whatever
-		cfloop( list = "masscan-ng~360Spider~80legs~Abonti~admant~AhrefsBot~archive-at.com~Baiduspider~BLEXBot~BUbiNG~domaincrawler~EMail Exractor~Exabot~ELNSB50~Grapeshot~genieo~help.zum~IstellaBot~jobdigger~linguee~MJ12bot~majestic~megasuche~megaindex~searchmetrics~SEOkicks~Semrush~SeznamBot~Sogou~Sleuth~sistrix~sitebot~siteexplorer~sixka~SiteSucker~Sosospider~voilabot~WBSearchBot~website-datenbank~waybackarchive~Wotbox~YandexBot~spbot~Cliqzbot~Java/~Pingoscope~Vagabondo~CB/Nutch~BUbiNG~SixKaBot~Synapse~python~" index = "banned_useragent_item" delimiters = "~" ){
+		cfloop( list = "masscan-ng~360Spider~80legs~Abonti~admant~AhrefsBot~archive-at.com~Baiduspider~BLEXBot~BUbiNG~domaincrawler~EMail Exractor~Exabot~ELNSB50~Grapeshot~genieo~help.zum~IstellaBot~jobdigger~linguee~MJ12bot~majestic~megasuche~megaindex~searchmetrics~SEOkicks~Semrush~SeznamBot~Sogou~Sleuth~sistrix~sitebot~siteexplorer~sixka~SiteSucker~Sosospider~voilabot~WBSearchBot~website-datenbank~waybackarchive~Wotbox~YandexBot~spbot~Cliqzbot~Java/~Pingoscope~Vagabondo~CB/Nutch~BUbiNG~SixKaBot~Synapse~python~", index = "banned_useragent_item", delimiters = "~" ) {
 			if( findNoCase( banned_useragent_item, cgi.http_user_agent ) ) {
 				cfheader( statuscode = "403", statustext = "Forbidden" );
 				echo( "<html><body>Not Available</body></html>" );
