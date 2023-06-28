@@ -104,6 +104,61 @@ component {
 		return result;
 	}
 
+	public string function getChatGPTPrompt( lang ){
+
+    loadedData = [ : ];
+	propertiesToTransate=[ ];
+	loadedData = mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( "en" ).data ) ;
+	loadedLangDataToTranslate= mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( arguments.lang ).data ) ;
+
+	for( property in loadedData ){
+		topKey=listFirst( property,"." );
+		if(!StructKeyExists( loadedLangDataToTranslate, property ) && StructKeyExists( loadedData, property) && loadedData[ property ]!="" ) {
+			structInsert( loadedLangDataToTranslate, property, loadedData[ property ] );
+			
+			if( !propertiesToTransate.contains( topKey ) ){
+				propertiesToTransate.append( topKey );
+			} 
+		}
+		
+		if( StructKeyExists( loadedLangDataToTranslate, property ) && loadedLangDataToTranslate[ property ] =="" && StructKeyExists( loadedData, property) && loadedData[ property ]!="" ) {
+			
+			structUpdate( loadedLangDataToTranslate, property, loadedData[ property ] );
+			if( !propertiesToTransate.contains( topKey ) ){
+				propertiesToTransate.append( topKey );
+			} 
+		}
+		
+		
+	}
+
+	// removeunused properties
+	for( property in loadedLangDataToTranslate ){
+		topKey=listFirst( property,"." );
+		if( !propertiesToTransate.contains( topKey  ) ){
+			structDelete( loadedLangDataToTranslate, "#property#" );
+		}
+	}
+
+	structKeyTranslate( loadedLangDataToTranslate );
+	
+	// create chatgptPrompt;
+	result="";
+	language= getAvailableJavaLocalesAsStruct()[  arguments.lang  ];
+	// removeunused properties
+	for( property in loadedLangDataToTranslate ){
+		tmpPrompt="Translate the following JSON to a JSON translation in " & language & " and show it as code:" &chr( 10 );
+		tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( { "#property#": loadedLangDataToTranslate[ property ] } );
+		result= result & tmpPrompt & chr( 10 ) & chr( 10 ) & "//////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) ;
+	}
+
+	if( isEmpty( result )){
+		result="Seems like there is nothing that needs to be translate for '#encodeForHTML( arguments.lang)#'";
+	}
+	return result;
+
+	}
+	
 
 	public void function createPasswordFile() localmode = true {
 		if( !fileExists( expandPath( "./../" ) & "adminDeploy/password.txt" ) ) {
@@ -154,6 +209,7 @@ component {
 		structUpdate( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode ] );
 		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json", serializeToPrettyJson( dataJSON ), "utf-8" );
 	}
+	
 
 
 
@@ -597,13 +653,15 @@ component {
 	public struct function mapStructToDotPathVariable( struct data, prefix = "", propertyStruct = {} ) localmode = true {
 		for( key in arguments.data ) {
 			value = data[ key ];
-
+			
 			if( isStruct( value ) ) {
 				mapStructToDotPathVariable( value, prefix & key & ".", propertyStruct );
 			} else {
 				propertyStruct.append( { "#prefix##key#": value } );
+				//echo( "#prefix##key#: #value# <br>");
 			}
 		}
+		
 
 		return propertyStruct;
 	}
@@ -617,11 +675,11 @@ component {
 		result = {};
 
 		if( !structIsEmpty( arguments.data ) ) {
-			for( langData in arguments.data ) {
-				result[ langData ] = mapStructToDotPathVariable( arguments.data[ langData ][ "data" ] );
+			for( language in arguments.data ) {
+				result[ language ] = mapStructToDotPathVariable( arguments.data[ language ][ "data" ] );
 			}
 		}
-
+		
 		return result;
 	}
 

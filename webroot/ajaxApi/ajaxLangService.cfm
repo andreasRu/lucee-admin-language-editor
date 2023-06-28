@@ -15,6 +15,8 @@
 			abort;
 		}
 
+		
+
 		if( url.method == "addProperty" and structKeyExists( form, "addPropertyName") ){
 
 			workingData=LangEditorService.mapStructToDotPathVariable( LangEditorService.getWorkingDataForLanguageByLettercode("en").data );
@@ -33,7 +35,7 @@
 				result["error"]=1;
 				result["success"]=false;
 				result["contentForHtmlOutput"]= "";
-				result["ajaxPopulateNotificationFlyingBar"]= "Cannot add property <i style=""color:red;"">#encodeForHTML( form.addPropertyName )#</i> ( Conflict )";
+				result["ajaxPopulateNotificationFlyingBar"]= "Key-Conflict detected: Property <i style=""color:red;"">#encodeForHTML( form.addPropertyName )#</i> not added.";
 
 
 			}
@@ -141,6 +143,17 @@
 			result["error"]=0;
 			result["success"]=true;
 			result["contentForHtmlOutput"]= "<textarea style=""width:80vw;max-width:900px;height:40vh;"" readonly>" & encodeForHTML( jsonSnippet ) & "</textarea>";
+			LangEditorService.outputAsJson( result );
+			
+		}
+
+		
+		if( url.method == "getChatGPTPrompt" ){
+			
+			jsonSnippet=LangEditorService.getChatGPTPrompt( url.lang );
+			result["error"]=0;
+			result["success"]=true;
+			result["contentForHtmlOutput"]= "<textarea name=""jsonEditor"" id=""jsonEditor"" style=""white-space: pre;overflow-wrap: normal;overflow-x: scroll;width:80vw;max-width:900px;height:40vh;"">" & encodeForHTML( jsonSnippet ) & "</textarea>";
 			LangEditorService.outputAsJson( result );
 			
 		}

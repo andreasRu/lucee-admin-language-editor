@@ -1,7 +1,7 @@
 <cfif !arrayIsEmpty( availableLangResourceLanguage )>
 	
-	<cfset variables.adminKeyNameListOrdered=langData["en"].keylist().listSort( "textnocase" )>
-	
+	<cfset variables.adminKeyNameListOrdered=variables.langData["en"].keylist().listSort( "textnocase" )>
+
 	<cfoutput>
 		<table class="langEditor">
 			<thead>
@@ -12,7 +12,7 @@
 
 						<button title="Add new Property" id="addPropertyButton" class="button" onClick="console.dir(window.langUpdater.updatedWithoutSaving);if( window.langUpdater.updatedWithoutSaving.length ){ alert( 'There are unsaved changes. Please save the changes before adding variables.' ); event.preventDefault(); };$('##addProperty').fadeIn();$(this).fadeOut();">Add new Property</button>
 						<div id="addProperty" style="display:none;margin-top:1rem;">
-							<input type="text" name="addPropertyName" id="addPropertyName" value="" placeholder="some.new.attribute.name">
+							<input type="text" name="addPropertyName" id="addPropertyName" value="" placeholder="some.new.attribute.name" style="width: 100%;max-width: 12rem;">
 							<button title="Add" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=addProperty', 'POST', '##addPropertyName', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Add</button>
 						</div>
 					
@@ -56,6 +56,8 @@
 								<button title="View/Paste JSON-Code #ucase( itemLanguageKey)#" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getJSONForm&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });">View/Add JSON (#ucase( itemLanguageKey )#)</button>
 								
 								<cfif itemLanguageKey !== "en">
+									<button title="ChatGPT Prompt" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getChatGPTPrompt&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });">ChatGPT prompt for translation</button>
+								
 									<button disabled class="button" onClick="if( confirm( 'Warning: This will remove the working file \'#encodeForHTMLAttribute( encodeForJavascript( LangEditorService.sanitizeFilename( itemLanguageKey ) & ".json") )#\'. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">Delete "#encodeForHTML( itemLanguageKey)#.json"</button>
 								</cfif>
 						</th>
@@ -67,7 +69,7 @@
 			<tbody id="tbodyData">
 				<cfloop list="#adminKeyNameListOrdered#" item="itemLanguage" >
 					<tr id="#itemLanguage#">
-						<td class="keyNameAddPropertx">
+						<td class="keyNameAddProperty">
 							#encodeForHTML( itemLanguage )# 
 							<!--- Search needs to be adapted to be searchable in JSON --->
 							<div class="propertyCommands">

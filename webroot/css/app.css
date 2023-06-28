@@ -103,6 +103,7 @@ body h3{
     border-collapse: collapse;
     border: 1px solid #0f0f0f;
     vertical-align: top;
+	position: relative;
 
 }
 

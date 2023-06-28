@@ -18,6 +18,7 @@
             <!--- initialize LangEditor Component --->
             <cfset variables.LangEditorService=new components.LangEditorService() />
 			<cfset variables.langData=LangEditorService.parseDataForTableOutput( LangEditorService.getFullWorkingData( ) ) />
+		
             <!--- get languages of resource files available in working folder --->
             <cfset variables.availableLangResourceLanguage=LangEditorService.getLanguagesAvailableInWorkingData() />
             <!--- get all available Language resources from Java for new langcreation--->
