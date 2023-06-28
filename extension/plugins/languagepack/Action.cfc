@@ -41,6 +41,7 @@ component hint = "LanguagePack" extends = "lucee.admin.plugin.Plugin" {
 			directoryCopy( "../languagepack/language", this.webContextPath & "/admin/resources/language" );
 		}
 		
+		
 	}
 
 	public function getAvailableLanguages() localmode = true {
