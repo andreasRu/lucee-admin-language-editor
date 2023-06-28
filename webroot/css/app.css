@@ -130,12 +130,12 @@ body h3{
     color: black;
     margin: 0.3rem auto;
     border: 0;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     cursor: pointer;
     text-decoration: none;
     padding: 0.3rem;
     box-sizing: border-box;
-    font-weight: 100;
+    font-weight: 600;
     box-shadow: 0px 15px 20px rgba(77, 79, 78, 0.4);
 }
 

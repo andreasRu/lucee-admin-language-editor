@@ -7,6 +7,7 @@
     "devWithWebpack": "webpack --mode development",
     "buildWithWebpack": "webpack --mode production",
     "cfformat": "box fmt ./webroot/ --overwrite",
+	"cfformatExtension": "box fmt ./extension/ --overwrite",
 	 "startLuceeWindows": "serve.bat",
 	 "startLuceeLuceeMacLinux": "serve.sh"
     
