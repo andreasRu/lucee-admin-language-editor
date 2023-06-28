@@ -11,9 +11,9 @@
 		<cflocation url="#request.self#?reinit=true" addtoken=false>
 	</cfif>
 
-	<!--- reenit if not already done after first load --->
+	<!--- reenit to load all languages if not already done after first load --->
 	<cfif structIsEmpty( app.availableLanguages )>
-		<cflocation url="#request.self#?action=plugin&amp;plugin=languagepack&amp;reinit=true" addtoken=false>
+		<cflocation url="?action=plugin&plugin=languagepack&reinit=true" addtoken=false>
 	</cfif>
 
 
