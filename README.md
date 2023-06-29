@@ -1,6 +1,6 @@
 # Lucee Admin Language Editor
 
-A simple editor that helps adding new languages and translations to Lucee 6.0 Administrator Extension by creating language JSON resource files in the Administrator. An online version is available at [](https://lucee-lang-editor.rhein-berg-digital.de/) at the moment. 
+A simple editor that helps adding new languages and translations to Lucee 6.0 Administrator Extension by creating language JSON resource files in the Administrator. An online version is available at [https://lucee-lang-editor.rhein-berg-digital.de/](https://lucee-lang-editor.rhein-berg-digital.de/).
 
 ## How to run
 
