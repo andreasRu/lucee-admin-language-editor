@@ -142,13 +142,14 @@ component {
 	}
 
 	structKeyTranslate( loadedLangDataToTranslate );
-	
+	tmp=sortNestedStruct( loadedLangDataToTranslate );
+	loadedLangDataToTranslate=tmp;
 	// create chatgptPrompt;
 	result="";
 	language= getAvailableJavaLocalesAsStruct()[  arguments.lang  ];
 	// removeunused properties
 	for( property in loadedLangDataToTranslate ){
-		tmpPrompt="Translate the following JSON to " & language & " and print it as code:" &chr( 10 );
+		tmpPrompt="Translate the following JSON from English to " & language & " and print it as code:" &chr( 10 );
 		tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( { "#property#": loadedLangDataToTranslate[ property ] } );
 		result= result & tmpPrompt & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & "////////////////////////// NEW CHATGPT-PROMPT //////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 );
 	}
@@ -190,6 +191,7 @@ component {
 			dataAsStruct = [ : ];
 			dataAsStruct = { "#dataPropertyName#": dataPropertyValue };
 			structKeyTranslate( dataAsStruct );
+			
 			result = "Property Path: """ & replaceNoCase( dataPropertyName, ".", " => ", "ALL" ) & """";
 			result = result & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( dataAsStruct );
 		} else {
