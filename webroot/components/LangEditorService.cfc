@@ -87,7 +87,8 @@ component {
 
 
 		// make sure the lang directory exists
-		if( !directoryExists( this.adminResourcePath & "/resources/language" ) ) {
+		
+		if( len( languagesArray ) && !directoryExists( this.adminResourcePath & "/resources/language" ) ) {
 			directoryCreate( this.adminResourcePath & "/resources/language" );
 		}
 

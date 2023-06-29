@@ -22,7 +22,7 @@ component hint = "LanguagePack" extends = "lucee.admin.plugin.Plugin" {
 
 	
 
-		app.availableLanguages = getAvailableLanguages();
+		
 
 
 		
@@ -40,6 +40,13 @@ component hint = "LanguagePack" extends = "lucee.admin.plugin.Plugin" {
 		if( !directoryExists( "../resources/language" ) ) {
 			directoryCopy( "../languagepack/language", this.webContextPath & "/admin/resources/language" );
 		}
+
+		if( !directoryExists( "../resources/language" ) ) {
+			directoryCopy( "../languagepack/language", this.serverContextPath & "/admin/resources/language" );
+		}
+		
+
+		app.availableLanguages = getAvailableLanguages();
 		
 		
 	}
