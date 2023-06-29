@@ -45,7 +45,7 @@ body h3{
 }
 
 .headingInfo{
-	margin-left:0.3rem;font-weight:600;
+	margin-left:0.3rem;font-weight:600;white-space: nowrap;
 }
 
 .CFML{
@@ -54,9 +54,9 @@ body h3{
 .thunder{
 
 	display: inline-block; 
-	transform: rotate(339deg);
+	transform: rotate(5deg);
 	color: #fff;
-	margin:0 -0.3rem 0 -0.39rem;
+	margin:0 -0.3rem 0 -0.27rem;
 }
 
 
