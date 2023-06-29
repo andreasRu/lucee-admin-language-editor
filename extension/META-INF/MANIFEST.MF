@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 id: "F1A3EEAF-5B7A-499C-9656DE3E103C8EA9"
-version: "1.0.0.2"
+version: "1.0.0.3"
 lucee-core-version: "6.0.0.481"
 name: "Lucee Admin Language Pack"
 description: "This extension installs languages for the Lucee6 Administrator."
