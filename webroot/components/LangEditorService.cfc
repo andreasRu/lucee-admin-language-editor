@@ -148,7 +148,7 @@ component {
 	language= getAvailableJavaLocalesAsStruct()[  arguments.lang  ];
 	// removeunused properties
 	for( property in loadedLangDataToTranslate ){
-		tmpPrompt="Translate the following JSON to a JSON translation in " & language & " and show it as code:" &chr( 10 );
+		tmpPrompt="Translate the following JSON to " & language & " and print it as code:" &chr( 10 );
 		tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( { "#property#": loadedLangDataToTranslate[ property ] } );
 		result= result & tmpPrompt & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & "////////////////////////// NEW CHATGPT-PROMPT //////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 );
 	}

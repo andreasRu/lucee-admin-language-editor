@@ -26,9 +26,9 @@
 
             <div class="header">
                 <h1>
-                    #encodeForHTML( application[ "appTitleName" ] )#
+                    #encodeForHTML( application[ "appTitleName" ] )# 
                 </h1>
-                <h3 style="margin-left:0.3rem;font-weight:600;"><i>Let's internationalize Lucee's 6.0 Administrator!</i></h3>
+                <h3 class="headingInfo"><i><div class="CFML">CF<span class="thunder">&##128498;</span>ML</div><div style="display:inline-block;position: relative;top: -0.24rem;left: 0.4rem;">rocks more than ever! Let's internationalize Lucee's 6.0 Administrator!</div></i></h3>
 
                 <div class="commandDivWrapper">
                     <cfif len( availableLangResourceLanguage ) < application.maxFileCountInWorkingDir>
@@ -77,8 +77,16 @@
                     </cfif>
 
 
+					<div class="commandDiv">
+                        <div style="position: relative;top:-2px;white-space:normal;">Get the LanguagePack-Plugin (beta) for latest:<br>English, German, Spanish.</div>
+                        <div>
+							<a class="button" href="https://github.com/andreasRu/lucee-admin-language-editor/raw/master/extension/F1A3EEAF-5B7A-499C-9656DE3E103C8EA9.lex" target="_blank">Download Extension (beta)</a>
+						</div>
+                    </div>
 
-                    <div class="commandDiv">
+
+
+                    <!---div class="commandDiv">
                         <div style="position: relative;top:-2px;">Contributors:</div>
                         <div>
                             <cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
@@ -93,7 +101,7 @@
 								Working Files:  #len( availableLangResourceLanguage )#/#fullFileCount#
 							</div>
                         </div>
-                    </div>
+                    </div--->
 
                     <cfif !variables.LangEditorService.runningOnlineProductionMode && server.lucee.version gt "6">
 
@@ -105,8 +113,7 @@
                                         <div>Generated Lucee Password(password.txt):</div>
                                         <div>
                                             <b>
-                                                <pre
-																	style="display:inline-block;margin:0 0.1rem 0;">#encodeForHTML( variables.generatedPWD )#</pre>
+                                                <pre style="display:inline-block;margin:0 0.1rem 0;">#encodeForHTML( variables.generatedPWD )#</pre>
                                             </b>
                                             <button style="display:inline-block;background: transparent;margin: 0;" title="Copy password to Clipboard" class="propertyCommandsButton copyButton" data-value="#encodeForHTMLAttribute( variables.generatedPWD )#" onclick="window.langUpdater.copyToClipboard( $( this ).attr('data-value') );"></button>
                                             <form style="display:inline-block;margin:0 0.1rem 0;" action="/lucee/admin/server.cfm" method="post" target="_blank">
@@ -116,22 +123,6 @@
                                         </div>
                                     </div>
                                 </cfif>
-                                <div style="font-style: italic;max-height:3rem;overflow-y:scroll;padding: 0.2rem;background:##2c2c2c;font-size:0.6rem;overflow-wrap:anywhere;">
-
-                                    <cfif len( variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ] )>
-                                        <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin
-                                            on last load:</b><br>
-                                        <cfloop collection="#variables.LangEditorService.loadedAdminFiles[ "languagesPulledToAdmin" ]#" item="currentKey">
-                                            <b>#currentKey#.json:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["languagesPulledToAdmin"][
-                                            currentKey ]#<br>
-                                        </cfloop>
-                                    </cfif>
-                                    <b style="color:red;">Files&nbsp;deployed&nbsp;to&nbsp;Lucee&nbsp;Admin
-                                        during initialization:</b><br>
-                                    <b>password.txt:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["adminPasswordTxtLocation"]#<br>
-                                    <b>langSwitcher.cfm:</b>&nbsp;#variables.LangEditorService.loadedAdminFiles["langSwitcherInjectedLocation"]#<br>
-								</div>
-
                             </div>
 
                         </div>

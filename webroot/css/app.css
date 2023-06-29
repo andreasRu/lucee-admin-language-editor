@@ -44,11 +44,24 @@ body h3{
     box-shadow: 0px 15px 20px rgb(77 79 78 / 40%);
 }
 
+.headingInfo{
+	margin-left:0.3rem;font-weight:600;
+}
 
+.CFML{
+	font-size: 1.4rem;display: inline-block;color:#7baed7;
+}
+.thunder{
+
+	display: inline-block; 
+	transform: rotate(339deg);
+	color: #fff;
+	margin:0 -0.3rem 0 -0.39rem;
+}
 
 
 .scrollUpButton{
-    background: #afc1cab3;
+    background: #2c2c2cb3;
     position: fixed;
     bottom: 0;
     right: 0;
