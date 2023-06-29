@@ -7,7 +7,7 @@ component hint = "LanguagePack" extends = "lucee.admin.plugin.Plugin" {
 		
 		
 		
-		
+		// define server contexts and web server context, also with singlemode
 		if( isNull( request.singlemode ) ) {
 			this.serverContextPath = expandPath( "{lucee-server}/context/context" );
 			this.webContextPath = expandPath( "{lucee-web}/context" );
@@ -20,14 +20,9 @@ component hint = "LanguagePack" extends = "lucee.admin.plugin.Plugin" {
 			}
 		}
 
-	
-
 		
 
-
-		
-
-		// copy original text.cfm from lucee admin to be able to use it as the swticher
+		// copy original text.cfm from lucee admin extension to be able to use it as the swticher
 		if( !fileExists( this.webContextPath & "/admin/resources/text.cfm" ) ) {
 			cfzip(
 				action = "unzip",
@@ -37,10 +32,12 @@ component hint = "LanguagePack" extends = "lucee.admin.plugin.Plugin" {
 			);
 		}
 
+		// make sure the language files get created in web context, if needed.
 		if( !directoryExists( "../resources/language" ) ) {
 			directoryCopy( "../languagepack/language", this.webContextPath & "/admin/resources/language" );
 		}
 
+		// make sure the language files get created in server context, if needed.
 		if( !directoryExists( "../resources/language" ) ) {
 			directoryCopy( "../languagepack/language", this.serverContextPath & "/admin/resources/language" );
 		}
