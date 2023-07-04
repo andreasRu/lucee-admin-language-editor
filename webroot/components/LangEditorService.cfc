@@ -10,16 +10,22 @@
 component {
 
 	public struct function init() {
+		
 		this.version = application.appversion;
 		this.luceeLangResourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/";
 		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/master/languageReleases/";
 
-
+		this.contribTempPath= "/cache/";
+		this.contribTemp=expandPath("./") & this.contribTempPath;
+		
+		
 		if( !cgi.http_host == "127.0.0.1:8080" && isDefined( "session.tmpDirectoryPath" ) ) {
 			this.workingDir = getTempDirectory() & "/workingDir/" & session.tmpDirectoryPath;
 		} else {
-			this.workingDir = "/workingDir/temp/";
+			this.workingDir = "/workingDir/";
 		}
+
+		createWorkingDirectoryIfNotExists();
 
 
 		// cfdirectory(
@@ -57,6 +63,10 @@ component {
 		if( !directoryExists( this.workingDir ) ) {
 			directoryCreate( this.workingDir );
 		}
+		
+		// if( !directoryExists( this.contribTemp ) ) {
+		// 	directoryCreate( this.contribTemp );
+		// }
 	}
 
 

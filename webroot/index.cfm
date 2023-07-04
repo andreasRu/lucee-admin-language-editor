@@ -34,10 +34,18 @@
 
             <div class="header">
                 <h1>
-                    #encodeForHTML( application[ "appTitleName" ] )#  </h1>
-                <h3 class="headingInfo"><i><div class="CFML">CF<span class="thunder">&##x26a1;</span>ML</div><div style="display:inline-block;position: relative;top: -0.24rem;left: 0.4rem;">rocks more than ever! Let's internationalize Lucee's 6.0 Administrator!</div></i></h3>
-
-                <div class="commandDivWrapper">
+                    #encodeForHTML( application[ "appTitleName" ] )#</h1>
+                <h3 class="headingInfo"><i><div class="CFML">CF<span class="thunder">&##x26a1;</span>ML</div><div style="display:inline-block;position: relative;top: -0.24rem;left: 0.4rem;">rocks more than ever! Let's internationalize Lucee's 6.0 Administrator!</div></i>
+				</h3>
+				<cfif variables.LangEditorService.runningOnlineProductionMode>
+					<div class="linkContainer">
+						<a href="https://github.com/andreasRu/lucee-admin-language-editor/graphs/contributors" rel="nofollow" class="defaultLink"  target="_blank">Contributors</a>
+						| <a href="https://github.com/andreasRu/lucee-admin-language-editor/" rel="nofollow" class="defaultLink"  target="_blank">Github</a>
+						| <a href="https://www.rhein-berg-digital.de/en/lucee-admin-lang-editor-imprint" class="defaultLink" rel="nofollow" target="_blank">Imprint</a> 
+						| <a href="https://www.rhein-berg-digital.de/en/lucee-admin-lang-editor-privacy-policy" rel="nofollow" class="defaultLink"  target="_blank">Privacy Policy</a>
+						</div>
+                </cfif>
+				<div class="commandDivWrapper">
                     <cfif len( availableLangResourceLanguage ) < application.maxFileCountInWorkingDir>
 						<div class="commandDiv">
 							<select name="selectLangResource" id="selectLangResource">
@@ -81,33 +89,38 @@
                     <cfif !arrayIsEmpty( availableLangResourceLanguage )>
                         <div class="commandDiv">
                             <button disabled class="button enhanced" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">ReInitialize!</button>
-                        </div>
-                    </cfif>
-
-
-                    <div class="commandDiv">
-                        <div style="position: relative;top:-2px;">Contributors:</div--->
-                        <div>
-                            <cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
-                                <a class="contributors" href="#encodeForHTMLAttribute( application.contributors[i]["html_url"] )#" target="_blank" title="#encodeForHTML( application.contributors[i]["login"] )#"><img src="#encodeForHTMLAttribute( application.contributors[i]["avatar_url"] )#"></a>
-                            </cfloop>
-							<div style="margin-top:0.5rem;">
+                        
+							<!---div style="margin-top:0.5rem;">
 								<cfif len( availableLangResourceLanguage ) gt application.maxFileCountInWorkingDir>
 									<cfset fullFileCount=len( availableLangResourceLanguage ) >
 								<cfelse>
 									<cfset fullFileCount=application.maxFileCountInWorkingDir>
 								</cfif>
 								Working Files:  #len( availableLangResourceLanguage )#/#fullFileCount#
-							</div>
-                        </div>
-                    </div>
+							</div--->
+						
+						</div>
+						
+                    </cfif>
+
+                    
 
 					<div class="commandDiv">
-                        <div style="position: relative;top:-2px;white-space:normal;">Get the LanguagePack-Plugin (beta) for latest:<br>English, German, Spanish.</div>
+                        <div style="position: relative;top:-2px;white-space:normal;">Get the latest Beta LanguagePack-Plugin:<br>English, German, Spanish.</div>
                         <div>
 							<a class="button" href="https://github.com/andreasRu/lucee-admin-language-editor/raw/master/extension/F1A3EEAF-5B7A-499C-9656DE3E103C8EA9.lex" target="_blank">Download Extension (beta)</a>
 						</div>
                     </div>
+
+					<!---div class="commandDiv">
+                        <div style="position: relative;top:-2px;">Contributors:</div>
+                        <div>
+                            <cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
+								<a class="contributors" href="#encodeForHTMLAttribute( application.contributors[i]["html_url"] )#" target="_blank" title="#encodeForHTML( application.contributors[i]["login"] )#"><img src="#encodeForHTMLAttribute( variables.LangEditorService.contribTempPath & application.contributors[i]["login"] )#.png"></a>
+                            </cfloop>
+							
+                        </div>
+                    </div--->
 
 
 

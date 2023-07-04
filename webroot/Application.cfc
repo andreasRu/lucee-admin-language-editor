@@ -53,6 +53,24 @@ component {
 				preserveCase = "true"
 			);
 		}
+
+		// get contributors from github
+		// cfhttp(
+		// 	method = "GET",
+		// 	charset = "utf-8",
+		// 	url = " https://api.github.com/repos/andreasRu/lucee-admin-language-editor/contributors",
+		// 	result = "result"
+		// );
+
+		// application[ "contributors" ] = deserializeJSON( result.filecontent );
+		// application[ "LangEditorService" ] = new components.LangEditorService();
+		
+		// cfloop( index="i", from="1", to="#arrayLen( application.contributors )#" ){
+		// 	if( !fileExists( application.LangEditorService.contribTemp & application.contributors[i].login  & ".png" ) ){
+		// 		cfimage( action="write", source="#application.contributors[i]["avatar_url"]#", destination="#application.LangEditorService.contribTemp##application.contributors[i].login#.png" ); 
+		// 	};
+		// }
+
 		return true;
 	}
 
@@ -62,17 +80,7 @@ component {
 		application[ "appTitleName" ] = "Lucee Admin Language Editor " & this.appversion;
 		application[ "maxWorkingSizeMB" ] = 50;
 		application[ "maxFileCountInWorkingDir" ] = 2;
-
-
-		// get contributors from github
-		cfhttp(
-			method = "GET",
-			charset = "utf-8",
-			url = " https://api.github.com/repos/andreasRu/lucee-admin-language-editor/contributors",
-			result = "result"
-		);
-
-		application[ "contributors" ] = deserializeJSON( result.filecontent );
+		
 		return true;
 	}
 

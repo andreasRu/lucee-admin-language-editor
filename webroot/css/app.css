@@ -59,6 +59,21 @@ body h3{
 	margin:0 -0.3rem 0 -0.27rem;
 }
 
+.linkContainer{
+	margin: 0.3rem 0.3rem 0;
+	color: #fff;
+    display: inline-block;
+    font-weight: 300;
+	font-size: 0.63rem;
+}
+.defaultLink, defaultLink:active, defaultLink:hover, defaultLink:visited {
+    color: #fff;
+    display: inline-block;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+    white-space: normal;
+}
 
 .scrollUpButton{
     background: #2c2c2cb3;
