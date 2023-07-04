@@ -41,9 +41,9 @@
                     <cfif len( availableLangResourceLanguage ) < application.maxFileCountInWorkingDir>
 						<div class="commandDiv">
 							<select name="selectLangResource" id="selectLangResource">
-								<cfset variables.langInLuceeSourceArray=LangEditorService.getAvailableLanguagesInLuceeGitSource() />
+								<cfset variables.langInSources=LangEditorService.getAvailableLanguagesInGitSource() />
 								<option value="">Select resource file</option>
-								<cfloop array="#variables.langInLuceeSourceArray#" item="letterCode">
+								<cfloop array="#variables.langInSources.langEditor#" item="letterCode">
 									<option value="#encodeForHTMLAttribute( letterCode )#">#encodeForHTML(
 										structKeyExists( availableJavaLocales,
 										letterCode)?availableJavaLocales[ letterCode ]:letterCode )#
@@ -52,17 +52,18 @@
 							</select>
 							<br>
 							<button disabled class="button" onClick="var lang=$('##selectLangResource').val();availableLangs=#encodeForHTMLAttribute( serializeJSON( availableLangResourceLanguage ) )#;if(lang==''){$('##selectLangResource').css({'border':'2px dotted red'})}else{ if( !availableLangs.includes( lang ) || confirm( 'Warning: This will download and overwrite any existing \'' + lang + '.json\' file in the working directory. Are you sure you want to proceed?'  ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDirAndPullResources&amp;lang='+ lang, 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}}">Pull
-								From Lucee at github</button>
+								Latest From github</button>
 						</div>
 					</cfif>
 
+					
                     <cfif len( availableLangResourceLanguage ) < application.maxFileCountInWorkingDir>
 
                         <div class="commandDiv">
                             <select name="selectCreateLangResource" id="selectCreateLangResource">
                                 <option value="">Start from scratch</option>
                                 <cfloop collection="#variables.availableJavaLocales#" item="letterCode">
-                                    <cfif !langInLuceeSourceArray.contains( lettercode ) && !availableLangResourceLanguage.contains( lettercode )>
+                                    <cfif !langInSources.langEditor.contains( lettercode ) && !availableLangResourceLanguage.contains( lettercode )>
                                         <option value="#encodeForHTMLAttribute( letterCode )#">
                                             #encodeForHTML( structKeyExists( availableJavaLocales,
                                             letterCode)?availableJavaLocales[ letterCode ]:letterCode )#
@@ -85,11 +86,11 @@
 
 
                     <div class="commandDiv">
-                        <!---div style="position: relative;top:-2px;">Contributors:</div--->
+                        <div style="position: relative;top:-2px;">Contributors:</div--->
                         <div>
-                            <!---cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
+                            <cfloop index="i" from="1" to="#arrayLen( application.contributors )#">
                                 <a class="contributors" href="#encodeForHTMLAttribute( application.contributors[i]["html_url"] )#" target="_blank" title="#encodeForHTML( application.contributors[i]["login"] )#"><img src="#encodeForHTMLAttribute( application.contributors[i]["avatar_url"] )#"></a>
-                            </cfloop--->
+                            </cfloop>
 							<div style="margin-top:0.5rem;">
 								<cfif len( availableLangResourceLanguage ) gt application.maxFileCountInWorkingDir>
 									<cfset fullFileCount=len( availableLangResourceLanguage ) >

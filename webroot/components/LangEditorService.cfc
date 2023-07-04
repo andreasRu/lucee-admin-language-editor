@@ -11,7 +11,9 @@ component {
 
 	public struct function init() {
 		this.version = application.appversion;
-		this.luceeSourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0";
+		this.luceeLangResourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/";
+		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/languageReleases/";
+
 
 		if( !cgi.http_host == "127.0.0.1:8080" && isDefined( "session.tmpDirectoryPath" ) ) {
 			this.workingDir = getTempDirectory() & "/workingDir/" & session.tmpDirectoryPath;
@@ -215,12 +217,6 @@ component {
 	
 
 
-
-
-
-
-
-
 	/**
 	 * returns a struct with the server/web context information that is bound to this template.
 	 */
@@ -276,8 +272,20 @@ component {
 	 * at: https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/
 	 */
 
-	public array function getAvailableLanguagesInLuceeGitSource() {
-		return [ "de", "en" ];
+	public struct function getAvailableLanguagesInGitSource() {
+		return { 
+			"lucee": [ 
+				"en", 
+				"de", 
+				"es" ],
+				
+			"langEditor": [ 
+				"en", 
+				"de", 
+				"es",
+				"pt",
+				"fr" ],
+		};
 	}
 
 
@@ -334,7 +342,7 @@ component {
 
 		// Pull source file if still not available
 		if( !fileExists( this.workingDir & "en.json" ) ) {
-			fileCopy( source = "#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/en.json", destination = this.workingDir & "en.json" );
+			fileCopy( source = "#this.luceeLangResourceUrl#en.json", destination = this.workingDir & "en.json" );
 		}
 
 		// define variables
@@ -441,11 +449,11 @@ component {
 
 
 		for( language in listToArray( arguments.lang ) ) {
-			fileCopy( source = "#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/#language#.json", destination = this.workingDir & "#language#.json" );
+			fileCopy( source = "#this.adminLangResourceUrl##language#.json", destination = this.workingDir & "#language#.json" );
 		}
 
 		if( !fileExists( this.workingDir & "en.json" ) ) {
-			fileCopy( source = "#this.luceeSourceUrl#/core/src/main/cfml/context/admin/resources/language/en.json", destination = this.workingDir & "en.json" );
+			fileCopy( source = "#this.luceeLangResourceUrl#en.json", destination = this.workingDir & "en.json" );
 		}
 	}
 
