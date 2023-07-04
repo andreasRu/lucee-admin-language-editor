@@ -87,6 +87,8 @@ component {
 
 
 	public boolean function OnSessionStart() {
+		
+		
 		if( !getHTTPRequestData( false ).headers.accept.findnocase( "*/*" ) ) {
 			cfheader( statuscode = "403", statustext = "Forbidden" );
 			echo( "<html><body>Not Available</body></html>" );
@@ -100,6 +102,16 @@ component {
 		location( "/?initialized", "false", "302" );
 
 		return true;
+	}
+
+
+	public boolean function OnSessionEnd() {
+		
+		ladminEdit=new components.LangEditorService();
+		if( !directoryExists( ladminEdit.workingDir ) ) {
+			directoryCreate( ladminEdit.workingDir );
+		}
+
 	}
 
 
