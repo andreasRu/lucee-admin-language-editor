@@ -10,15 +10,14 @@
 component {
 
 	public struct function init() {
-		
 		this.version = application.appversion;
 		this.luceeLangResourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/";
 		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/master/languageReleases/";
 
-		this.contribTempPath= "/cache/";
-		this.contribTemp=expandPath("./") & this.contribTempPath;
-		
-		
+		this.contribTempPath = "/cache/";
+		this.contribTemp = expandPath( "./" ) & this.contribTempPath;
+
+
 		if( !cgi.http_host == "127.0.0.1:8080" && isDefined( "session.tmpDirectoryPath" ) ) {
 			this.workingDir = getTempDirectory() & "/workingDir/" & session.tmpDirectoryPath;
 		} else {
@@ -63,7 +62,7 @@ component {
 		if( !directoryExists( this.workingDir ) ) {
 			directoryCreate( this.workingDir );
 		}
-		
+
 		// if( !directoryExists( this.contribTemp ) ) {
 		// 	directoryCreate( this.contribTemp );
 		// }
@@ -99,7 +98,7 @@ component {
 
 
 		// make sure the lang directory exists
-		
+
 		if( len( languagesArray ) && !directoryExists( this.adminResourcePath & "/resources/language" ) ) {
 			directoryCreate( this.adminResourcePath & "/resources/language" );
 		}
@@ -117,62 +116,57 @@ component {
 		return result;
 	}
 
-	public string function getChatGPTPrompt( lang ){
+	public string function getChatGPTPrompt( lang ) {
+		loadedData = [ : ];
+		propertiesToTransate = [];
+		loadedData = mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( "en" ).data );
+		loadedLangDataToTranslate = mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( arguments.lang ).data );
 
-    loadedData = [ : ];
-	propertiesToTransate=[ ];
-	loadedData = mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( "en" ).data ) ;
-	loadedLangDataToTranslate= mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( arguments.lang ).data ) ;
+		for( property in loadedData ) {
+			topKey = listFirst( property, "." );
+			if( !structKeyExists( loadedLangDataToTranslate, property ) && structKeyExists( loadedData, property ) && loadedData[ property ] != "" ) {
+				structInsert( loadedLangDataToTranslate, property, loadedData[ property ] );
 
-	for( property in loadedData ){
-		topKey=listFirst( property,"." );
-		if(!StructKeyExists( loadedLangDataToTranslate, property ) && StructKeyExists( loadedData, property) && loadedData[ property ]!="" ) {
-			structInsert( loadedLangDataToTranslate, property, loadedData[ property ] );
-			
-			if( !propertiesToTransate.contains( topKey ) ){
-				propertiesToTransate.append( topKey );
-			} 
+				if( !propertiesToTransate.contains( topKey ) ) {
+					propertiesToTransate.append( topKey );
+				}
+			}
+
+			if( structKeyExists( loadedLangDataToTranslate, property ) && loadedLangDataToTranslate[ property ] == "" && structKeyExists( loadedData, property ) && loadedData[ property ] != "" ) {
+				structUpdate( loadedLangDataToTranslate, property, loadedData[ property ] );
+				if( !propertiesToTransate.contains( topKey ) ) {
+					propertiesToTransate.append( topKey );
+				}
+			}
 		}
-		
-		if( StructKeyExists( loadedLangDataToTranslate, property ) && loadedLangDataToTranslate[ property ] =="" && StructKeyExists( loadedData, property) && loadedData[ property ]!="" ) {
-			
-			structUpdate( loadedLangDataToTranslate, property, loadedData[ property ] );
-			if( !propertiesToTransate.contains( topKey ) ){
-				propertiesToTransate.append( topKey );
-			} 
+
+		// removeunused properties
+		for( property in loadedLangDataToTranslate ) {
+			topKey = listFirst( property, "." );
+			if( !propertiesToTransate.contains( topKey ) ) {
+				structDelete( loadedLangDataToTranslate, "#property#" );
+			}
 		}
-		
-		
-	}
 
-	// removeunused properties
-	for( property in loadedLangDataToTranslate ){
-		topKey=listFirst( property,"." );
-		if( !propertiesToTransate.contains( topKey  ) ){
-			structDelete( loadedLangDataToTranslate, "#property#" );
+		structKeyTranslate( loadedLangDataToTranslate );
+		tmp = sortNestedStruct( loadedLangDataToTranslate );
+		loadedLangDataToTranslate = tmp;
+		// create chatgptPrompt;
+		result = "";
+		language = getAvailableJavaLocalesAsStruct()[ arguments.lang ];
+		// removeunused properties
+		for( property in loadedLangDataToTranslate ) {
+			tmpPrompt = "Translate the following JSON from English to " & language & " and print it as code:" & chr( 10 );
+			tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( { "#property#": loadedLangDataToTranslate[ property ] } );
+			result = result & tmpPrompt & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & "////////////////////////// NEW CHATGPT-PROMPT //////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 );
 		}
+
+		if( isEmpty( result ) ) {
+			result = "Seems like there is nothing that needs to be translate for '#encodeForHTML( arguments.lang )#'";
+		}
+		return result;
 	}
 
-	structKeyTranslate( loadedLangDataToTranslate );
-	tmp=sortNestedStruct( loadedLangDataToTranslate );
-	loadedLangDataToTranslate=tmp;
-	// create chatgptPrompt;
-	result="";
-	language= getAvailableJavaLocalesAsStruct()[  arguments.lang  ];
-	// removeunused properties
-	for( property in loadedLangDataToTranslate ){
-		tmpPrompt="Translate the following JSON from English to " & language & " and print it as code:" &chr( 10 );
-		tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( { "#property#": loadedLangDataToTranslate[ property ] } );
-		result= result & tmpPrompt & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & "////////////////////////// NEW CHATGPT-PROMPT //////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 );
-	}
-
-	if( isEmpty( result )){
-		result="Seems like there is nothing that needs to be translate for '#encodeForHTML( arguments.lang)#'";
-	}
-	return result;
-
-	}
-	
 
 	public void function createPasswordFile() localmode = true {
 		if( !fileExists( expandPath( "./../" ) & "adminDeploy/password.txt" ) ) {
@@ -203,7 +197,7 @@ component {
 			dataAsStruct = [ : ];
 			dataAsStruct = { "#dataPropertyName#": dataPropertyValue };
 			structKeyTranslate( dataAsStruct );
-			
+
 			result = "Property Path: """ & replaceNoCase( dataPropertyName, ".", " => ", "ALL" ) & """";
 			result = result & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( dataAsStruct );
 		} else {
@@ -224,7 +218,7 @@ component {
 		structUpdate( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode ] );
 		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json", serializeToPrettyJson( dataJSON ), "utf-8" );
 	}
-	
+
 
 
 	/**
@@ -283,19 +277,7 @@ component {
 	 */
 
 	public struct function getAvailableLanguagesInGitSource() {
-		return { 
-			"lucee": [ 
-				"en", 
-				"de", 
-				"es" ],
-				
-			"langEditor": [ 
-				"en", 
-				"de", 
-				"es",
-				"pt",
-				"fr" ],
-		};
+		return { "lucee": [ "en", "de", "es" ], "langEditor": [ "en", "de", "es", "pt", "fr" ] };
 	}
 
 
@@ -556,8 +538,8 @@ component {
 		propertyPaths = listToArray( arguments.propertyName, "." );
 
 		// create an array of possible keys. E.g. if "admin.search.desc" is added,
-		// the following keys must be checked for existance, so no overwriting will take place: 
-		// "admin", "admin.search", "admin.search.desc", 
+		// the following keys must be checked for existance, so no overwriting will take place:
+		// "admin", "admin.search", "admin.search.desc",
 		keysToCheckConflict = arrayReduce(
 			propertyPaths,
 			function(prev, item, index, theArray) {
@@ -587,7 +569,6 @@ component {
 		}
 
 		if( !propertyHasConflict ) {
-
 			structInsert( loadedData, arguments.propertyName, "" );
 			structKeyTranslate( loadedData );
 			dataJSON = [ : ];
@@ -596,11 +577,8 @@ component {
 			dataJSON[ "data" ] = sortNestedStruct( loadedData );
 			fileWrite( this.workingDir & "en.json", serializeToPrettyJson( dataJSON ), "utf-8" );
 			result = true;
-
-		}else{
-
+		} else {
 			result = false;
-
 		}
 
 		return result;
@@ -674,15 +652,15 @@ component {
 	public struct function mapStructToDotPathVariable( struct data, prefix = "", propertyStruct = {} ) localmode = true {
 		for( key in arguments.data ) {
 			value = data[ key ];
-			
+
 			if( isStruct( value ) ) {
 				mapStructToDotPathVariable( value, prefix & key & ".", propertyStruct );
 			} else {
 				propertyStruct.append( { "#prefix##key#": value } );
-				//echo( "#prefix##key#: #value# <br>");
+				// echo( "#prefix##key#: #value# <br>");
 			}
 		}
-		
+
 
 		return propertyStruct;
 	}
@@ -700,7 +678,7 @@ component {
 				result[ language ] = mapStructToDotPathVariable( arguments.data[ language ][ "data" ] );
 			}
 		}
-		
+
 		return result;
 	}
 
