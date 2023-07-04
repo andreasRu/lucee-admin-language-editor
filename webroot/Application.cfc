@@ -18,7 +18,7 @@ component {
 		}
 	}
 
-	this.appversion = "2.0.2";
+	this.appversion = "2.0.3";
 	this.name = "adminTranslator#server.lucee.version#-#this.appversion#";
 	this.clientmanagement = "no";
 	this.scriptprotect = "all";
@@ -64,10 +64,10 @@ component {
 
 		// application[ "contributors" ] = deserializeJSON( result.filecontent );
 		// application[ "LangEditorService" ] = new components.LangEditorService();
-		
+
 		// cfloop( index="i", from="1", to="#arrayLen( application.contributors )#" ){
 		// 	if( !fileExists( application.LangEditorService.contribTemp & application.contributors[i].login  & ".png" ) ){
-		// 		cfimage( action="write", source="#application.contributors[i]["avatar_url"]#", destination="#application.LangEditorService.contribTemp##application.contributors[i].login#.png" ); 
+		// 		cfimage( action="write", source="#application.contributors[i]["avatar_url"]#", destination="#application.LangEditorService.contribTemp##application.contributors[i].login#.png" );
 		// 	};
 		// }
 
@@ -80,7 +80,7 @@ component {
 		application[ "appTitleName" ] = "Lucee Admin Language Editor " & this.appversion;
 		application[ "maxWorkingSizeMB" ] = 50;
 		application[ "maxFileCountInWorkingDir" ] = 2;
-		
+
 		return true;
 	}
 
