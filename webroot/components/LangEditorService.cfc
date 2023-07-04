@@ -12,7 +12,7 @@ component {
 	public struct function init() {
 		this.version = application.appversion;
 		this.luceeLangResourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/";
-		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/languageReleases/";
+		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/master/languageReleases/";
 
 
 		if( !cgi.http_host == "127.0.0.1:8080" && isDefined( "session.tmpDirectoryPath" ) ) {
