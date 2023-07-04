@@ -1,6 +1,5 @@
 
 import $ from 'jquery';
-import floatthead from 'floatthead';
 import langUpdater from './langService';
 
 
@@ -8,9 +7,5 @@ import langUpdater from './langService';
 window.jQuery = $;
 window.$ = $;
 window.langUpdater = langUpdater;
-window.floatthead = floatthead;
-
-console.log( window.langUpdater ); 
-
-export default { $, floatthead, langUpdater};
+export default { $, langUpdater};
 

@@ -89,17 +89,7 @@
                     <cfif !arrayIsEmpty( availableLangResourceLanguage )>
                         <div class="commandDiv">
                             <button disabled class="button enhanced" onClick="if( confirm( 'Warning: This will remove all working files from the working directory and changes will be lost forever. Are you sure you want to proceed?' ) ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=cleanWorkingDir', 'GET', undefined, 'ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed');}">ReInitialize!</button>
-                        
-							<!---div style="margin-top:0.5rem;">
-								<cfif len( availableLangResourceLanguage ) gt application.maxFileCountInWorkingDir>
-									<cfset fullFileCount=len( availableLangResourceLanguage ) >
-								<cfelse>
-									<cfset fullFileCount=application.maxFileCountInWorkingDir>
-								</cfif>
-								Working Files:  #len( availableLangResourceLanguage )#/#fullFileCount#
-							</div--->
-						
-						</div>
+                      	</div>
 						
                     </cfif>
 

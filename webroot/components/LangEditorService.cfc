@@ -14,28 +14,22 @@ component {
 		this.luceeLangResourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/";
 		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/master/languageReleases/";
 
-		this.contribTempPath = "/cache/";
-		this.contribTemp = expandPath( "./" ) & this.contribTempPath;
-
-
+				
 		if( !cgi.http_host == "127.0.0.1:8080" && isDefined( "session.tmpDirectoryPath" ) ) {
 			this.workingDir = getTempDirectory() & "/workingDir/" & session.tmpDirectoryPath;
 		} else {
 			this.workingDir = "/workingDir/";
 		}
 
-		createWorkingDirectoryIfNotExists();
-
 
 		// cfdirectory(
-		// 		directory = this.workingDir,
-		// 		action = "list",
-		// 		name = "filequery",
+		//  		directory = this.workingDir,
+		//  		action = "list",
+		//  		name = "filequery",
 		// 		recurse="true"
-		// 	);
-
+		// );
 		// dump( filequery );
-
+		// abort;
 
 		this.runningOnlineProductionMode = ( cgi.http_host == "127.0.0.1:8080" ) ? false : true;
 		this.applicationSettings = getApplicationSettings();
@@ -62,10 +56,7 @@ component {
 		if( !directoryExists( this.workingDir ) ) {
 			directoryCreate( this.workingDir );
 		}
-
-		// if( !directoryExists( this.contribTemp ) ) {
-		// 	directoryCreate( this.contribTemp );
-		// }
+	
 	}
 
 
@@ -330,6 +321,8 @@ component {
 	 * Updates/Saves the data to an ordered formatted JSON
 	 * */
 	public void function createUpdateWorkingLanguageResourceFile( string languageCode required, struct formObject ) localmode = true {
+		
+		
 		createWorkingDirectoryIfNotExists();
 
 		// Pull source file if still not available
