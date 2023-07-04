@@ -25,6 +25,7 @@
         <body>
             <!--- initialize LangEditor Component --->
             <cfset variables.LangEditorService=new components.LangEditorService() />
+			
 			<cfset variables.langData=LangEditorService.parseDataForTableOutput( LangEditorService.getFullWorkingData( ) ) />
 		
             <!--- get languages of resource files available in working folder --->
@@ -182,14 +183,7 @@
             <script type="text/javascript" src="/js/distro/jsbundle.js?version=#hash(application.appversion)#"></script>
             <script type="text/javascript" src="/js/distro/vendors.js?version=#hash(application.appversion)#"></script>
             <script>
-            /* call floatThead for fixed table head */
-            $(function() {
-                $('table').floatThead({
-                    position: 'fixed'
-                });
-            });
-
-
+            
             /**  create a MutationObserver for ajaxPopulateNotificationFlyingbar: This is the flying Bar that
              *	is shown for a feedback 
              *	More Details https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver  

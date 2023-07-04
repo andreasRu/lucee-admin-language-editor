@@ -14,22 +14,14 @@ component {
 		this.luceeLangResourceUrl = "https://raw.githubusercontent.com/lucee/Lucee/6.0/core/src/main/cfml/context/admin/resources/language/";
 		this.adminLangResourceUrl = "https://raw.githubusercontent.com/andreasRu/lucee-admin-language-editor/master/languageReleases/";
 
-				
+		this.workingBase = "/workingDir/";
+
 		if( !cgi.http_host == "127.0.0.1:8080" && isDefined( "session.tmpDirectoryPath" ) ) {
-			this.workingDir = getTempDirectory() & "/workingDir/" & session.tmpDirectoryPath;
+			this.workingDir = getTempDirectory() & this.workingBase & session.tmpDirectoryPath;
 		} else {
-			this.workingDir = "/workingDir/";
+			this.workingDir = this.workingBase;
 		}
 
-
-		// cfdirectory(
-		//  		directory = this.workingDir,
-		//  		action = "list",
-		//  		name = "filequery",
-		// 		recurse="true"
-		// );
-		// dump( filequery );
-		// abort;
 
 		this.runningOnlineProductionMode = ( cgi.http_host == "127.0.0.1:8080" ) ? false : true;
 		this.applicationSettings = getApplicationSettings();
@@ -52,11 +44,28 @@ component {
 	}
 
 
+	public void function cleanTempDirs() {
+		if( this.runningOnlineProductionMode ) {
+			cfdirectory(
+				directory = getTempDirectory() & this.workingBase,
+				action = "list",
+				name = "filequery",
+				recurse = "false"
+			);
+
+			for( row in filequery ) {
+				if( row.dateLastModified < dateAdd( "h", -3, now() ) ) {
+					directoryDelete( getTempDirectory() & this.workingBase & row.name, true );
+				}
+			}
+		}
+		return;
+	}
+
 	public void function createWorkingDirectoryIfNotExists() {
 		if( !directoryExists( this.workingDir ) ) {
 			directoryCreate( this.workingDir );
 		}
-	
 	}
 
 
@@ -324,8 +333,6 @@ component {
 	 * Updates/Saves the data to an ordered formatted JSON
 	 * */
 	public void function createUpdateWorkingLanguageResourceFile( string languageCode required, struct formObject ) localmode = true {
-		
-		
 		createWorkingDirectoryIfNotExists();
 
 		// Pull source file if still not available

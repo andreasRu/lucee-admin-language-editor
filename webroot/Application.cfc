@@ -30,12 +30,28 @@ component {
 
 
 
-	if( structKeyExists( cookie, "isUser" ) ) {
+	if(
+		getHTTPRequestData( false ).headers.accept.findnocase( "*/*" )
+		&& structKeyExists( cookie, "isUser" )
+	) {
 		this.sessionmanagement = "yes";
 		this.sessionStorage = "memory";
 		this.sessiontimeout = "#createTimespan( 0, 0, 30, 0 )#";
 		this.setclientcookies = "yes";
 		this.setdomaincookies = "no";
+		cfcookie(
+			name = "cfid",
+			value = "#session.cfid#",
+			httpOnly = "true",
+			preserveCase = "true"
+		);
+
+		cfcookie(
+			name = "cftoken",
+			value = "#session.cftoken#",
+			httpOnly = "true",
+			preserveCase = "true"
+		);
 	} else {
 		this.sessionmanagement = "no";
 		this.setclientcookies = "no";
@@ -54,22 +70,8 @@ component {
 			);
 		}
 
-		// get contributors from github
-		// cfhttp(
-		// 	method = "GET",
-		// 	charset = "utf-8",
-		// 	url = " https://api.github.com/repos/andreasRu/lucee-admin-language-editor/contributors",
-		// 	result = "result"
-		// );
 
-		// application[ "contributors" ] = deserializeJSON( result.filecontent );
-		// application[ "LangEditorService" ] = new components.LangEditorService();
 
-		// cfloop( index="i", from="1", to="#arrayLen( application.contributors )#" ){
-		// 	if( !fileExists( application.LangEditorService.contribTemp & application.contributors[i].login  & ".png" ) ){
-		// 		cfimage( action="write", source="#application.contributors[i]["avatar_url"]#", destination="#application.LangEditorService.contribTemp##application.contributors[i].login#.png" );
-		// 	};
-		// }
 
 		return true;
 	}
@@ -87,31 +89,33 @@ component {
 
 
 	public boolean function OnSessionStart() {
-		
-		
 		if( !getHTTPRequestData( false ).headers.accept.findnocase( "*/*" ) ) {
 			cfheader( statuscode = "403", statustext = "Forbidden" );
 			echo( "<html><body>Not Available</body></html>" );
 			abort;
 		}
 
-		sessionRotate();
+
 		if( !isRunningLocal() ) {
-			session.tmpDirectoryPath = dateTimeFormat( now(), "yyyy-mm-dd-hh-nn-ss-l" ) & "-" & hash( now(), "md5" ) & "/";
+			sessionRotate();
+			session.tmpDirectoryPath = dateTimeFormat( now(), "yyyy-mm-dd-HH-nn-ss-l" ) & "-" & hash( now(), "md5" ) & "/";
+
+			// cleanup from old temp files
+			tmpLangEditorService = new components.LangEditorService()
+			tmpLangEditorService.cleanTempDirs();
 		}
-		location( "/?initialized", "false", "302" );
+
+		location( "/", "false", "302" );
 
 		return true;
 	}
 
 
 	public boolean function OnSessionEnd() {
-		
-		ladminEdit=new components.LangEditorService();
+		ladminEdit = new components.LangEditorService();
 		if( !directoryExists( ladminEdit.workingDir ) ) {
 			directoryCreate( ladminEdit.workingDir );
 		}
-
 	}
 
 
