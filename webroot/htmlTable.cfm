@@ -20,10 +20,9 @@
 					<cfloop array="#availableLangResourceLanguage#" item="itemLanguageKey" >
 						<th>
 							#encodeForHTML( structKeyExists( availableJavaLocales, itemLanguageKey)?availableJavaLocales[ itemLanguageKey ]:"" )#</div>
-							#encodeForHTML( itemLanguageKey )#.json
-							<cfif itemLanguageKey == "en">(default)</cfif>
+							#encodeForHTML( itemLanguageKey )#.json<cfif itemLanguageKey == "en">*</cfif>
 								
-								<button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save Changes to "#itemLanguageKey#.json"<br><cfif !variables.LangEditorService.runningOnlineProductionMode  && server.lucee.version gt "6"> &amp; push to Admin</cfif></button>
+								<button disabled class="button enhanced" id="save_#encodeForHTMLAttribute( itemLanguageKey )#" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=updateJsonWorkingFile&amp;adminLang=#itemLanguageKey#', 'POST', '.updateContainer-#ucase(itemLanguageKey)# textarea', '##ajaxPopulateNotificationFlyingBar', 'reloadURLDelayed' );">Save<cfif itemLanguageKey != "en">/Normalize</cfif> "#itemLanguageKey#.json"<br><cfif !variables.LangEditorService.runningOnlineProductionMode  && server.lucee.version gt "6"> &amp; push to Admin</cfif></button>
 								<!---a class="button" href="#encodeForHTMLAttribute( "/ajaxApi/ajaxLangService.cfm?method=downloadFileJSON&downloadLanguageJSONFile=" & encodeforURL( itemLanguageKey ) )#" target="_blank">Download File For PR</a--->
 								
 								<cfif !variables.LangEditorService.runningOnlineProductionMode && server.lucee.version gt "6">
@@ -52,7 +51,7 @@
 
 								
 								</cfif>
-								<button title="View/Paste JSON-Code #ucase( itemLanguageKey)#" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getJSONForm&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });">View/Add JSON (#ucase( itemLanguageKey )#)</button>
+								<button title="View/Paste JSON-Code #ucase( itemLanguageKey)#" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getJSONForm&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });">View/Update JSON (#ucase( itemLanguageKey )#)</button>
 								
 								<cfif itemLanguageKey !== "en">
 									<button title="ChatGPT Prompt" class="button" onClick="window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=getChatGPTPrompt&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( itemLanguageKey ) ) )#', 'GET', undefined, '##modalMainContent', 'replaceInner' , function(){ $('.modalContainer').fadeIn() });">ChatGPT prompt for translation</button>
