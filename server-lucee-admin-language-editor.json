@@ -20,6 +20,6 @@
         }
     ],
     "app":{
-        "cfengine":"https://update.lucee.org/rest/update/provider/forgebox/6.0.0.482-SNAPSHOT"
+        "cfengine":"https://update.lucee.org/rest/update/provider/forgebox/6.0.0.483-SNAPSHOT"
     }
 }
