@@ -222,6 +222,14 @@ component {
 		result= replaceNoCase( result, "#chr(10)#      """,  "#chr(10)#			""","ALL");
 		result= replaceNoCase( result, "#chr(10)#    """,  "#chr(10)#		""","ALL");
 		result= replaceNoCase( result, "#chr(10)#  """,  "#chr(10)#	""","ALL");
+		result= replaceNoCase( result, "#chr(10)#                }",  "#chr(10)#								}","ALL");
+		result= replaceNoCase( result, "#chr(10)#              }",  "#chr(10)#							}","ALL");
+		result= replaceNoCase( result, "#chr(10)#            }",  "#chr(10)#						}","ALL");
+		result= replaceNoCase( result, "#chr(10)#          }",  "#chr(10)#					}","ALL");
+		result= replaceNoCase( result, "#chr(10)#        }",  "#chr(10)#				}","ALL");
+		result= replaceNoCase( result, "#chr(10)#      }",  "#chr(10)#			}","ALL");
+		result= replaceNoCase( result, "#chr(10)#    }",  "#chr(10)#		}","ALL");
+		result= replaceNoCase( result, "#chr(10)#  }",  "#chr(10)#	}","ALL");
 		return result;
 	}
 
@@ -229,7 +237,7 @@ component {
 		dataJSON = deserializeJSON( arguments.JsonObject );
 		structUpdate( dataJSON, "key", arguments.languageCode );
 		structUpdate( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode ] );
-		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json", cleanIdentationJSON( serializeToPrettyJson( dataJSON ) ), "utf-8" );
+		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeToPrettyJson( dataJSON ) , "utf-8" );
 	}
 
 
