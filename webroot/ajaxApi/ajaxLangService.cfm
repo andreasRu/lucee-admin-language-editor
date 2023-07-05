@@ -153,7 +153,7 @@
 			jsonSnippet=LangEditorService.getChatGPTPrompt( url.lang );
 			result["error"]=0;
 			result["success"]=true;
-			result["contentForHtmlOutput"]= "<textarea name=""jsonEditor"" id=""jsonEditor"" style=""white-space: pre;overflow-wrap: normal;overflow-x: scroll;width:80vw;max-width:900px;height:40vh;"">" & encodeForHTML( jsonSnippet ) & "</textarea>";
+			result["contentForHtmlOutput"]= "<textarea name=""jsonEditor"" id=""jsonEditor"" style=""white-space: pre;overflow-wrap: nowrap;overflow-x: scroll;width:80vw;max-width:900px;height:40vh;tab-size: 2;"">" & encodeForHTML( jsonSnippet ) & "</textarea>";
 			LangEditorService.outputAsJson( result );
 			
 		}
@@ -164,7 +164,8 @@
 			jsonSnippet=LangEditorService.getFullJSON( url.lang );
 			result["error"]=0;
 			result["success"]=true;
-			result["contentForHtmlOutput"]= "<textarea name=""jsonEditor"" id=""jsonEditor"" style=""white-space: pre;overflow-wrap: normal;overflow-x: scroll;width:80vw;max-width:900px;height:40vh;"">" & encodeForHTML( jsonSnippet ) & "</textarea>";
+
+			result["contentForHtmlOutput"]= "<textarea name=""jsonEditor"" id=""jsonEditor"" style=""white-space: pre;overflow-wrap: nowrap;overflow-x: scroll;width:80vw;max-width:900px;height:40vh;tab-size: 2;"">" & encodeForHTML( jsonSnippet ) & "</textarea>";
 			result["contentForHtmlOutput"]= result["contentForHtmlOutput"] & "<button onClick=""if( true ){ window.langUpdater.myAjaxUtils.buildPayLoad( '/ajaxApi/ajaxLangService.cfm?method=saveJSONCodeSnippet&amp;lang=#encodeForHTMLAttribute( encodeForJavascript( encodeForURL( url.lang ) ) )#', 'POST', '##jsonEditor', '##modalMainContent', 'replaceInner' , function(){ $( '##loadingSpinner' ).show(); $('.modalContainer').hide();setTimeout(function(){window.location.reload();}, 2000); });};""> Save </button-->";
 			LangEditorService.outputAsJson( result );
 			

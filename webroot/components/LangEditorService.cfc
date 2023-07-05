@@ -212,11 +212,32 @@ component {
 		return serializeToPrettyJson( getWorkingDataForLanguageByLettercode( lang ) );
 	}
 
+	public string function cleanIdentationJSON( required string Json ){
+		result= arguments.Json;
+		result= replaceNoCase( result, "#chr(10)#                """,  "#chr(10)#								""","ALL");
+		result= replaceNoCase( result, "#chr(10)#              """,  "#chr(10)#							""","ALL");
+		result= replaceNoCase( result, "#chr(10)#            """,  "#chr(10)#						""","ALL");
+		result= replaceNoCase( result, "#chr(10)#          """,  "#chr(10)#					""","ALL");
+		result= replaceNoCase( result, "#chr(10)#        """,  "#chr(10)#				""","ALL");
+		result= replaceNoCase( result, "#chr(10)#      """,  "#chr(10)#			""","ALL");
+		result= replaceNoCase( result, "#chr(10)#    """,  "#chr(10)#		""","ALL");
+		result= replaceNoCase( result, "#chr(10)#  """,  "#chr(10)#	""","ALL");
+		result= replaceNoCase( result, "#chr(10)#                }",  "#chr(10)#								}","ALL");
+		result= replaceNoCase( result, "#chr(10)#              }",  "#chr(10)#							}","ALL");
+		result= replaceNoCase( result, "#chr(10)#            }",  "#chr(10)#						}","ALL");
+		result= replaceNoCase( result, "#chr(10)#          }",  "#chr(10)#					}","ALL");
+		result= replaceNoCase( result, "#chr(10)#        }",  "#chr(10)#				}","ALL");
+		result= replaceNoCase( result, "#chr(10)#      }",  "#chr(10)#			}","ALL");
+		result= replaceNoCase( result, "#chr(10)#    }",  "#chr(10)#		}","ALL");
+		result= replaceNoCase( result, "#chr(10)#  }",  "#chr(10)#	}","ALL");
+		return result;
+	}
+
 	public void function saveJSON( required string languageCode, required string JsonObject ) localmode = true {
 		dataJSON = deserializeJSON( arguments.JsonObject );
 		structUpdate( dataJSON, "key", arguments.languageCode );
 		structUpdate( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode ] );
-		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json", serializeToPrettyJson( dataJSON ), "utf-8" );
+		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeToPrettyJson( dataJSON ) , "utf-8" );
 	}
 
 
@@ -389,7 +410,7 @@ component {
 	public string function serializeToPrettyJson( struct dataStruct ) {
 		// prettify JSON
 		prettifier = createObject( "java", "com.google.gson.GsonBuilder", "/../libs/gson-2.10.1.jar" ).init().setPrettyPrinting().create();
-		return prettifier.toJson( arguments.datastruct );
+		return cleanIdentationJSON( prettifier.toJson( arguments.datastruct ) );
 	}
 
 
