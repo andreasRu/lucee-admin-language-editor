@@ -34,10 +34,10 @@
             <cfset variables.availableJavaLocales=LangEditorService.getAvailableJavaLocalesAsStruct() />
 
             <div class="header">
-                <h1>
-                    #encodeForHTML( application[ "appTitleName" ] )#</h1>
-                <h3 class="headingInfo"><i><div class="CFML">CF<span class="thunder">&##x26a1;</span>ML</div><div style="display:inline-block;position: relative;top: -0.24rem;left: 0.4rem;">rocks more than ever! Let's internationalize Lucee's 6.0 Administrator!</div></i>
-				</h3>
+                <a href="/" target="_self" >
+					<h1>#encodeForHTML( application[ "appTitleName" ] )#</h1>
+				</a>
+                <h3 class="headingInfo"><i><div class="CFML">CF<span class="thunder">&##x26a1;</span>ML</div><div style="display:inline-block;position: relative;top: -0.24rem;left: 0.4rem;">rocks more than ever! Let's internationalize Lucee's 6.0 Administrator!</div></i></h3>
 				<cfif variables.LangEditorService.runningOnlineProductionMode>
 					<div class="linkContainer">
 						<a href="https://github.com/andreasRu/lucee-admin-language-editor/graphs/contributors" rel="nofollow" class="defaultLink"  target="_blank">Contributors</a>
