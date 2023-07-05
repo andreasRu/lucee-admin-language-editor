@@ -18,7 +18,7 @@ component {
 		}
 	}
 
-	this.appversion = "2.0.4";
+	this.appversion = "2.0.5";
 	this.name = "adminTranslator#server.lucee.version#-#this.appversion#";
 	this.clientmanagement = "no";
 	this.scriptprotect = "all";

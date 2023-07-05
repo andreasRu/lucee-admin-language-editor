@@ -156,8 +156,8 @@ component {
 		language = getAvailableJavaLocalesAsStruct()[ arguments.lang ];
 		// removeunused properties
 		for( property in loadedLangDataToTranslate ) {
-			tmpPrompt = "Translate the following JSON from English to " & language & " and print it as code:" & chr( 10 );
-			tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeToPrettyJson( { "#property#": loadedLangDataToTranslate[ property ] } );
+			tmpPrompt = "Translate the following JSON from English to " & language & " and print the JSON as code:" & chr( 10 );
+			tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeJson( { "#property#": loadedLangDataToTranslate[ property ] } );
 			result = result & tmpPrompt & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & "////////////////////////// NEW CHATGPT-PROMPT //////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 );
 		}
 
@@ -559,7 +559,7 @@ component {
 		loadedData = mapStructToDotPathVariable( getWorkingDataForLanguageByLettercode( "en" ).data );
 
 		propertyHasConflict = false;
-		propertyPaths = listToArray( arguments.propertyName, "." );
+		propertyPaths = listToArray( trim( arguments.propertyName ), "." );
 
 		// create an array of possible keys. E.g. if "admin.search.desc" is added,
 		// the following keys must be checked for existance, so no overwriting will take place:
