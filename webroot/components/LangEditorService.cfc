@@ -157,7 +157,7 @@ component {
 		// removeunused properties
 		for( property in loadedLangDataToTranslate ) {
 			tmpPrompt = "Translate the following JSON from English to " & language & " and print the JSON as code:" & chr( 10 );
-			tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeJson( { "#property#": loadedLangDataToTranslate[ property ] } );
+			tmpPrompt = tmpPrompt & chr( 10 ) & chr( 10 ) & serializeJSON( { "#property#": loadedLangDataToTranslate[ property ] } );
 			result = result & tmpPrompt & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & chr( 10 ) & "////////////////////////// NEW CHATGPT-PROMPT //////////////////////////" & chr( 10 ) & chr( 10 ) & chr( 10 );
 		}
 
@@ -212,24 +212,104 @@ component {
 		return serializeToPrettyJson( getWorkingDataForLanguageByLettercode( lang ) );
 	}
 
-	public string function cleanIdentationJSON( required string Json ){
-		result= arguments.Json;
-		result= replaceNoCase( result, "#chr(10)#                """,  "#chr(10)#								""","ALL");
-		result= replaceNoCase( result, "#chr(10)#              """,  "#chr(10)#							""","ALL");
-		result= replaceNoCase( result, "#chr(10)#            """,  "#chr(10)#						""","ALL");
-		result= replaceNoCase( result, "#chr(10)#          """,  "#chr(10)#					""","ALL");
-		result= replaceNoCase( result, "#chr(10)#        """,  "#chr(10)#				""","ALL");
-		result= replaceNoCase( result, "#chr(10)#      """,  "#chr(10)#			""","ALL");
-		result= replaceNoCase( result, "#chr(10)#    """,  "#chr(10)#		""","ALL");
-		result= replaceNoCase( result, "#chr(10)#  """,  "#chr(10)#	""","ALL");
-		result= replaceNoCase( result, "#chr(10)#                }",  "#chr(10)#								}","ALL");
-		result= replaceNoCase( result, "#chr(10)#              }",  "#chr(10)#							}","ALL");
-		result= replaceNoCase( result, "#chr(10)#            }",  "#chr(10)#						}","ALL");
-		result= replaceNoCase( result, "#chr(10)#          }",  "#chr(10)#					}","ALL");
-		result= replaceNoCase( result, "#chr(10)#        }",  "#chr(10)#				}","ALL");
-		result= replaceNoCase( result, "#chr(10)#      }",  "#chr(10)#			}","ALL");
-		result= replaceNoCase( result, "#chr(10)#    }",  "#chr(10)#		}","ALL");
-		result= replaceNoCase( result, "#chr(10)#  }",  "#chr(10)#	}","ALL");
+	public string function cleanIdentationJSON( required string Json ) {
+		result = arguments.Json;
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#                """,
+			"#chr( 10 )#								""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#              """,
+			"#chr( 10 )#							""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#            """,
+			"#chr( 10 )#						""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#          """,
+			"#chr( 10 )#					""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#        """,
+			"#chr( 10 )#				""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#      """,
+			"#chr( 10 )#			""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#    """,
+			"#chr( 10 )#		""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#  """,
+			"#chr( 10 )#	""",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#                }",
+			"#chr( 10 )#								}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#              }",
+			"#chr( 10 )#							}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#            }",
+			"#chr( 10 )#						}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#          }",
+			"#chr( 10 )#					}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#        }",
+			"#chr( 10 )#				}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#      }",
+			"#chr( 10 )#			}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#    }",
+			"#chr( 10 )#		}",
+			"ALL"
+		);
+		result = replaceNoCase(
+			result,
+			"#chr( 10 )#  }",
+			"#chr( 10 )#	}",
+			"ALL"
+		);
 		return result;
 	}
 
@@ -237,7 +317,7 @@ component {
 		dataJSON = deserializeJSON( arguments.JsonObject );
 		structUpdate( dataJSON, "key", arguments.languageCode );
 		structUpdate( dataJSON, "label", getAvailableJavaLocalesAsStruct()[ arguments.languageCode ] );
-		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json",  serializeToPrettyJson( dataJSON ) , "utf-8" );
+		fileWrite( this.workingDir & "#sanitizeFilename( arguments.languageCode )#.json", serializeToPrettyJson( dataJSON ), "utf-8" );
 	}
 
 
